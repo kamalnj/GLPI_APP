@@ -30,7 +30,7 @@ class GlpiSyncAntiviruses extends Command
      */
     public function handle()
     {
-         $client = new GlpiApi();
+        $client = new GlpiApi();
 
         try {
             $session = $client->initSession();
@@ -44,39 +44,39 @@ class GlpiSyncAntiviruses extends Command
                 $items = $client->getCollection('ComputerAntivirus', $session, [
                     'range' => "{$start}-{$end}",
                 ]);
-                 if (empty($items)) {
+                if (empty($items)) {
                     $this->info("No more items. Finished.");
                     break;
                 }
-            $computerMap = Computer::query()->pluck('id', 'glpi_id');
+                $computerMap = Computer::query()->pluck('id', 'glpi_id');
 
                 foreach ($items as $av) {
 
                     $glpiComputerId = (int) ($av['computers_id'] ?? 0);
-                if ($glpiComputerId <= 0) {
-                    continue;
-                }
-                   $localComputerId = $computerMap[$glpiComputerId] ?? null;
-                if (!$localComputerId) {
-                  
-                    continue;
-                }
+                    if ($glpiComputerId <= 0) {
+                        continue;
+                    }
+                    $localComputerId = $computerMap[$glpiComputerId] ?? null;
+                    if (!$localComputerId) {
+
+                        continue;
+                    }
                     ComputerAntivirus::updateOrCreate(
-                         ['glpi_id' => (int) $av['id']], 
-        [
-            'computer_id' => (int) $localComputerId, // ✅ FK vers computers.id
-            'name' => $av['name'] ?? null,
-            'antivirus_version' => $av['antivirus_version'] ?? null,
-            'date_mod' => $av['date_mod'] ?? null,
-            'synced_at' => now(),
-        ]
+                        ['glpi_id' => (int) $av['id']],
+                        [
+                            'computer_id' => (int) $localComputerId, // ✅ FK vers computers.id
+                            'name' => $av['name'] ?? null,
+                            'antivirus_version' => $av['antivirus_version'] ?? null,
+                            'date_mod' => $av['date_mod'] ?? null,
+                            'synced_at' => now(),
+                        ]
                     );
                 }
 
-              $this->info("Synced Computer range {$start}-{$end} (count=" . count($items) . ")");
+                $this->info("Synced Computer range {$start}-{$end} (count=" . count($items) . ")");
                 if (count($items) < $batch) {
-                $this->info("Last batch received (" . count($items) . " < {$batch}). Finished.");
-                break;
+                    $this->info("Last batch received (" . count($items) . " < {$batch}). Finished.");
+                    break;
                 }
                 $start += $batch;
             }

@@ -24,7 +24,7 @@ class ComputerInventoryService
                 $q->where('name', $sophosName);
             });
         })
-            ->orderBy('name')
+            ->orderBy('id')
             ->paginate($perPage)
             ->withQueryString();
     }

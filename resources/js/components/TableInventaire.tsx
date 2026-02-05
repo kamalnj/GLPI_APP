@@ -6,7 +6,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
 import type { Computer } from "@/features/inventaire/types"
+import { Link } from "@inertiajs/react"
+import { Eye } from "lucide-react"
 
 type Props = {
   computers: Computer[]
@@ -23,20 +26,36 @@ export default function InventaireTable({ computers }: Props) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[35%]">Nom</TableHead>
-            <TableHead className="w-[35%]">Contact</TableHead>
-            <TableHead className="w-[30%]">Dernière MAJ Inventaire</TableHead>
+            <TableHead className="w-[30%]">Nom</TableHead>
+            <TableHead className="w-[30%]">Contact</TableHead>
+            <TableHead className="w-[25%]">Dernière MAJ</TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
           {computers.map((computer) => (
-            <TableRow key={computer.id}>
+            <TableRow
+              key={computer.id}
+              className="hover:bg-muted/50 transition"
+            >
               <TableCell className="font-medium">
                 {computer.name ?? "—"}
               </TableCell>
+
               <TableCell>{computer.contact ?? "—"}</TableCell>
-              <TableCell>{formatDate(computer.last_inventory_update)}</TableCell>
+
+              <TableCell>
+                {formatDate(computer.last_inventory_update)}
+              </TableCell>
+
+              <TableCell className="text-right">
+                <Button asChild size="sm" variant="outline">
+                  <Link href={`/inventaire/${computer.id}`}>
+                    <Eye className="mr-2 h-4 w-4" />
+                    Détails
+                  </Link>
+                </Button>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

@@ -12,7 +12,7 @@ class inventaireController extends Controller
 {
     public function index(ListComputersRequest $request, ComputerInventoryService $service): Response
     {
-        
+
         $computers = $service->paginate(
             $request->search(),
             $request->missingSophos(),

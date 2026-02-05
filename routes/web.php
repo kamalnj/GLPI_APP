@@ -14,6 +14,8 @@ Route::get('dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/inventaire', [inventaireController::class, 'index'])->name('inventaire');
+Route::get('/inventaire/{computer}', [inventaireController::class, 'show'])->name('inventaire.show');
+
 
 
 

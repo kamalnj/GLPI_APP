@@ -21,16 +21,16 @@ class ListComputersRequest extends FormRequest
      */
     public function rules(): array
     {
-           return [
+        return [
             'search'  => ['nullable', 'string', 'max:100'],
             'perPage' => ['nullable', 'integer', 'min:10', 'max:200'],
-             'missing_sophos' => ['nullable', 'boolean'],
+            'missing_sophos' => ['nullable', 'boolean'],
 
         ];
     }
-        public function perPage(): int
+    public function perPage(): int
     {
-        return (int) ($this->validated('perPage') ?? 50);
+        return (int) ($this->validated('perPage') ?? 10);
     }
 
     public function search(): ?string

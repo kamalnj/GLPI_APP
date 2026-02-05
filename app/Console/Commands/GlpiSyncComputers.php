@@ -37,7 +37,7 @@ class GlpiSyncComputers extends Command
                 }
 
                 foreach ($items as $pc) {
-                  
+
                     Computer::updateOrCreate(
                         ['glpi_id' => (int) $pc['id']],
                         [
@@ -51,8 +51,8 @@ class GlpiSyncComputers extends Command
 
                 $this->info("Synced Computer range {$start}-{$end} (count=" . count($items) . ")");
                 if (count($items) < $batch) {
-                $this->info("Last batch received (" . count($items) . " < {$batch}). Finished.");
-                break;
+                    $this->info("Last batch received (" . count($items) . " < {$batch}). Finished.");
+                    break;
                 }
                 $start += $batch;
             }

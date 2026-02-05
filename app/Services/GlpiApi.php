@@ -24,7 +24,7 @@ class GlpiApi
         $this->appToken = config('services.glpi.app_token');
         $this->userToken = config('services.glpi.user_token');
 
-          if ($this->baseUrl === '' || $this->appToken === '' || $this->userToken === '') {
+        if ($this->baseUrl === '' || $this->appToken === '' || $this->userToken === '') {
             throw new RuntimeException('GLPI config missing: check GLPI_URL / GLPI_APP_TOKEN / GLPI_USER_TOKEN in .env');
         }
     }
@@ -38,9 +38,9 @@ class GlpiApi
         ])->timeout(20);
     }
 
-       public function initSession(): string
+    public function initSession(): string
     {
-            /** @var Response $res */
+        /** @var Response $res */
         $res = $this->http()
             ->withHeaders([
                 'Authorization' => 'user_token ' . $this->userToken,
@@ -61,15 +61,15 @@ class GlpiApi
     /**
      * Doc: killSession is GET
      */
-public function killSession(string $sessionToken): void
-{
-    /** @var Response $res */
-    $res = $this->http()
-        ->withHeaders(['Session-Token' => $sessionToken])
-        ->get($this->baseUrl . '/apirest.php/killSession');
+    public function killSession(string $sessionToken): void
+    {
+        /** @var Response $res */
+        $res = $this->http()
+            ->withHeaders(['Session-Token' => $sessionToken])
+            ->get($this->baseUrl . '/apirest.php/killSession');
 
-    $res->throw();
-}
+        $res->throw();
+    }
 
     /**
      * GET collection: /apirest.php/:itemtype/
@@ -105,5 +105,27 @@ public function killSession(string $sessionToken): void
 
         return is_array($data) ? $data : [];
     }
-    
+
+    /**
+     * GET sub-collection: /apirest.php/{parentType}/{parentId}/{childType}
+     * Example: /Computer/1/Item_Disk
+     */
+    public function getSubCollection(string $parentType,int $parentId,string $childType,string $sessionToken,array $query = []): array {
+        /** @var Response $res */
+        $res = $this->http()
+            ->withHeaders(['Session-Token' => $sessionToken])
+            ->get(
+                $this->baseUrl . '/apirest.php/'
+                    . trim($parentType, '/') . '/'
+                    . $parentId . '/'
+                    . trim($childType, '/'),
+                $query
+            );
+
+        $res->throw();
+
+        $data = $res->json();
+
+        return is_array($data) ? $data : [];
     }
+}
