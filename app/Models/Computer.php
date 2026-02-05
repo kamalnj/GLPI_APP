@@ -20,4 +20,8 @@ class Computer extends Model
     {
         return $this->hasMany(ComputerAntivirus::class, 'computer_id','id');
     }
+    public function volumes(): HasMany
+    {
+        return $this->hasMany(ComputerVolumes::class, 'computer_id','id');
+    }
 }

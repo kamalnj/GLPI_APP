@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 
 class ComputerVolumes extends Model
 {
@@ -19,4 +21,9 @@ class ComputerVolumes extends Model
         'date_mod',
         'synced_at',
     ];
+
+           public function computer(): BelongsTo
+    {
+        return $this->belongsTo(Computer::class, 'computer_id');
+    }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ComputerDetailsController;
 use App\Http\Controllers\inventaireController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -14,7 +15,7 @@ Route::get('dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/inventaire', [inventaireController::class, 'index'])->name('inventaire');
-Route::get('/inventaire/{computer}', [inventaireController::class, 'show'])->name('inventaire.show');
+Route::get('/inventaire/{computer}', [ComputerDetailsController::class, 'show'])->name('inventaire.show');
 
 
 
