@@ -14,6 +14,12 @@ return [
     |
     */
 
+    'glpi' =>[
+        'url' => env('GLPI_URL'),
+        'app_token' => env('GLPI_APP_TOKEN'),
+        'user_token' => env('GLPI_USER_TOKEN'),
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],
