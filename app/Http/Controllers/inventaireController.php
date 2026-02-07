@@ -16,6 +16,7 @@ class inventaireController extends Controller
         $computers = $service->paginate(
             $request->search(),
             $request->missingSophos(),
+            $request->cpuTier(),
             $request->perPage()
         );
 
@@ -24,9 +25,10 @@ class inventaireController extends Controller
             'filters' => [
                 'search' => $request->search(),
                 'perPage' => $request->perPage(),
+                'cpu_tier' => $request->cpuTier(),
                 'missing_sophos' => $request->missingSophos(),
             ],
-
+            'cpuTierOptions' => $service->cpuTierOptions(),
         ]);
     }
 }

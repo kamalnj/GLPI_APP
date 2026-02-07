@@ -24,4 +24,16 @@ class Computer extends Model
     {
         return $this->hasMany(ComputerVolumes::class, 'computer_id','id');
     }
+    public function cpu(): HasMany
+    {
+        return $this->hasMany(ComputerCPU::class, 'computer_id','id');
+    }
+    public function ram(): HasMany
+    {
+        return $this->hasMany(ComputerRAM::class, 'computer_id','id');          
+    }
+    public function os(): HasMany
+    {
+        return $this->hasMany(ComputerOS::class, 'computer_id','id');          
+    }
 }

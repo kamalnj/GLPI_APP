@@ -24,6 +24,7 @@ class ListComputersRequest extends FormRequest
         return [
             'search'  => ['nullable', 'string', 'max:100'],
             'perPage' => ['nullable', 'integer', 'min:10', 'max:200'],
+            'cpu_tier'       => ['nullable', 'string', 'max:20'],
             'missing_sophos' => ['nullable', 'boolean'],
 
         ];
@@ -49,4 +50,12 @@ class ListComputersRequest extends FormRequest
     {
         return (bool) ($this->validated('missing_sophos') ?? false);
     }
+    public function cpuTier(): ?string
+{
+    $v = $this->validated('cpu_tier');
+    if (!is_string($v)) return null;
+
+    $v = trim($v);
+    return $v === '' ? null : strtolower($v);
+}
 }

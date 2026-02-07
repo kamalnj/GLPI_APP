@@ -28,7 +28,7 @@ export default function InventaireTable({ computers }: Props) {
           <TableRow>
             <TableHead className="w-[30%]">Nom</TableHead>
             <TableHead className="w-[30%]">Contact</TableHead>
-            <TableHead className="w-[25%]">Dernière MAJ</TableHead>
+            <TableHead className="w-[25%]">Dernière MAJ de l'inventaire</TableHead>
           </TableRow>
         </TableHeader>
 

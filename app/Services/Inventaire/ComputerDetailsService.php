@@ -8,8 +8,7 @@ class ComputerDetailsService
 {
     public function getDetails(Computer $computer):Computer
     {
-        // This method will fetch and return detailed information about a computer,
-        // including its antivirus details, inventory history, etc.
+
 
         $computer->load([
             'antiviruses' => fn ($q) => $q
@@ -24,6 +23,15 @@ class ComputerDetailsService
                      'date_mod'
                 ])
                 ->orderBy('mountpoint')
+                ->orderByDesc('date_mod'),
+            'cpu' => fn ($q) => $q
+                ->select(['id', 'computer_id', 'cpu_name', 'frequence', 'nbr_cores', 'nbr_threads', 'date_mod'])
+                ->orderByDesc('date_mod'),
+            'ram' => fn ($q) => $q
+                ->select(['id', 'computer_id', 'ram_name', 'size', 'serial', 'date_mod'])
+                ->orderByDesc('date_mod'),
+            'os' => fn ($q) => $q
+                ->select(['id', 'computer_id', 'os_name', 'os_version_name', 'os_arch_name', 'install_date', 'date_mod'])
                 ->orderByDesc('date_mod'),
         ]);
 
