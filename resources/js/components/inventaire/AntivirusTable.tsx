@@ -11,7 +11,7 @@ export default function AntivirusTable({ antiviruses }: { antiviruses: Antivirus
       <table className="w-full text-sm">
         <thead className="border-b bg-muted/40">
           <tr>
-            <th className="px-3 py-2 text-left">Name</th>
+            <th className="px-3 py-2 text-left">Nom</th>
             <th className="px-3 py-2 text-left">Version</th>
             <th className="px-3 py-2 text-left">Date</th>
           </tr>

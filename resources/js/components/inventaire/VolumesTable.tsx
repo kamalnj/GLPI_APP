@@ -27,9 +27,9 @@ export default function VolumesTable({ volumes }: { volumes: Volume[] }) {
                 <thead className="border-b bg-muted/40">
                     <tr>
                         <th className="px-3 py-2 text-left">Mount</th>
-                        <th className="px-3 py-2 text-left">Name</th>
-                        <th className="px-3 py-2 text-left">Free %</th>
-                        <th className="px-3 py-2 text-left">Free</th>
+                        <th className="px-3 py-2 text-left">Nom</th>
+                        <th className="px-3 py-2 text-left">Libre %</th>
+                        <th className="px-3 py-2 text-left">Libre</th>
                         <th className="px-3 py-2 text-left">Total</th>
                     </tr>
                 </thead>

@@ -3,6 +3,12 @@ import AppLayout from '@/layouts/app-layout';
 import AntivirusTable from '@/components/inventaire/AntivirusTable';
 import VolumesTable from '@/components/inventaire/VolumesTable';
 import InfoCard from '@/components/inventaire/InfoCard';
+import type { BreadcrumbItem } from '@/types';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Inventaire', href: '/inventaire' },
+    { title: 'Détails', href: '' },
+];
 
 type Antivirus = {
     id: number;
@@ -61,16 +67,15 @@ export default function Details({ computer }: PageProps) {
     const cpu0 = computer.cpu?.[0] ?? null;
     const os0 = computer.os?.[0] ?? null;
     const ram0 = computer.ram?.[0] ?? null;
-function formatMemory(mb: number): string {
-    if (mb < 1024) {
-        return `${mb} Mo`;
+    function formatMemory(mb: number): string {
+        if (mb < 1024) {
+            return `${mb} Mo`;
+        }
+        return `${(mb / 1024).toFixed(2)} Go`;
     }
-    return `${(mb / 1024).toFixed(2)} Go`;
-}
-
 
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Details - ${computer.name ?? 'Computer'}`} />
 
             <div className="flex flex-col gap-4 p-4">
@@ -79,10 +84,6 @@ function formatMemory(mb: number): string {
                     <div>
                         <div className="text-lg font-semibold">
                             {computer.name ?? '—'}
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                            Dernière date MAJ inventaire :{' '}
-                            {computer.last_inventory_update ?? '—'}
                         </div>
                     </div>
 
@@ -131,12 +132,10 @@ function formatMemory(mb: number): string {
                         title="Mémoire (RAM)"
                         lines={[
                             ram0?.ram_name,
-                           ram0?.size != null
-    ? `Taille : ${formatMemory(ram0.size)}`
-    : null,
-
-
-                       ] }
+                            ram0?.size != null
+                                ? `Taille : ${formatMemory(ram0.size)}`
+                                : null,
+                        ]}
                     />
                 </div>
 
