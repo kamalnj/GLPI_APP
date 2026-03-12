@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\Response;
+use Illuminate\Http\Client\Request;
 use RuntimeException;
 
 
@@ -128,4 +129,17 @@ class GlpiApi
 
         return is_array($data) ? $data : [];
     }
+public function search(string $itemType, string $sessionToken, array $params = [])
+{
+    /** @var Response $res */
+    $res = $this->http()
+        ->withHeaders(['Session-Token' => $sessionToken])
+        ->get($this->baseUrl . '/apirest.php/search/' . trim($itemType, '/'), $params);
+
+    $res->throw();
+
+    $data = $res->json();
+
+    return is_array($data) ? $data : [];
+}
 }

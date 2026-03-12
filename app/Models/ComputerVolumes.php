@@ -20,6 +20,7 @@ class ComputerVolumes extends Model
         'encryption_tool',
         'date_mod',
         'synced_at',
+        'alert_level',
     ];
 
            public function computer(): BelongsTo

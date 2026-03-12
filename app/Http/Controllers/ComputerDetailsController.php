@@ -12,7 +12,6 @@ use Inertia\Response;
 class ComputerDetailsController extends Controller
 {
     public function show(
-        ShowComputerRequest $request,
         Computer $computer,
         ComputerDetailsService $service
     ): Response {

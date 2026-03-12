@@ -83,6 +83,36 @@ export default function Index({
             <Head title="Inventaire" />
 
             <div className="flex flex-col gap-4 rounded-xl p-4">
+                {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+  <div className="bg-white p-4 rounded-lg shadow flex flex-col items-center">
+    <span className="text-2xl font-bold">{computers.data.length}</span>
+    <span className="text-sm text-gray-500">Ordinateurs</span>
+  </div>
+
+  <div className="bg-white p-4 rounded-lg shadow flex flex-col items-center">
+    <span className="text-2xl font-bold">
+      {computers.data.filter(c => !c.antiviruses?.length).length}
+    </span>
+    <span className="text-sm text-gray-500">Sans antivirus</span>
+  </div>
+
+  <div className="bg-white p-4 rounded-lg shadow flex flex-col items-center">
+    <span className="text-2xl font-bold">
+      {computers.data.reduce((acc, c) => acc + (c.security_kpis?.critical ?? 0), 0)}
+    </span>
+    <span className="text-sm text-gray-500">Vulnérabilités critiques</span>
+  </div>
+
+  <div className="bg-white p-4 rounded-lg shadow flex flex-col items-center">
+    <span className="text-2xl font-bold">
+      {Math.round(
+        computers.data.reduce((acc, c) => acc + (c.ram?.[0]?.size ?? 0), 0) /
+          computers.data.length
+      )}
+    </span>
+    <span className="text-sm text-gray-500">RAM moyenne (Mo)</span>
+  </div>
+</div> */}
                 {/* Toolbar */}
                 <div className="rounded-xl border bg-muted/20 p-4">
                     <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
@@ -139,7 +169,6 @@ export default function Index({
                                 <label className="mb-1 block text-xs font-medium text-muted-foreground">
                                     CPU
                                 </label>
-
                                 <select
                                     value={cpuTier}
                                     onChange={(e) => setCpuTier(e.target.value)}
@@ -152,6 +181,7 @@ export default function Index({
                                         </option>
                                     ))}
                                 </select>
+                            
                             </div>
 
                             {/* Actions */}

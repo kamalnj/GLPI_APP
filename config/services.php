@@ -19,6 +19,19 @@ return [
         'app_token' => env('GLPI_APP_TOKEN'),
         'user_token' => env('GLPI_USER_TOKEN'),
     ],
+    'wazuh' => [
+        'url' => env('WAZUH_API_URL'),
+        'user' => env('WAZUH_API_USER'),
+        'password' => env('WAZUH_API_PASSWORD'),
+        'token' => env('WAZUH_TOKEN'),
+    ],
+
+    'wazuh_indexer' => [
+        'url' => env('WAZUH_INDEXER_URL'),
+        'user' => env('WAZUH_INDEXER_USER'),
+        'password' => env('WAZUH_INDEXER_PASSWORD'),
+    ],
+    
 
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),

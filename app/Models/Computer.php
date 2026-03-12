@@ -9,11 +9,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Computer extends Model
 {
     protected $fillable = [
+        'wazuh_agent_id',
         'glpi_id',
         'name',
         'contact',
         'last_inventory_update',
         'synced_at',
+        'groupe'
     ];
 
       public function antiviruses(): HasMany
@@ -36,4 +38,25 @@ class Computer extends Model
     {
         return $this->hasMany(ComputerOS::class, 'computer_id','id');          
     }
+
+    public function agent()
+{
+    return $this->belongsTo(
+        Agents::class,
+        'wazuh_agent_id',
+        'wazuh_agent_id'
+    );
+}
+public function vulnerabilities()
+{
+    return $this->hasManyThrough(
+        Vulnerabilite::class,      // Model final
+        AgentVulne::class,         // Pivot table model
+        'agent_id',                // Foreign key sur AgentVulne vers Agents
+        'id',                      // Foreign key sur Vulnerabilite
+        'wazuh_agent_id',          // Local key sur Computer
+        'vulnerability_id'         // Local key sur AgentVulne vers Vulnerabilite
+    );
+}
+  
 }
