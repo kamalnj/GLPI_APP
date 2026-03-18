@@ -3,42 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Services\Alertes\AlertService;
+use Inertia\Inertia;
+use Inertia\Response;
 
-class AlertesController extends Controller
+class alertesController extends Controller
 {
-    protected AlertService $alertService;
+    public function __construct(protected AlertService $alertService) {}
 
-    public function __construct(AlertService $alertService)
+    public function index(): Response
     {
-        $this->alertService = $alertService;
-    }
-
-    public function index()
-    {
-        $ramAlerts = $this->alertService->getRamAlerts();
-        $diskAlerts = $this->alertService->getDiskAlerts();
-
-        return inertia('Inventaire/Alertes', [
-            'alerts' => [
-                'supervision' => [
-                    'title' => 'Supervision',
-                    'items' => [
-                        [
-                            'name' => 'Alertes RAM',
-                            'count' => $ramAlerts->count(),
-                            'status' => $ramAlerts->contains('ram_alert_level','critical') ? 'danger' : 'warning'
-                        ],
-                        [
-                            'name' => 'Alertes Disque',
-                            'count' => $diskAlerts->count(),
-                            'status' => $diskAlerts->contains('alert_level','critical') ? 'danger' : 'warning'
-                        ],
-                    ],
-                ],
-            ],
-
-            'ramAlerts' => $ramAlerts,
-            'diskAlerts' => $diskAlerts,
+        return Inertia::render('Alertes/Index', [
+            'ramAlerts'  => $this->alertService->getRamAlerts(),
+            'diskAlerts' => $this->alertService->getDiskAlerts(),
         ]);
     }
 }

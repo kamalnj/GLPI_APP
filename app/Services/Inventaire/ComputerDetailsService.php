@@ -3,6 +3,8 @@
 namespace App\Services\Inventaire;
 
 use App\Models\Computer;
+use Carbon\Carbon;
+
 
 class ComputerDetailsService
 {
@@ -65,25 +67,29 @@ class ComputerDetailsService
             'last_detected' => $vulns->max('detected_at'),
         ];
 
-        // données pour PieChart
-        $computer->severity_chart = [
-            [
-                'name' => 'Critical',
-                'value' => $vulns->where('severity', 'Critical')->count(),
-            ],
-            [
-                'name' => 'High',
-                'value' => $vulns->where('severity', 'High')->count(),
-            ],
-            [
-                'name' => 'Medium',
-                'value' => $vulns->where('severity', 'Medium')->count(),
-            ],
-            [
-                'name' => 'Low',
-                'value' => $vulns->where('severity', 'Low')->count(),
-            ],
-        ];
+
+// ce mois
+$vulnsCurrent = $vulns->filter(fn($v) => Carbon::parse($v->detected_at)->month === Carbon::now()->month);
+
+// mois précédent
+$vulnsPrevious = $vulns->filter(fn($v) => Carbon::parse($v->detected_at)->month === Carbon::now()->subMonth()->month);
+
+// PieChart "ce mois"
+$computer->severity_chart_current = [
+    ['name' => 'Critical', 'value' => $vulnsCurrent->where('severity', 'Critical')->count()],
+    ['name' => 'High', 'value' => $vulnsCurrent->where('severity', 'High')->count()],
+    ['name' => 'Medium', 'value' => $vulnsCurrent->where('severity', 'Medium')->count()],
+    ['name' => 'Low', 'value' => $vulnsCurrent->where('severity', 'Low')->count()],
+];
+
+// PieChart "mois précédent"
+$computer->severity_chart_previous = [
+    ['name' => 'Critical', 'value' => $vulnsPrevious->where('severity', 'Critical')->count()],
+    ['name' => 'High', 'value' => $vulnsPrevious->where('severity', 'High')->count()],
+    ['name' => 'Medium', 'value' => $vulnsPrevious->where('severity', 'Medium')->count()],
+    ['name' => 'Low', 'value' => $vulnsPrevious->where('severity', 'Low')->count()],
+];
+
        
         return $computer;
     }

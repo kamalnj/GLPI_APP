@@ -17,6 +17,7 @@ class inventaireController extends Controller
             $request->search(),
             $request->missingSophos(),
             $request->cpuTier(),
+            $request->group(),
             $request->perPage()
         );
 
@@ -27,8 +28,12 @@ class inventaireController extends Controller
                 'perPage' => $request->perPage(),
                 'cpu_tier' => $request->cpuTier(),
                 'missing_sophos' => $request->missingSophos(),
+                'group'=> $request->group(),
+
             ],
             'cpuTierOptions' => $service->cpuTierOptions(),
+            'groupOptions' =>$service->groupOptions(),
+
         ]);
     }
 }

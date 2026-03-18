@@ -10,23 +10,32 @@ use Illuminate\Support\Collection;
 
 class ComputerInventoryService
 {
-  public function paginate(?string $search, bool $missingSophos = false, ?string $cpuTier = null, int $perPage): LengthAwarePaginator
-    {
+    public function paginate(
+        ?string $search,
+        bool $missingSophos = false,
+        ?string $cpuTier = null,
+        ?string $group = null,
+        int $perPage = 15
+    ): LengthAwarePaginator {
         $sophosName = 'Sophos Intercept X';
         return Computer::query()
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
-                      ->orWhere('contact', 'like', "%{$search}%");
+                        ->orWhere('contact', 'like', "%{$search}%");
                 });
             })
-          ->when($missingSophos, function ($query) use ($sophosName) {
-            $query->whereDoesntHave('antiviruses', function ($q) use ($sophosName) {
-                $q->where('name', $sophosName);
-            });
-        })
-         ->when($cpuTier, function ($query) use ($cpuTier) {
-                $tier = strtolower(trim($cpuTier)); 
+            ->when($group, function ($query) use ($group) {
+                $query->where('groupe', $group);
+            })
+            ->when($missingSophos, function ($query) use ($sophosName) {
+                $query->whereDoesntHave('antiviruses', function ($q) use ($sophosName) {
+                    $q->where('name', $sophosName);
+                });
+            })
+            ->when($cpuTier, function ($query) use ($cpuTier) {
+                $tier = strtolower(trim($cpuTier));
+
                 $query->whereHas('cpu', function ($q) use ($tier) {
                     $q->whereRaw('LOWER(cpu_name) REGEXP ?', ["\\b{$tier}\\b"]);
                 });
@@ -36,7 +45,17 @@ class ComputerInventoryService
             ->withQueryString();
     }
 
-       public function cpuTierOptions(): array
+    public function groupOptions(): array
+    {
+        return Computer::query()
+            ->whereNotNull('groupe')
+            ->where('groupe', '<>', '')
+            ->distinct()
+            ->orderBy('groupe')
+            ->pluck('groupe')
+            ->toArray();
+    }
+    public function cpuTierOptions(): array
     {
         $names = ComputerCPU::query()
             ->whereNotNull('cpu_name')

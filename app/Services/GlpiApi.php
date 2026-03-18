@@ -129,6 +129,37 @@ class GlpiApi
 
         return is_array($data) ? $data : [];
     }
+
+    public function getMultipleItems(
+        string $itemtype,
+        array  $ids,
+        string $sessionToken,
+        array  $query = []
+    ): array {
+        if (empty($ids)) {
+            return [];
+        }
+ 
+        // Construit items[0][itemtype]=X&items[0][items_id]=1&...
+        $params = $query;
+ 
+        foreach (array_values($ids) as $index => $id) {
+            $params["items[{$index}][itemtype]"]  = $itemtype;
+            $params["items[{$index}][items_id]"]  = $id;
+        }
+ 
+        /** @var Response $res */
+        $res = $this->http()
+            ->withHeaders(['Session-Token' => $sessionToken])
+            ->get($this->baseUrl . '/apirest.php/getMultipleItems', $params);
+ 
+        $res->throw();
+ 
+        $data = $res->json();
+ 
+        return is_array($data) ? $data : [];
+    }
+ 
 public function search(string $itemType, string $sessionToken, array $params = [])
 {
     /** @var Response $res */

@@ -1,42 +1,45 @@
-import { Head, router } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem } from '@/types';
-import type { Paginated } from '@/types/pagination';
-import type { Computer } from '@/features/inventaire/types';
-import { useState } from 'react';
-import InventaireTable from '@/components/inventaire/TableInventaire';
-import Pagination from '@/components/Pagination';
+import { Head, router } from '@inertiajs/react'
+import AppLayout from '@/layouts/app-layout'
+import type { BreadcrumbItem } from '@/types'
+import type { Paginated } from '@/types/pagination'
+import type { Computer } from '@/features/inventaire/types'
+import { useState } from 'react'
+import InventaireTable from '@/components/inventaire/TableInventaire'
+import Pagination from '@/components/Pagination'
+import { Search, ShieldAlert, Cpu, Layers } from 'lucide-react'
 
 type PageProps = {
-    computers: Paginated<Computer>;
+    computers: Paginated<Computer>
     filters: {
-        search: string | null;
-        missing_sophos: boolean | null;
-        cpu_tier: string | null;
-        perPage: number;
-    };
-    cpuTierOptions: string[];
-};
+        search: string | null
+        missing_sophos: boolean | null
+        cpu_tier: string | null
+        group: string | null
+        perPage: number
+    }
+    cpuTierOptions: string[]
+    groupOptions: string[]
+}
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Inventaire', href: '/inventaire' },
-];
+]
 
 export default function Index({
     computers,
     filters,
     cpuTierOptions,
+    groupOptions,
 }: PageProps) {
-    const [search, setSearch] = useState(filters.search ?? '');
-    const [missingSophos, setMissingSophos] = useState(
-        !!filters.missing_sophos,
-    );
-    const [cpuTier, setCpuTier] = useState(filters.cpu_tier ?? '');
 
-    const [loading, setLoading] = useState(false);
+    const [search, setSearch] = useState(filters.search ?? '')
+    const [missingSophos, setMissingSophos] = useState(!!filters.missing_sophos)
+    const [cpuTier, setCpuTier] = useState(filters.cpu_tier ?? '')
+    const [group, setGroup] = useState(filters.group ?? '')
+    const [loading, setLoading] = useState(false)
 
     const submit = () => {
-        setLoading(true);
+        setLoading(true)
 
         router.get(
             '/inventaire',
@@ -44,6 +47,7 @@ export default function Index({
                 search: search.trim() || null,
                 missing_sophos: missingSophos ? 1 : 0,
                 cpu_tier: cpuTier.trim().toLowerCase() || null,
+                group: group.trim() || null,
                 perPage: filters.perPage,
             },
             {
@@ -52,14 +56,15 @@ export default function Index({
                 replace: true,
                 onFinish: () => setLoading(false),
             },
-        );
-    };
+        )
+    }
 
     const reset = () => {
-        setSearch('');
-        setMissingSophos(false);
-        setCpuTier('');
-        setLoading(true);
+        setSearch('')
+        setMissingSophos(false)
+        setCpuTier('')
+        setGroup('')
+        setLoading(true)
 
         router.get(
             '/inventaire',
@@ -67,6 +72,7 @@ export default function Index({
                 search: null,
                 missing_sophos: null,
                 cpu_tier: null,
+                group: null,
                 perPage: filters.perPage,
             },
             {
@@ -75,161 +81,174 @@ export default function Index({
                 replace: true,
                 onFinish: () => setLoading(false),
             },
-        );
-    };
+        )
+    }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Inventaire" />
 
-            <div className="flex flex-col gap-4 rounded-xl p-4">
-                {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-  <div className="bg-white p-4 rounded-lg shadow flex flex-col items-center">
-    <span className="text-2xl font-bold">{computers.data.length}</span>
-    <span className="text-sm text-gray-500">Ordinateurs</span>
-  </div>
+            <div className="flex flex-col gap-6 p-6">
 
-  <div className="bg-white p-4 rounded-lg shadow flex flex-col items-center">
-    <span className="text-2xl font-bold">
-      {computers.data.filter(c => !c.antiviruses?.length).length}
-    </span>
-    <span className="text-sm text-gray-500">Sans antivirus</span>
-  </div>
+                {/* Page Header */}
+                <div className="flex flex-col gap-2">
+                    <h1 className="text-2xl font-semibold tracking-tight">
+                        Inventaire des ordinateurs
+                    </h1>
+                    <p className="text-sm text-muted-foreground">
+                        Consultez et filtrez les machines présentes dans le parc informatique.
+                    </p>
+                </div>
 
-  <div className="bg-white p-4 rounded-lg shadow flex flex-col items-center">
-    <span className="text-2xl font-bold">
-      {computers.data.reduce((acc, c) => acc + (c.security_kpis?.critical ?? 0), 0)}
-    </span>
-    <span className="text-sm text-gray-500">Vulnérabilités critiques</span>
-  </div>
 
-  <div className="bg-white p-4 rounded-lg shadow flex flex-col items-center">
-    <span className="text-2xl font-bold">
-      {Math.round(
-        computers.data.reduce((acc, c) => acc + (c.ram?.[0]?.size ?? 0), 0) /
-          computers.data.length
-      )}
-    </span>
-    <span className="text-sm text-gray-500">RAM moyenne (Mo)</span>
-  </div>
-</div> */}
-                {/* Toolbar */}
-                <div className="rounded-xl border bg-muted/20 p-4">
-                    <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-                        {/* Left: Filters */}
-                        <div className="grid w-full gap-3 lg:grid-cols-12">
-                            {/* Search */}
-                            <div className="lg:col-span-5">
-                                <label className="mb-1 block text-xs font-medium text-muted-foreground">
-                                    Recherche
-                                </label>
-                                <div className="flex h-10 items-center gap-2 rounded-md border bg-background px-3">
-                                    <input
-                                        value={search}
-                                        onChange={(e) =>
-                                            setSearch(e.target.value)
-                                        }
-                                        onKeyDown={(e) => {
-                                            if (e.key === 'Enter') submit();
-                                        }}
-                                        placeholder="Nom, contact..."
-                                        className="h-full w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-                                    />
-                                    {search.length > 0 && (
-                                        <button
-                                            type="button"
-                                            onClick={() => setSearch('')}
-                                            className="text-xs text-muted-foreground hover:text-foreground"
-                                            aria-label="Clear search"
-                                        >
-                                            ✕
-                                        </button>
-                                    )}
-                                </div>
+                {/* Filters */}
+                <div className="rounded-xl border bg-card p-5 shadow-sm">
+
+                    <div className="grid gap-4 lg:grid-cols-12">
+
+                        {/* Search */}
+                        <div className="lg:col-span-4">
+                            <label className="text-xs text-muted-foreground">
+                                Recherche
+                            </label>
+
+                            <div className="mt-1 flex items-center gap-2 rounded-md border bg-background px-3 h-10">
+                                <Search size={16} className="text-muted-foreground" />
+
+                                <input
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') submit()
+                                    }}
+                                    placeholder="Nom, utilisateur, contact..."
+                                    className="w-full bg-transparent text-sm outline-none"
+                                />
                             </div>
+                        </div>
 
-                            {/* Checkbox */}
-                            <div className="lg:col-span-4">
-                                <label className="mb-1 block text-xs font-medium text-muted-foreground">
-                                    Conformité Antivirus
-                                </label>
-                                <label className="flex h-10 items-center gap-2 rounded-md border bg-background px-3 text-sm">
-                                    <input
-                                        type="checkbox"
-                                        checked={missingSophos}
-                                        onChange={(e) =>
-                                            setMissingSophos(e.target.checked)
-                                        }
-                                        className="h-4 w-4"
-                                    />
-                                    <span>Sans Sophos Intercept X</span>
-                                </label>
-                            </div>
-                            <div className="lg:col-span-2">
-                                <label className="mb-1 block text-xs font-medium text-muted-foreground">
-                                    CPU
-                                </label>
+                        {/* CPU */}
+                        <div className="lg:col-span-2">
+                            <label className="text-xs text-muted-foreground">
+                                CPU
+                            </label>
+
+                            <div className="relative mt-1">
+                                <Cpu
+                                    size={16}
+                                    className="absolute left-3 top-3 text-muted-foreground"
+                                />
+
                                 <select
                                     value={cpuTier}
                                     onChange={(e) => setCpuTier(e.target.value)}
-                                    className="h-10 w-full rounded-md border bg-background px-3 text-sm outline-none"
+                                    className="h-10 w-full rounded-md border bg-background pl-9 pr-3 text-sm"
                                 >
                                     <option value="">Tous</option>
+
                                     {cpuTierOptions.map((tier) => (
                                         <option key={tier} value={tier}>
                                             {tier.toUpperCase()}
                                         </option>
                                     ))}
                                 </select>
-                            
-                            </div>
-
-                            {/* Actions */}
-                            <div className="lg:col-span-3">
-                                <label className="mb-1 block text-xs font-medium text-muted-foreground">
-                                    Actions
-                                </label>
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={submit}
-                                        disabled={loading}
-                                        className="h-10 flex-1 rounded-md bg-foreground px-4 text-sm font-medium text-background disabled:opacity-60"
-                                    >
-                                        {loading
-                                            ? 'Chargement...'
-                                            : 'Appliquer'}
-                                    </button>
-
-                                    <button
-                                        onClick={reset}
-                                        disabled={
-                                            loading ||
-                                            (search.trim() === '' &&
-                                                !missingSophos &&
-                                                cpuTier === '')
-                                        }
-                                        className="h-10 rounded-md border px-4 text-sm disabled:opacity-60"
-                                    >
-                                        Reset
-                                    </button>
-                                </div>
                             </div>
                         </div>
+
+                        {/* Group */}
+                        <div className="lg:col-span-2">
+                            <label className="text-xs text-muted-foreground">
+                                Groupe
+                            </label>
+
+                            <div className="relative mt-1">
+                                <Layers
+                                    size={16}
+                                    className="absolute left-3 top-3 text-muted-foreground"
+                                />
+
+                                <select
+                                    value={group}
+                                    onChange={(e) => setGroup(e.target.value)}
+                                    className="h-10 w-full rounded-md border bg-background pl-9 pr-3 text-sm"
+                                >
+                                    <option value="">Tous</option>
+
+                                    {groupOptions.map((tier) => (
+                                        <option key={tier} value={tier}>
+                                            {tier.toUpperCase()}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+
+                        {/* Antivirus */}
+                        <div className="lg:col-span-3 flex items-end">
+
+                            <label className="flex items-center gap-2 rounded-md border px-3 h-10 w-full cursor-pointer bg-background">
+
+                                <input
+                                    type="checkbox"
+                                    checked={missingSophos}
+                                    onChange={(e) => setMissingSophos(e.target.checked)}
+                                    className="h-4 w-4"
+                                />
+
+                                <ShieldAlert size={16} className="text-red-500" />
+
+                                <span className="text-sm">
+                                    Sans Sophos Intercept X
+                                </span>
+
+                            </label>
+
+                        </div>
+
+                        {/* Buttons */}
+                        <div className="lg:col-span-1 flex items-end gap-2">
+
+                            <button
+                                onClick={submit}
+                                disabled={loading}
+                                className="h-10 w-full rounded-md bg-primary text-white text-sm font-medium hover:opacity-90 disabled:opacity-60"
+                            >
+                                {loading ? '...' : 'Filtrer'}
+                            </button>
+
+                            <button
+                                onClick={reset}
+                                disabled={loading}
+                                className="h-10 w-full rounded-md border text-sm hover:bg-muted"
+                            >
+                                Reset
+                            </button>
+
+                        </div>
+
                     </div>
                 </div>
 
-                {/* Content */}
-                {computers.data.length === 0 ? (
-                    <div className="rounded-lg border p-6 text-sm text-muted-foreground">
-                        Aucun ordinateur trouvé.
-                    </div>
-                ) : (
-                    <>
-                        <InventaireTable computers={computers.data} />
-                        <Pagination links={computers.links} />
-                    </>
-                )}
+
+                {/* Table */}
+                <div className="rounded-xl border bg-card shadow-sm">
+
+                    {computers.data.length === 0 ? (
+                        <div className="p-8 text-center text-muted-foreground text-sm">
+                            Aucun ordinateur trouvé.
+                        </div>
+                    ) : (
+                        <>
+                            <InventaireTable computers={computers.data} />
+
+                            <div className="border-t p-4">
+                                <Pagination links={computers.links} />
+                            </div>
+                        </>
+                    )}
+
+                </div>
             </div>
         </AppLayout>
-    );
+    )
 }

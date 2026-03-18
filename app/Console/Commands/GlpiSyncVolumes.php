@@ -34,7 +34,8 @@ class GlpiSyncVolumes extends Command
                 return self::FAILURE;
             }
 
-            $totalUpserts = 0;
+            $syncStartedAt = now();
+            $totalUpserts  = 0;
 
             foreach ($computers as $computer) {
 
@@ -98,7 +99,14 @@ class GlpiSyncVolumes extends Command
                 }
             }
 
+            // Juste un warning pour les volumes non touchés, sans les supprimer
+            $staleCount = ComputerVolumes::where('synced_at', '<', $syncStartedAt)->delete();
+
             $this->info("✅ Done. Upserted volumes: {$totalUpserts}");
+
+            if ($staleCount > 0) {
+                $this->warn("⚠️  {$staleCount} volumes non mis à jour lors de ce sync (PC hors ligne ou erreur réseau).");
+            }
 
             $client->killSession($session);
 
