@@ -58,5 +58,11 @@ public function vulnerabilities()
         'vulnerability_id'         // Local key sur AgentVulne vers Vulnerabilite
     );
 }
+ 
+
+     public function softwares(): HasMany
+    {
+        return $this->hasMany(SoftwareApplication::class, 'computer_id','id');          
+    }
   
 }

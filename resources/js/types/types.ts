@@ -24,3 +24,4 @@ export interface DiskAlert {
     synced_at: string;
     partitions: Partition[];
 }
+

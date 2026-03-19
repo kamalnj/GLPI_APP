@@ -10,8 +10,7 @@ import {
     AlertTriangle,
     XCircle,
 } from 'lucide-react';
-import LevelBadge from '@/components/Alertes/LevelBadge';
-import UsageBar from '@/components/Alertes/UsageBar';
+
 import StatCard from '@/components/Alertes/StatCard';
 import RamAlertsTable from '@/components/Alertes/RamAlertsTable';
 import DiskAlertsTable from '@/components/Alertes/DiskAlertsTable';
@@ -29,7 +28,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function AlertsIndex({ ramAlerts, diskAlerts }: Props) {
-    const [activeTab, setActiveTab] = useState<'ram' | 'disk'>('ram');
+const [activeTab, setActiveTab] = useState<'ram' | 'disk' | 'logiciels'>('ram');
 
     const ramCritical = ramAlerts.filter(
         (r) => r.alert_level === 'critical',
@@ -56,6 +55,14 @@ export default function AlertsIndex({ ramAlerts, diskAlerts }: Props) {
             count: diskAlerts.length,
             hasCritical: diskCritical > 0,
         },
+         {
+            key: 'logiciels' as const,
+            label: 'Logiciels non autorisés',
+            icon: <XCircle size={15} />,
+            count: 0,
+            hasCritical: false,
+        },
+
     ];
 
     return (
@@ -142,6 +149,17 @@ export default function AlertsIndex({ ramAlerts, diskAlerts }: Props) {
                 )}
 
                 {activeTab === 'disk' && (
+                    <section>
+                        {diskAlerts.length === 0 ? (
+                            <p className="text-sm text-gray-400">
+                                Aucune alerte disque.
+                            </p>
+                        ) : (
+                            <DiskAlertsTable diskAlerts={diskAlerts} />
+                        )}
+                    </section>
+                )}
+                  {activeTab === 'logiciels' && (
                     <section>
                         {diskAlerts.length === 0 ? (
                             <p className="text-sm text-gray-400">

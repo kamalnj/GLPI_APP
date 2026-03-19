@@ -18,4 +18,8 @@ class ComputerPatchSecurity extends Model
         'date_mod',
         'synced_at',
     ];
+    public function computer()
+    {
+        return $this->belongsTo(Computer::class);
+    }
 }
