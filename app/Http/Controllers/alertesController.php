@@ -13,8 +13,9 @@ class alertesController extends Controller
     public function index(): Response
     {
         return Inertia::render('Alertes/Index', [
-            'ramAlerts'  => $this->alertService->getRamAlerts(),
-            'diskAlerts' => $this->alertService->getDiskAlerts(),
+              'ramAlerts'  => Inertia::defer(fn() => $this->alertService->getRamAlerts()),
+            'diskAlerts' => Inertia::defer(fn() => $this->alertService->getDiskAlerts()),
+            'patchWindowsAlerts' => Inertia::defer(fn() => $this->alertService->getPatchWindowsAlerts()),
         ]);
     }
 }

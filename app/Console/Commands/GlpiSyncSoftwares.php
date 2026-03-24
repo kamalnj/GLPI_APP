@@ -240,7 +240,8 @@ class GlpiSyncSoftwares extends Command
                             'version'     => $sv['name'] ?? null,
                         ];
                     } catch (Throwable) {
-                        // skip
+                        // ne pas skiper
+                        $this->error("❌ Failed to fetch SoftwareVersion [{$svId}]");
                     }
                 }
             }

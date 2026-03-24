@@ -2,6 +2,7 @@
 
 namespace App\Services\Alertes;
 
+use App\Models\ComputerPatchSecurity;
 use App\Models\ComputerRAM;
 use App\Models\ComputerVolumes;
 use Illuminate\Support\Collection;
@@ -53,5 +54,29 @@ class AlertService
             ];
         })
         ->values();
+}
+public function getPatchWindowsAlerts(): Collection
+{
+    $latestPatches = ComputerPatchSecurity::select('computer_id')
+        ->selectRaw('MAX(date_install) as last_patch_date')
+        ->groupBy('computer_id');
+
+    return ComputerPatchSecurity::with('computer')
+        ->joinSub($latestPatches, 'latest', function ($join) {
+            $join->on('computer_patch_securite.computer_id', '=', 'latest.computer_id')
+                 ->on('computer_patch_securite.date_install', '=', 'latest.last_patch_date');
+        })
+        ->where('computer_patch_securite.date_install', '<=', now()->subDays(30))
+        ->get()
+         ->unique('computer_id') 
+        ->values()
+        ->map(fn($patch) => [
+            'id'           => $patch->id,
+            'computer_id'  => $patch->computer_id,
+            'computer_name'=> $patch->computer?->name ?? 'N/A',
+            'patch_name'   => $patch->patch_name,
+            'date_install' => $patch->date_install,
+            'synced_at'    => $patch->synced_at,
+        ]);
 }
 }

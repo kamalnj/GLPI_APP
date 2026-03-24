@@ -25,3 +25,12 @@ export interface DiskAlert {
     partitions: Partition[];
 }
 
+export interface PatchWindowsAlert {
+    id: number;
+    computer_id: number;
+    computer_name: string;
+    patch_name: string;
+    date_install: string;
+    synced_at: string;
+}
+
