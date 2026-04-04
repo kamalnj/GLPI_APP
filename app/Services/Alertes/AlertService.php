@@ -2,10 +2,13 @@
 
 namespace App\Services\Alertes;
 
+use App\Models\Computer;
 use App\Models\ComputerPatchSecurity;
 use App\Models\ComputerRAM;
 use App\Models\ComputerVolumes;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+
 
 class AlertService
 {
@@ -78,5 +81,62 @@ public function getPatchWindowsAlerts(): Collection
             'date_install' => $patch->date_install,
             'synced_at'    => $patch->synced_at,
         ]);
+}
+
+public function getDiskStats(): array
+{
+        $totalpc = Computer::count();
+
+    // On récupère un seul enregistrement par PC avec la priorité d'alerte
+    $pcLevels = ComputerVolumes::select('computer_id', DB::raw('MAX(CASE 
+        WHEN alert_level = "critical" THEN 3
+        WHEN alert_level = "alert" THEN 2
+        ELSE 1
+    END) as level'))
+    ->groupBy('computer_id')
+    ->get();
+
+    // Compter le nombre de PC par niveau
+    $critical = $pcLevels->where('level', 3)->count();
+    $alert    = $pcLevels->where('level', 2)->count();
+    $normal   = $pcLevels->where('level', 1)->count();
+    $total    = $totalpc;
+
+    return compact('critical', 'alert', 'normal', 'total');
+}
+ 
+
+public function getRamStats(): array
+{
+    $total = Computer::count();
+
+    $counts = ComputerRAM::select('ram_alert_level', DB::raw('COUNT(DISTINCT computer_id) as count'))
+        ->groupBy('ram_alert_level')
+        ->pluck('count', 'ram_alert_level');
+
+    return [
+        'critical' => $counts->get('critical', 0),
+        'alert'    => $counts->get('alert', 0),
+        'normal'   => max(0, $total - ($counts->get('critical', 0) + $counts->get('alert', 0))),
+        'total'    => $total,
+    ];
+}
+public function getPatchStats(): array
+{
+    $total = Computer::count();
+
+    $lastPatches = ComputerPatchSecurity::select('computer_id', DB::raw('MAX(date_install) as last_patch'))
+        ->groupBy('computer_id')
+        ->get();
+
+    $critical = $lastPatches->filter(fn($p) => $p->last_patch <= now()->subDays(90))->count();
+    $alert    = $lastPatches->filter(fn($p) => $p->last_patch > now()->subDays(90) && $p->last_patch <= now()->subDays(30))->count();
+
+    return [
+        'critical'   => $critical,
+        'alert'      => $alert,
+        'up_to_date' => max(0, $total - $critical - $alert),
+        'total'      => $total,
+    ];
 }
 }

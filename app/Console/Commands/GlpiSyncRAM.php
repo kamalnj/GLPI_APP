@@ -86,6 +86,7 @@ class GlpiSyncRAM extends Command
                                 'serial' => $serial,
                                 'date_mod' => $dateMod,
                                 'synced_at' => now(),
+                                
                             ]
                         );
                     }

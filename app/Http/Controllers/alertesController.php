@@ -16,6 +16,10 @@ class alertesController extends Controller
               'ramAlerts'  => Inertia::defer(fn() => $this->alertService->getRamAlerts()),
             'diskAlerts' => Inertia::defer(fn() => $this->alertService->getDiskAlerts()),
             'patchWindowsAlerts' => Inertia::defer(fn() => $this->alertService->getPatchWindowsAlerts()),
+
+                'diskStats'  => $this->alertService->getDiskStats(),
+            'ramStats'   => $this->alertService->getRamStats(),
+            'patchStats' => $this->alertService->getPatchStats(),
         ]);
     }
 }
