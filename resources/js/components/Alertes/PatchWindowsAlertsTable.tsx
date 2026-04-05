@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
-import { AlertLevel, PatchWindowsAlert, RamAlert } from '@/types/types';
+import {  PatchWindowsAlert } from '@/types/types';
 import { FiSearch } from 'react-icons/fi';
 
 export const formatDate = (date: string) =>

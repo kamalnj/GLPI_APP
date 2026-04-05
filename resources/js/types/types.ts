@@ -33,4 +33,32 @@ export interface PatchWindowsAlert {
     date_install: string;
     synced_at: string;
 }
+export interface outDateInventoryAlert {
+    id: number;
+    computer_id: number;
+    name: string;
+    last_inventory_update: string;
+    synced_at: string;
+}
 
+export interface KpiStats {
+    // Card 1 — santé globale
+    healthPct:         number;
+    machinesOk:        number;
+    machinesAlert:     number;
+    machinesCritical:  number;
+    totalMachines:     number;
+ 
+    // Card 2 — alertes actives
+    totalCritical:     number;
+    totalAlert:        number;
+    countRam:          number;
+    countDisk:         number;
+    countPatch:        number;
+    countInventory:    number;
+ 
+    // Card 3 — machines concernées
+    machinesWithAlerts: number;
+    machinesConcernees: number;
+}
+ 
