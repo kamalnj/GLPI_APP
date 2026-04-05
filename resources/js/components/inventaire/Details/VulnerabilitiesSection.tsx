@@ -3,7 +3,7 @@ import { FiShield, FiSearch, FiX } from 'react-icons/fi';
 import { SectionCard } from './SectionCard';
 import SeverityBadge from './SeverityBadge';
 import ScoreBar from './ScoreBar';
-import VulnerabilitySeverityChart from '@/components/inventaire/VulnerabilityChart';
+import VulnerabilitySeverityChart from '@/components/inventaire/Details/VulnerabilityChart';
 
 type Vulnerability = {
     id: number;

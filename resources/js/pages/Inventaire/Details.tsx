@@ -3,14 +3,14 @@ import { useState, useCallback } from 'react';
 import { FiCpu, FiDatabase, FiShield, FiHardDrive, FiMonitor, FiArrowLeft, FiAlertTriangle } from 'react-icons/fi';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
-import KpiCards from '@/components/inventaire/KpiCards';
-import SidebarNav, { type Section } from '@/components/inventaire/SidebarNav';
-import { OsSection, CpuSection, RamSection } from '@/components/inventaire/HardwareSections';
-import { SectionCard } from '@/components/inventaire/SectionCard';
-import VulnerabilitiesSection from '@/components/inventaire/VulnerabilitiesSection';
-import AntivirusTable from '@/components/inventaire/AntivirusTable';
-import VolumesTable from '@/components/inventaire/VolumesTable';
-import SoftwaresSection from '@/components/inventaire/SoftwaresSection';
+import KpiCards from '@/components/inventaire/Details/KpiCards';
+import SidebarNav, { type Section } from '@/components/inventaire/Details/SidebarNav';
+import { OsSection, CpuSection, RamSection } from '@/components/inventaire/Details/HardwareSections';
+import { SectionCard } from '@/components/inventaire/Details/SectionCard';
+import VulnerabilitiesSection from '@/components/inventaire/Details/VulnerabilitiesSection';
+import AntivirusTable from '@/components/inventaire/Details/AntivirusTable';
+import VolumesTable from '@/components/inventaire/Details/VolumesTable';
+import SoftwaresSection from '@/components/inventaire/Details/SoftwaresSection';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Inventaire\ListComputersRequest;
 use App\Services\Inventaire\ComputerInventoryService;
+use App\Services\Inventaire\StatsInventaire;
 use Inertia\Inertia;
 use Inertia\Response;
 
 
 class inventaireController extends Controller
 {
-    public function index(ListComputersRequest $request, ComputerInventoryService $service): Response
+    public function index(ListComputersRequest $request, ComputerInventoryService $service , StatsInventaire $statsInventaire): Response
     {
 
         $computers = $service->paginate(
@@ -20,6 +21,13 @@ class inventaireController extends Controller
             $request->group(),
             $request->perPage()
         );
+        $stats = [
+            'totalComputers' => $statsInventaire->getCountComputers(),
+            'vulnerableComputers' => $statsInventaire->getCountComputersVulnerable(),
+            'withoutSophos' => $statsInventaire->getCountComputersWithoutSophos(),
+            'computersByGroup' => $statsInventaire->getAllComputersByGroupe(),
+            'computersWithVulnerabilities' => $statsInventaire->getAllComputerswithVulnerabilities(),
+        ];
 
         return Inertia::render('Inventaire/Index', [
             'computers' => $computers,
