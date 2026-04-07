@@ -66,9 +66,10 @@ class WazuhInitialImport extends Command
         [
             'package' => $data['package']['name'] ?? null,
             'package_version' => $data['package']['version'] ?? null,
-'detected_at' => isset($data['detected_at']) 
-    ? Carbon::parse($data['detected_at'])->format('Y-m-d H:i:s') 
-    : now(),        ]
+            'detected_at' => isset($data['vulnerability']['detected_at']) 
+                ? Carbon::parse($data['vulnerability']['detected_at'])->format('Y-m-d H:i:s') 
+                : now(),
+        ]
     );
 
 }

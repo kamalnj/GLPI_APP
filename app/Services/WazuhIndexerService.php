@@ -46,24 +46,92 @@ class WazuhIndexerService
 
     public function incremental($date)
     {
-                                        /** @var Response $response */
-
+        $query = [
+            'size' => 10,  // Réduit à 10 pour éviter circuit breaker
+            '_source' => [
+                'agent',
+                'vulnerability',
+                'package'
+            ],
+            'query' => [
+                'range' => [
+                    'vulnerability.detected_at' => [
+                        'gte' => $date
+                    ]
+                ]
+            ]
+        ];
+        
+        $url = config('services.wazuh_indexer.url') . '/wazuh-states-vulnerabilities-*/_search?scroll=5m';
+        
+        error_log('Wazuh filtering vulnerability.detected_at from: ' . $date);
+        
+        /** @var Response $response */
         $response = Http::withBasicAuth(
             config('services.wazuh_indexer.user'),
             config('services.wazuh_indexer.password')
         )
         ->withoutVerifying()
-        ->post(config('services.wazuh_indexer.url').'/wazuh-states-vulnerabilities-*/_search',[
-            'size'=>500,
-            'query'=>[
-                'range'=>[
-                    'detected_at'=>[
-                        'gt'=>$date
-                    ]
-                ]
-            ]
+        ->post($url, $query);
+
+        $result = $response->json();
+        error_log('Wazuh response status: ' . $response->status());
+        error_log('Wazuh total hits: ' . ($result['hits']['total']['value'] ?? 'unknown'));
+        
+        return $result;
+    }
+
+    public function scroll($scrollId)
+    {
+        /** @var Response $response */
+        $response = Http::withBasicAuth(
+            config('services.wazuh_indexer.user'),
+            config('services.wazuh_indexer.password')
+        )
+        ->withoutVerifying()
+        ->post(config('services.wazuh_indexer.url') . '/_search/scroll', [
+            'scroll' => '5m',
+            'scroll_id' => $scrollId
         ]);
 
         return $response->json();
+    }
+
+    public function testSample($date = null)
+    {
+        // Si pas de date, utiliser une date très récente pour limiter les résultats
+        if (!$date) {
+            $date = now()->subDays(7)->toIso8601ZuluString();
+        }
+
+        $query = [
+            'size' => 1,
+            '_source' => ['agent', 'vulnerability', 'package'],
+            'query' => [
+                'range' => [
+                    'vulnerability.detected_at' => [
+                        'gte' => $date
+                    ]
+                ]
+            ]
+        ];
+
+        $url = config('services.wazuh_indexer.url') . '/wazuh-states-vulnerabilities-*/_search';
+
+        error_log('Fetching test sample from: ' . $url);
+
+        /** @var Response $response */
+        $response = Http::withBasicAuth(
+            config('services.wazuh_indexer.user'),
+            config('services.wazuh_indexer.password')
+        )
+        ->withoutVerifying()
+        ->post($url, $query);
+
+        error_log('Test sample status: ' . $response->status());
+        $result = $response->json();
+        error_log('Test sample result: ' . json_encode($result));
+
+        return $result;
     }
 }

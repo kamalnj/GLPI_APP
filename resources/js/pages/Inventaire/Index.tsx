@@ -7,6 +7,8 @@ import { useState } from 'react';
 import InventaireTable from '@/components/inventaire/TableInventaire';
 import Pagination from '@/components/Pagination';
 import { Search, ShieldAlert, Cpu, Layers } from 'lucide-react';
+import KpiCards from '@/components/inventaire/KpiCards';
+import GroupPieChart from '@/components/inventaire/charts/GroupPieChart';
 
 type PageProps = {
     computers: Paginated<Computer>;
@@ -19,6 +21,12 @@ type PageProps = {
     };
     cpuTierOptions: string[];
     groupOptions: string[];
+    stats: {
+        totalComputers: number;
+        vulnerableComputers: number;
+        withoutSophos: number;
+        computersByGroup: { [groupe: string]: number };
+    };
 };
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -30,6 +38,7 @@ export default function Index({
     filters,
     cpuTierOptions,
     groupOptions,
+    stats,
 }: PageProps) {
     const [search, setSearch] = useState(filters.search ?? '');
     const [missingSophos, setMissingSophos] = useState(
@@ -99,6 +108,13 @@ export default function Index({
                         Consultez et filtrez les machines présentes dans le parc
                         informatique.
                     </p>
+                </div>
+
+                <KpiCards stats={stats} />
+
+                {/* Charts */}
+                <div className="grid gap-6 lg:grid-cols-1">
+                    <GroupPieChart stats={stats.computersByGroup} />
                 </div>
 
                 {/* Filters */}

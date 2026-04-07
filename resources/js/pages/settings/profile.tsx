@@ -15,7 +15,7 @@ import type { BreadcrumbItem, SharedData } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Profile settings',
+        title: 'Paramètres du profil',
         href: edit().url,
     },
 ];
@@ -39,8 +39,8 @@ export default function Profile({
                 <div className="space-y-6">
                     <Heading
                         variant="small"
-                        title="Profile information"
-                        description="Update your name and email address"
+                        title="Informations du profil"
+                        description="Mettez à jour votre nom et votre adresse e-mail"
                     />
 
                     <Form
@@ -53,7 +53,7 @@ export default function Profile({
                         {({ processing, recentlySuccessful, errors }) => (
                             <>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="name">Name</Label>
+                                    <Label htmlFor="name">Nom</Label>
 
                                     <Input
                                         id="name"
@@ -72,7 +72,7 @@ export default function Profile({
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="email">Email address</Label>
+                                    <Label htmlFor="email">Adresse e-mail</Label>
 
                                     <Input
                                         id="email"
@@ -123,7 +123,7 @@ export default function Profile({
                                         disabled={processing}
                                         data-test="update-profile-button"
                                     >
-                                        Save
+                                        Enregistrer
                                     </Button>
 
                                     <Transition
@@ -143,7 +143,6 @@ export default function Profile({
                     </Form>
                 </div>
 
-                <DeleteUser />
             </SettingsLayout>
         </AppLayout>
     );

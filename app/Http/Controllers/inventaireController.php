@@ -27,6 +27,7 @@ class inventaireController extends Controller
             'withoutSophos' => $statsInventaire->getCountComputersWithoutSophos(),
             'computersByGroup' => $statsInventaire->getAllComputersByGroupe(),
             'computersWithVulnerabilities' => $statsInventaire->getAllComputerswithVulnerabilities(),
+            
         ];
 
         return Inertia::render('Inventaire/Index', [
@@ -41,6 +42,7 @@ class inventaireController extends Controller
             ],
             'cpuTierOptions' => $service->cpuTierOptions(),
             'groupOptions' =>$service->groupOptions(),
+            'stats' => $stats,
 
         ]);
     }

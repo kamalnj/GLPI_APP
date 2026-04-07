@@ -20,7 +20,7 @@ class StatsInventaire
     public function getCountComputersWithoutSophos()
     {
         return Computer::whereDoesntHave('antiviruses', function ($query) {
-            $query->where('name', 'Sophos');
+            $query->where('name', 'like', '%Sophos%');
         })->count();
     }
     public function getAllComputersByGroupe()

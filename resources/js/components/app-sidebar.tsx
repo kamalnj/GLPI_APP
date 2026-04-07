@@ -1,8 +1,9 @@
 import { Link } from '@inertiajs/react';
-import {  LayoutGrid ,NotepadText,TriangleAlert } from 'lucide-react';
+import { LayoutGrid, NotepadText, TriangleAlert } from 'lucide-react';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
+import logo from '@/assets/logo.png';
 import {
     Sidebar,
     SidebarContent,
@@ -14,27 +15,23 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
-import AppLogo from './app-logo';
-
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
     },
-        {
+    {
         title: 'Inventaire',
         href: '/inventaire',
         icon: NotepadText,
     },
-          {
+    {
         title: 'Alertes',
         href: '/alertes',
         icon: TriangleAlert,
     },
 ];
-
-
 
 export function AppSidebar() {
     return (
@@ -43,9 +40,13 @@ export function AppSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
-                                <AppLogo />
-                            </Link>
+                            <span className="flex h-full w-full items-center justify-center">
+                                <img
+                                    src={logo}
+                                    alt="Logo entreprise"
+                                    className="h-8 w-auto object-contain"
+                                />
+                            </span>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
