@@ -12,6 +12,7 @@ class Computer extends Model
         'wazuh_agent_id',
         'glpi_id',
         'name',
+        'computer_model',
         'contact',
         'last_inventory_update',
         'synced_at',

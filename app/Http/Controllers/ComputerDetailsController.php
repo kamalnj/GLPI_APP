@@ -22,6 +22,7 @@ class ComputerDetailsController extends Controller
             'computer' => [
                 'id'                      => $computer->id,
                 'name'                    => $computer->name,
+                'computer_model'          => $computer->computer_model,
                 'contact'                 => $computer->contact,
                 'last_inventory_update'   => $computer->last_inventory_update,
                 'cpu'                     => $computer->cpu,

@@ -38,6 +38,7 @@ class GlpiSyncComputers extends Command
 
                 foreach ($items as $pc) {
                     $groupName = null;
+                    $computerModelName = null;
 
                     try {
                         $groups = $client->getSubCollection('Computer', $pc['id'], 'group', $session);
@@ -49,10 +50,21 @@ class GlpiSyncComputers extends Command
                         $this->warn("Group fetch failed for computer {$pc['id']}");
                     }
 
+                    try {
+                        $computerModel = $client->getSubCollection('Computer', $pc['id'], 'ComputerModel', $session);
+
+                        if (!empty($computerModel)) {
+                            $computerModelName = $computerModel[0]['name'] ?? null;
+                        }
+                    } catch (Throwable $e) {
+                        $this->warn("ComputerModel fetch failed for computer {$pc['id']}");
+                    }
+
                     Computer::updateOrCreate(
                         ['glpi_id' => (int) $pc['id']],
                         [
                             'name' => $pc['name'] ?? null,
+                            'computer_model' => $computerModelName,
                             'contact' => $pc['contact'] ?? null,
                             'last_inventory_update' => $pc['last_inventory_update'] ?? null,
                             'synced_at' => now(),
