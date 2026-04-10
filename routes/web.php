@@ -1,26 +1,46 @@
 <?php
 
 use App\Http\Controllers\ComputerDetailsController;
-use App\Http\Controllers\inventaireController;
-use App\Http\Controllers\alertesController;
+use App\Http\Controllers\InventaireController;
+use App\Http\Controllers\AlertesController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Laravel\Fortify\Features;
+
+/*
+|--------------------------------------------------------------------------
+| Public Routes
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/', function () {
     return redirect('/login');
 })->name('home');
 
-Route::get('dashboard', function () {
-    return Inertia::render('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+/*
+|--------------------------------------------------------------------------
+| Protected Routes (Auth + Verified + Rate Limit)
+|--------------------------------------------------------------------------
+*/
 
-Route::get('/inventaire', [inventaireController::class, 'index'])->name('inventaire');
-Route::get('/inventaire/{computer}', [ComputerDetailsController::class, 'show'])->name('inventaire.show');
-Route::get('/alertes', [alertesController::class, 'index'])->name('alertes');
+Route::middleware(['auth', 'verified', 'throttle:60,1'])->group(function () {
 
+    // Dashboard
+    Route::get('/dashboard', function () {
+        return Inertia::render('dashboard');
+    })->name('dashboard');
 
+    // Inventaire
+    Route::get('/inventaire', [InventaireController::class, 'index'])
+        ->name('inventaire');
 
+    Route::get('/inventaire/{computer}', [ComputerDetailsController::class, 'show'])
+        ->name('inventaire.show');
+
+    // Alertes
+    Route::get('/alertes', [AlertesController::class, 'index'])
+        ->name('alertes');
+
+});
 
 
 

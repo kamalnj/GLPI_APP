@@ -7,6 +7,7 @@ use App\Services\Inventaire\ComputerInventoryService;
 use App\Services\Inventaire\StatsInventaire;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Cache;
 
 
 class inventaireController extends Controller
@@ -21,13 +22,19 @@ class inventaireController extends Controller
             $request->group(),
             $request->perPage()
         );
+        
+        // Cache basic stats for 30 minutes
+        $totalComputers = Cache::remember('stats_total_computers', 1800, fn () => $statsInventaire->getCountComputers());
+        $vulnerableComputers = Cache::remember('stats_vulnerable_computers', 1800, fn () => $statsInventaire->getCountComputersVulnerable());
+        $withoutSophos = Cache::remember('stats_without_sophos', 1800, fn () => $statsInventaire->getCountComputersWithoutSophos());
+        $computersByGroup = Cache::remember('stats_computers_by_group', 1800, fn () => $statsInventaire->getAllComputersByGroupe());
+
         $stats = [
-            'totalComputers' => $statsInventaire->getCountComputers(),
-            'vulnerableComputers' => $statsInventaire->getCountComputersVulnerable(),
-            'withoutSophos' => $statsInventaire->getCountComputersWithoutSophos(),
-            'computersByGroup' => $statsInventaire->getAllComputersByGroupe(),
-            'computersWithVulnerabilities' => $statsInventaire->getAllComputerswithVulnerabilities(),
-            
+            'totalComputers' => $totalComputers,
+            'vulnerableComputers' => $vulnerableComputers,
+            'withoutSophos' => $withoutSophos,
+            'computersByGroup' => $computersByGroup,
+            'computersWithVulnerabilities' => Inertia::defer(fn () => $statsInventaire->getAllComputerswithVulnerabilities()),
         ];
 
         return Inertia::render('Inventaire/Index', [
@@ -40,10 +47,11 @@ class inventaireController extends Controller
                 'group'=> $request->group(),
 
             ],
-            'cpuTierOptions' => $service->cpuTierOptions(),
-            'groupOptions' =>$service->groupOptions(),
+            'cpuTierOptions' => Cache::rememberForever('cpu_tier_options', fn () => $service->cpuTierOptions()),
+            'groupOptions' => Cache::rememberForever('group_options', fn () => $service->groupOptions()),
             'stats' => $stats,
 
         ]);
     }
 }
+
