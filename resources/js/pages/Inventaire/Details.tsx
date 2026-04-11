@@ -28,13 +28,13 @@ type Volume = {
     total_size: number | null;
     free_size: number | null;
     free_percent: number | null;
-    encryption_tool: string | null; 
+    encryption_tool: string | null;
     date_mod: string | null;
 };
 
 type CPU = { cpu_name: string | null; frequence: string | null; nbr_cores: number | null; nbr_threads: number | null; };
 type RAM = { ram_name: string | null; size: number | null; serial: string | null; };
-type OS  = { os_name: string | null; os_version_name: string | null; os_arch_name: string | null; install_date: string | null; };
+type OS = { os_name: string | null; os_version_name: string | null; os_arch_name: string | null; install_date: string | null; };
 
 type Vulnerability = {
     id: number;
@@ -62,8 +62,8 @@ type Computer = {
     os?: OS[] | null;
     antiviruses: Antivirus[];
     volumes: Volume[];
-    softwares?: Software[] | null;      
-    vulnerabilities?: Vulnerability[] | null; 
+    softwares?: Software[] | null;
+    vulnerabilities?: Vulnerability[] | null;
     security_kpis: {
         total: number;
         critical: number;
@@ -80,19 +80,19 @@ type PageProps = { computer: Computer };
 
 const LAZY_SECTIONS: Record<string, string> = {
     vulnerabilities: 'computer.vulnerabilities',
-    softwares:       'computer.softwares',
+    softwares: 'computer.softwares',
 };
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Inventaire', href: '/inventaire' },
-    { title: 'Détails',    href: '' },
+    { title: 'Détails', href: '' },
 ];
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function Details({ computer }: PageProps) {
     const cpu0 = computer.cpu?.[0] ?? null;
-    const os0  = computer.os?.[0]  ?? null;
+    const os0 = computer.os?.[0] ?? null;
     const ram0 = computer.ram?.[0] ?? null;
 
     const [activeSection, setActiveSection] = useState<string>('os');
@@ -107,8 +107,8 @@ export default function Details({ computer }: PageProps) {
 
         const alreadyLoaded =
             section === 'vulnerabilities' ? computer.vulnerabilities != null
-          : section === 'softwares'       ? computer.softwares != null
-          : true;
+                : section === 'softwares' ? computer.softwares != null
+                    : true;
 
         if (alreadyLoaded) return;
 
@@ -127,13 +127,13 @@ export default function Details({ computer }: PageProps) {
     }, [computer.vulnerabilities, computer.softwares]);
 
     const sections: Section[] = [
-        { id: 'os',              title: "Système d'exploitation", icon: <FiMonitor size={15} /> },
-        { id: 'cpu',             title: 'Processeur',             icon: <FiCpu size={15} /> },
-        { id: 'ram',             title: 'Mémoire RAM',            icon: <FiDatabase size={15} /> },
-        { id: 'volumes',         title: 'Volumes',                icon: <FiHardDrive size={15} />,     count: computer.volumes.length },
-        { id: 'antivirus',       title: 'Antivirus',              icon: <FiShield size={15} />,        count: computer.antiviruses.length },
-        { id: 'vulnerabilities', title: 'Vulnérabilités',         icon: <FiAlertTriangle size={15} />, count: computer.security_kpis.total },
-        { id: 'softwares',       title: 'Logiciels installés',    icon: <FiMonitor size={15} /> },
+        { id: 'os', title: "Système d'exploitation", icon: <FiMonitor size={15} /> },
+        { id: 'cpu', title: 'Processeur', icon: <FiCpu size={15} /> },
+        { id: 'ram', title: 'Mémoire RAM', icon: <FiDatabase size={15} /> },
+        { id: 'volumes', title: 'Volumes', icon: <FiHardDrive size={15} />, count: computer.volumes.length },
+        { id: 'antivirus', title: 'Antivirus', icon: <FiShield size={15} />, count: computer.antiviruses.length },
+        { id: 'vulnerabilities', title: 'Vulnérabilités', icon: <FiAlertTriangle size={15} />, count: computer.security_kpis.total },
+        { id: 'softwares', title: 'Logiciels installés', icon: <FiMonitor size={15} /> },
     ];
 
     return (
@@ -176,7 +176,7 @@ export default function Details({ computer }: PageProps) {
 
                     <div className="section-fade min-w-0 flex-1" key={activeSection}>
 
-                        {activeSection === 'os'  && <OsSection os={os0} />}
+                        {activeSection === 'os' && <OsSection os={os0} />}
                         {activeSection === 'cpu' && <CpuSection cpu={cpu0} />}
                         {activeSection === 'ram' && <RamSection ram={ram0} />}
 
@@ -207,7 +207,8 @@ export default function Details({ computer }: PageProps) {
                                     severityChartPrevious={computer.severity_chart_previous}
                                     chartView={chartView}
                                     setChartView={setChartView}
-                                  />
+                                    computerId={computer.id}
+                                />
                         )}
 
                         {activeSection === 'softwares' && (
@@ -215,7 +216,7 @@ export default function Details({ computer }: PageProps) {
                                 ? <LoadingSection label="Chargement des logiciels…" />
                                 : <SoftwaresSection
                                     softwares={computer.softwares ?? []} // ✅ tableau simple
-                                  />
+                                />
                         )}
                     </div>
                 </div>

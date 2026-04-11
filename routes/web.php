@@ -39,6 +39,10 @@ Route::middleware(['auth', 'verified', 'throttle:60,1'])->group(function () {
     // Alertes
     Route::get('/alertes', [AlertesController::class, 'index'])
         ->name('alertes');
+    
+    // Export des vulnérabilités
+    Route::get('/inventaire/{computer}/export', [ComputerDetailsController::class, 'export'])
+        ->name('vulne.export');
 
 });
 

@@ -2,14 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\VulneExport;
 use App\Http\Controllers\Controller;
 use App\Models\Computer;
 use App\Services\Inventaire\ComputerDetailsService;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
+use Maatwebsite\Excel\Facades\Excel;
+
+
 
 class ComputerDetailsController extends Controller
 {
+
+
+    public function export(Computer $computer)
+    {
+
+        $filename = sprintf(
+            'vulnerabilities_%s_%s.xlsx',
+            str_replace(' ', '_', $computer->name ?? $computer->id),
+            now()->format('Y-m-d_His')
+        );
+
+        return Excel::download(
+            new VulneExport($computer->wazuh_agent_id, $computer->name),
+            $filename
+        );
+    }
     public function show(
         Computer $computer,
         ComputerDetailsService $service
