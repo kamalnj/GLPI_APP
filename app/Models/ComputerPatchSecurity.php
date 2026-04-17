@@ -8,6 +8,10 @@ class ComputerPatchSecurity extends Model
 {
     
     protected $table = 'computer_patch_securite';
+    protected $casts = [
+        'synced_at' => 'datetime',
+        'date_install' => 'datetime',
+    ];
     protected $fillable = [
         'glpi_item_softwareversion_id',
         'glpi_softwareversion_id',

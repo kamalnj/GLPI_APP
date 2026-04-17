@@ -10,6 +10,11 @@ export interface RamAlert {
     synced_at: string;
 }
 
+export interface Computer{
+    id: number;
+    name: string;
+}
+
 export interface Partition {
     id: number;
     mountpoint: string;

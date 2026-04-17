@@ -3,6 +3,7 @@
 use App\Http\Controllers\ComputerDetailsController;
 use App\Http\Controllers\InventaireController;
 use App\Http\Controllers\AlertesController;
+use App\Http\Controllers\alertesController as ControllersAlertesController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -44,6 +45,17 @@ Route::middleware(['auth', 'verified', 'throttle:60,1'])->group(function () {
     Route::get('/inventaire/{computer}/export', [ComputerDetailsController::class, 'export'])
         ->name('vulne.export');
 
+    // Export des volumes
+    Route::get('/alertes/export/volumes', [ControllersAlertesController::class, 'exportDisque'])
+        ->name('volumes.export');
+
+    // Export des patches de sécurité
+    Route::get('/alertes/export/patches', [ControllersAlertesController::class, 'exportPatch'])
+        ->name('patches.export');
+
+    // Export de l'inventaire
+    Route::get('/alertes/export/inventaire', [ControllersAlertesController::class, 'exportInventory'])
+        ->name('inventaire.export');
 });
 
 

@@ -60,6 +60,9 @@ class GlpiSyncVolumes extends Command
                     }
 
                     foreach ($items as $disk) {
+                        if (($disk['mountpoint'] ?? '') !== 'C:') {
+                            continue;
+                        }
 
                         $totalSize = $this->toIntOrNull($disk['totalsize'] ?? null);
                         $freeSize  = $this->toIntOrNull($disk['freesize'] ?? null);
@@ -111,7 +114,6 @@ class GlpiSyncVolumes extends Command
             $client->killSession($session);
 
             return self::SUCCESS;
-
         } catch (Throwable $e) {
 
             $this->error('❌ Sync failed: ' . $e->getMessage());

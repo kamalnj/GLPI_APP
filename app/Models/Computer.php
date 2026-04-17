@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Computer extends Model
 {
+    protected $casts = [
+        'last_inventory_update' => 'datetime',
+        'synced_at' => 'datetime',
+    ];
     protected $fillable = [
         'wazuh_agent_id',
         'glpi_id',

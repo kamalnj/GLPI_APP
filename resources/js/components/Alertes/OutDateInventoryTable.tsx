@@ -62,6 +62,12 @@ export default function OutDateInventoryTable({
                     className="w-full rounded-md border border-gray-200 bg-white py-2 pr-3 pl-8 text-sm placeholder-gray-400 focus:border-gray-400 focus:ring-1 focus:ring-gray-300 focus:outline-none"
                 />
             </div>
+               <a
+                href={`/alertes/export/inventaire`}
+                className="inline-flex shrink-0 items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700"
+            >
+                Exporter CSV
+            </a>
 
             <div className="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
                 {/* En-tête fixe */}

@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ComputerVolumes extends Model
 {
     protected $table = 'computer_volumes';
+    protected $casts = [
+    'synced_at' => 'datetime',
+];
     protected $fillable = [
         'glpi_id',
         'computer_id',
