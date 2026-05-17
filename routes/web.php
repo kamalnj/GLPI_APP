@@ -4,6 +4,7 @@ use App\Http\Controllers\ComputerDetailsController;
 use App\Http\Controllers\InventaireController;
 use App\Http\Controllers\AlertesController;
 use App\Http\Controllers\alertesController as ControllersAlertesController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -26,9 +27,8 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified', 'throttle:60,1'])->group(function () {
 
     // Dashboard
-    Route::get('/dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
 
     // Inventaire
     Route::get('/inventaire', [InventaireController::class, 'index'])
