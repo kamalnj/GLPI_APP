@@ -1,0 +1,153 @@
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: s2m-app
+    restart: always
+    working_dir: /app
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - CACHE_DRIVER=redis
+      - SESSION_DRIVER=redis
+      - QUEUE_CONNECTION=redis
+      - DB_CONNECTION=sqlsrv
+      - DB_HOST=${DB_HOST:-your-sql-server-host}
+      - DB_PORT=${DB_PORT:-1433}
+      - DB_DATABASE=${DB_DATABASE:-s2m}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_PORT=6379
+    volumes:
+      - ./storage/logs:/app/storage/logs
+      - ./storage/app:/app/storage/app
+      - .env:/app/.env:ro
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - s2m-network
+    healthcheck:
+      test: ["CMD", "php", "-r", "exit(0);"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  nginx:
+    image: nginx:alpine
+    container_name: s2m-nginx
+    restart: always
+    ports:
+      - "${NGINX_PORT:-80}:80"
+      - "${NGINX_SSL_PORT:-443}:443"
+    volumes:
+      - ./:/app
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ${SSL_CERT_PATH}:/etc/nginx/certs/cert.pem:ro
+      - ${SSL_KEY_PATH}:/etc/nginx/certs/key.pem:ro
+    depends_on:
+      - app
+    networks:
+      - s2m-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  redis:
+    image: redis:7-alpine
+    container_name: s2m-redis
+    restart: always
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis}
+    volumes:
+      - redis-data:/data
+    networks:
+      - s2m-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  queue-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: s2m-queue
+    restart: always
+    working_dir: /app
+    command: php artisan queue:work redis --tries=3 --timeout=90
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - CACHE_DRIVER=redis
+      - SESSION_DRIVER=redis
+      - QUEUE_CONNECTION=redis
+      - DB_CONNECTION=sqlsrv
+      - DB_HOST=${DB_HOST:-your-sql-server-host}
+      - DB_PORT=${DB_PORT:-1433}
+      - DB_DATABASE=${DB_DATABASE:-s2m}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_PORT=6379
+    volumes:
+      - ./storage/logs:/app/storage/logs
+      - .env:/app/.env:ro
+    depends_on:
+      redis:
+        condition: service_healthy
+      app:
+        condition: service_healthy
+    networks:
+      - s2m-network
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: s2m-scheduler
+    restart: always
+    working_dir: /app
+    command: sh -c "while true; do php artisan schedule:run --verbose --no-interaction; sleep 60; done"
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - CACHE_DRIVER=redis
+      - SESSION_DRIVER=redis
+      - QUEUE_CONNECTION=redis
+      - DB_CONNECTION=sqlsrv
+      - DB_HOST=${DB_HOST:-your-sql-server-host}
+      - DB_PORT=${DB_PORT:-1433}
+      - DB_DATABASE=${DB_DATABASE:-s2m}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_PORT=6379
+    volumes:
+      - ./storage/logs:/app/storage/logs
+      - .env:/app/.env:ro
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - s2m-network
+
+volumes:
+  redis-data:
+
+networks:
+  s2m-network:
+    driver: bridge

@@ -14,18 +14,14 @@ import {
     KpiStats,
     outDateInventoryAlert,
     PatchWindowsAlert,
-    RamAlert,
 } from '@/types/types';
 import { DiskStats } from '@/components/Alertes/charts/DiskPieChart';
-import { RamStats } from '@/components/Alertes/charts/RamPieChart';
 import { PatchStats } from '@/components/Alertes/charts/PatchPieChart';
 import { OutDateInventoryStats } from '@/components/Alertes/charts/outDateInventoryPieChart';
 import KpiCards from '@/components/Alertes/charts/KpiCards';
 
 // ✅ Lazy loading — chaque section ne charge que quand l'onglet est actif
-const RamAlertsTable = lazy(
-    () => import('@/components/Alertes/RamAlertsTable'),
-);
+
 const DiskAlertsTable = lazy(
     () => import('@/components/Alertes/DiskAlertsTable'),
 );
@@ -38,9 +34,7 @@ const OutDateInventoryTable = lazy(
 const DiskPieChart = lazy(
     () => import('@/components/Alertes/charts/DiskPieChart'),
 );
-const RamPieChart = lazy(
-    () => import('@/components/Alertes/charts/RamPieChart'),
-);
+
 const PatchPieChart = lazy(
     () => import('@/components/Alertes/charts/PatchPieChart'),
 );
@@ -51,13 +45,11 @@ const OutDateInventoryPieChart = lazy(
 interface Props {
     // ✅ Stats légères — disponibles immédiatement (jamais undefined)
     diskStats: DiskStats;
-    ramStats: RamStats;
     patchStats: PatchStats;
     outDateInventoryStats: OutDateInventoryStats;
     kpiStats: KpiStats;
 
     // ✅ Données complètes — différées (undefined pendant le chargement)
-    ramAlerts?: RamAlert[];
     diskAlerts?: DiskAlert[];
     patchWindowsAlerts?: PatchWindowsAlert[];
     outDateInventoryAlerts?: outDateInventoryAlert[];
@@ -112,56 +104,23 @@ function SkeletonChart() {
 
 export default function Index({
     kpiStats,
-    ramStats,
     diskStats,
     patchStats,
     outDateInventoryStats,
-    ramAlerts,
     diskAlerts,
     patchWindowsAlerts,
     outDateInventoryAlerts,
 }: Props) {
     const [activeTab, setActiveTab] = useState<
-        'ram' | 'disk' | 'logiciels' | 'patchwindows' | 'outdateinventory'
-    >('ram');
-    // ✅ useMemo — recalcul seulement si les données changent
-    const ramCritical = useMemo(
-        () =>
-            ramAlerts?.filter((r) => r.alert_level === 'critical').length ?? 0,
-        [ramAlerts],
-    );
-    const diskCritical = useMemo(
-        () =>
-            diskAlerts?.filter((d) => d.alert_level === 'critical').length ?? 0,
-        [diskAlerts],
-    );
+        'disk' | 'patchwindows' | 'outdateinventory'
+    >('disk');
 
-    const totalCritical = ramCritical + diskCritical;
-    const totalAlert =
-        (ramAlerts?.length ?? 0) -
-        ramCritical +
-        ((diskAlerts?.length ?? 0) - diskCritical);
-
-    const machinesConcernees = useMemo(
-        () =>
-            new Set([
-                ...(ramAlerts?.map((r) => r.computer_id) ?? []),
-                ...(diskAlerts?.map((d) => d.computer_id) ?? []),
-            ]).size,
-        [ramAlerts, diskAlerts],
-    );
 
     const tabs = [
-        { key: 'ram' as const, label: 'RAM', icon: <MemoryStick size={15} /> },
         {
             key: 'disk' as const,
             label: 'Disques',
             icon: <HardDrive size={15} />,
-        },
-        {
-            key: 'logiciels' as const,
-            label: 'Logiciels non autorisés',
-            icon: <XCircle size={15} />,
         },
         {
             key: 'patchwindows' as const,
@@ -198,10 +157,6 @@ export default function Index({
                                     import('@/components/Alertes/DiskAlertsTable');
                                     import('@/components/Alertes/charts/DiskPieChart');
                                 }
-                                if (tab.key === 'ram') {
-                                    import('@/components/Alertes/RamAlertsTable');
-                                    import('@/components/Alertes/charts/RamPieChart');
-                                }
                                 if (tab.key === 'patchwindows') {
                                     import('@/components/Alertes/PatchWindowsAlertsTable');
                                     import('@/components/Alertes/charts/PatchPieChart');
@@ -221,28 +176,6 @@ export default function Index({
                         </button>
                     ))}
                 </div>
-
-                {/* ── RAM ── */}
-                {activeTab === 'ram' && (
-                    <section className="space-y-6">
-                        {/* ✅ Chart immédiat — ramStats disponible sans defer */}
-                        <Suspense fallback={<SkeletonChart />}>
-                            <RamPieChart stats={ramStats} />
-                        </Suspense>
-                        {/* ✅ Table différée */}
-                        {ramAlerts === undefined ? (
-                            <SkeletonTable cols={5} />
-                        ) : ramAlerts.length === 0 ? (
-                            <p className="text-sm text-gray-400">
-                                Aucune alerte RAM.
-                            </p>
-                        ) : (
-                            <Suspense fallback={<SkeletonTable cols={5} />}>
-                                <RamAlertsTable ramAlerts={ramAlerts} />
-                            </Suspense>
-                        )}
-                    </section>
-                )}
 
                 {/* ── Disques ── */}
                 {activeTab === 'disk' && (
@@ -265,16 +198,6 @@ export default function Index({
                         )}
                     </section>
                 )}
-
-                {/* ── Logiciels ── */}
-                {activeTab === 'logiciels' && (
-                    <section>
-                        <p className="text-sm text-gray-400">
-                            Fonctionnalité à venir.
-                        </p>
-                    </section>
-                )}
-
                 {/* ── Patches Windows ── */}
                 {activeTab === 'patchwindows' && (
                     <section className="space-y-6">

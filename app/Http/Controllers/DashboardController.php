@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Services\Dashboard\MaterialInventory;
 use App\Services\Dashboard\SoftwareInventory;
 use App\Services\Dashboard\GroupsStats;
+use App\Services\Dashboard\CollaboratorsStats;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -14,7 +15,8 @@ class DashboardController extends Controller
     public function __construct(
         protected MaterialInventory $materialInventory,
         protected SoftwareInventory $softwareInventory,
-        protected GroupsStats $groupsStats
+        protected GroupsStats $groupsStats,
+        protected CollaboratorsStats $collaboratorsStats
     ) {}
 
     /**
@@ -31,6 +33,7 @@ class DashboardController extends Controller
             'ram_distribution' => Inertia::defer(fn() => $this->materialInventory->ramByNumberOfDevices()),
             'software_stats' => Inertia::defer(fn() => $this->softwareInventory->getSoftwareStats()),
             'groups_stats' => Inertia::defer(fn() => $this->groupsStats->getGroupsStatsAll()),
+            'collaborators_stats' => Inertia::defer(fn() => $this->collaboratorsStats->getCollaboratorsStatsAll()),
         ]);
     }
 

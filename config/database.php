@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Str;
 
+
 return [
 
     /*
@@ -97,23 +98,37 @@ return [
             'search_path' => 'public',
             'sslmode' => env('DB_SSLMODE', 'prefer'),
         ],
-
         'sqlsrv' => [
             'driver' => 'sqlsrv',
-            'url' => env('DB_URL'),
-            'host' => env('DB_HOST', 'localhost'),
-            'port' => env('DB_PORT', '1433'),
-            'database' => env('DB_DATABASE', 'laravel'),
-            'username' => env('DB_USERNAME', 'root'),
-            'password' => env('DB_PASSWORD', ''),
-            'charset' => env('DB_CHARSET', 'utf8'),
+            'odbc_driver' => '{ODBC Driver 18 for SQL Server}', 
+            'host' => env('SQLSRV_HOST', 'localhost'),
+            'port' => env('SQLSRV_PORT', '1433'),
+            'database' => env('SQLSRV_DATABASE', 'Test'),
+            'username' => env('SQLSRV_USERNAME', 'sa'),
+            'password' => env('SQLSRV_PASSWORD', ''),
+            'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
-            // 'encrypt' => env('DB_ENCRYPT', 'yes'),
-            // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
+            'trust_server_certificate' => env('SQLSRV_TRUST_SERVER_CERTIFICATE', 'yes'),
+            'encrypt' => env('SQLSRV_ENCRYPT', 'optional'),
         ],
+//         'sqlsrv' => [
+//     'driver' => 'sqlsrv',
+//     'odbc_driver' => '{ODBC Driver 18 for SQL Server}',
+//     'host' => '10.0.0.63',
+//     'port' => '1433',
+//     'database' => 'Test',
+//     'username' => env('SQLSRV_USERNAME'),
+//     'password' => env('SQLSRV_PASSWORD'),
+//     'charset' => 'utf8',
+//     'prefix' => '',
+//     'prefix_indexes' => true,
+//     'trust_server_certificate' => 'no',
+//     'encrypt' => 'yes', // ✅ Chiffrement obligatoire
+// ],
 
     ],
+
 
     /*
     |--------------------------------------------------------------------------
@@ -148,7 +163,7 @@ return [
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
-            'prefix' => env('REDIS_PREFIX', Str::slug((string) env('APP_NAME', 'laravel')).'-database-'),
+            'prefix' => env('REDIS_PREFIX', Str::slug((string) env('APP_NAME', 'laravel')) . '-database-'),
             'persistent' => env('REDIS_PERSISTENT', false),
         ],
 

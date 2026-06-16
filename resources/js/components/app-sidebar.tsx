@@ -1,6 +1,4 @@
-import { Link } from '@inertiajs/react';
-import { LayoutGrid, NotepadText, TriangleAlert } from 'lucide-react';
-import { NavFooter } from '@/components/nav-footer';
+import { LayoutGrid, NotepadText, TriangleAlert, UserRound  } from 'lucide-react';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import logo from '@/assets/logo.png';
@@ -30,6 +28,11 @@ const mainNavItems: NavItem[] = [
         title: 'Alertes',
         href: '/alertes',
         icon: TriangleAlert,
+    },
+        {
+        title: 'Collaborateurs',
+        href: '/collaborateurs',
+        icon: UserRound,
     },
 ];
 

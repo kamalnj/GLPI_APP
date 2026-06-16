@@ -68,55 +68,84 @@ export default function SoftwaresSection({ softwares }: Props) {
                 />
             </div>
 
-            <div className="overflow-hidden rounded-md border">
-                <table className="w-full text-sm">
-                    <thead className="border-b bg-muted/40">
-                        <tr>
-                            <th className="px-3 py-2 text-left font-medium">Nom</th>
-                            <th className="px-3 py-2 text-left font-medium">Version</th>
-                            <th className="px-3 py-2 text-left font-medium">Date d'installation</th>
-                        </tr>
-                    </thead>
-                </table>
+         <div className="overflow-hidden rounded-md border">
+    {/* HEADER */}
+    <table className="w-full table-fixed text-sm">
+        <colgroup>
+            <col className="w-[50%]" />
+            <col className="w-[20%]" />
+            <col className="w-[30%]" />
+        </colgroup>
 
-                {filtered.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center gap-2 py-10 text-gray-400">
-                        <FiPackage size={24} />
-                        <span className="text-sm">Aucun logiciel trouvé</span>
-                    </div>
-                ) : (
-                    <div
-                        ref={scrollRef}
-                        onScroll={handleScroll}
-                        style={{ height: CONTAINER_HEIGHT, overflowY: 'auto' }}
-                    >
-                        <div style={{ height: totalHeight, position: 'relative' }}>
-                            <table
-                                className="w-full text-sm"
-                                style={{ position: 'absolute', top: offsetY, left: 0, right: 0 }}
+        <thead className="border-b bg-muted/40">
+            <tr>
+                <th className="px-3 py-2 text-left font-medium">Nom</th>
+                <th className="px-3 py-2 text-left font-medium">Version</th>
+                <th className="px-3 py-2 text-left font-medium">
+                    Date d'installation
+                </th>
+            </tr>
+        </thead>
+    </table>
+
+    {filtered.length === 0 ? (
+        <div className="flex flex-col items-center justify-center gap-2 py-10 text-gray-400">
+            <FiPackage size={24} />
+            <span className="text-sm">Aucun logiciel trouvé</span>
+        </div>
+    ) : (
+        <div
+            ref={scrollRef}
+            onScroll={handleScroll}
+            style={{ height: CONTAINER_HEIGHT, overflowY: 'auto' }}
+        >
+            <div style={{ height: totalHeight, position: 'relative' }}>
+                {/* BODY */}
+                <table
+                    className="w-full table-fixed text-sm"
+                    style={{
+                        position: 'absolute',
+                        top: offsetY,
+                        left: 0,
+                        right: 0,
+                    }}
+                >
+                    <colgroup>
+                        <col className="w-[50%]" />
+                        <col className="w-[20%]" />
+                        <col className="w-[30%]" />
+                    </colgroup>
+
+                    <tbody>
+                        {visibleItems.map((s) => (
+                            <tr
+                                key={s.id}
+                                className="border-b last:border-b-0 hover:bg-gray-50"
+                                style={{ height: ROW_HEIGHT }}
                             >
-                                <tbody>
-                                    {visibleItems.map((s) => (
-                                        <tr
-                                            key={s.id}
-                                            className="border-b last:border-b-0 hover:bg-gray-50"
-                                            style={{ height: ROW_HEIGHT }}
-                                        >
-                                            <td className="px-3 py-2 max-w-xs truncate">{s.software_name ?? '—'}</td>
-                                            <td className="px-3 py-2 text-gray-500">{s.version ?? '—'}</td>
-                                            <td className="px-3 py-2 text-gray-500">
-                                                {s.date_install
-                                                    ? new Date(s.date_install).toLocaleDateString('fr-FR')
-                                                    : '—'}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                )}
+                                <td className="px-3 py-2 truncate">
+                                    {s.software_name ?? '—'}
+                                </td>
+
+                                <td className="px-3 py-2 text-gray-500 truncate">
+                                    {s.version ?? '—'}
+                                </td>
+
+                                <td className="px-3 py-2 text-gray-500 truncate">
+                                    {s.date_install
+                                        ? new Date(
+                                              s.date_install
+                                          ).toLocaleDateString('fr-FR')
+                                        : '—'}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
+        </div>
+    )}
+</div>
         </div>
     );
 }

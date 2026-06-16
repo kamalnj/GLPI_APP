@@ -21,13 +21,13 @@ class RunAllLocalCommands extends Command
         $this->info('Début de l’exécution des commandes locales...');
 
         $commands = [
-            // 'glpi:sync-computers',
-            // 'glpi:sync-cpu',
-            // 'glpi:sync-ram',
-            // 'glpi:sync-volumes',
-            // 'glpi:sync-os',
-            // 'glpi:sync-softwares', 
-            // 'glpi:sync-antiviruses',
+            'glpi:sync-computers',
+            'glpi:sync-cpu',
+            'glpi:sync-ram',
+            'glpi:sync-volumes',
+            'glpi:sync-os',
+            'glpi:sync-softwares', 
+            'glpi:sync-antiviruses',
             'wazuh:sync-agents',
             'wazuh:link-computers',
             'wazuh:sync-ram',

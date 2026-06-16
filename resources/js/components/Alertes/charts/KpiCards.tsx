@@ -126,7 +126,6 @@ export default function KpiCards({ stats }: Props) {
                 <Divider />
 
                 <div className="flex flex-col gap-2">
-                    <LegendRow icon={<MemoryStick size={13} />} label="RAM"       value={stats.countRam} />
                     <LegendRow icon={<HardDrive   size={13} />} label="Disques"   value={stats.countDisk} />
                     <LegendRow icon={<Download    size={13} />} label="Patches"   value={stats.countPatch} />
                     <LegendRow icon={<Clock       size={13} />} label="Inventaire" value={stats.countInventory} />

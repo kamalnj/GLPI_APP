@@ -8,36 +8,35 @@ use Illuminate\Http\Client\Response;
 class WazuhIndexerService
 {
 
-    public function initialScroll($scrollId=null)
+    public function initialScroll($scrollId = null)
     {
 
-        if($scrollId){
-                                    /** @var Response $response */
+        if ($scrollId) {
+            /** @var Response $response */
 
             $response = Http::withBasicAuth(
                 config('services.wazuh_indexer.user'),
                 config('services.wazuh_indexer.password')
             )
-            ->withoutVerifying()
-            ->post(config('services.wazuh_indexer.url').'/_search/scroll',[
-                'scroll'=>'2m',
-                'scroll_id'=>$scrollId
-            ]);
-
-        }else{
-                                /** @var Response $response */
+                ->withoutVerifying()
+                ->post(config('services.wazuh_indexer.url') . '/_search/scroll', [
+                    'scroll' => '2m',
+                    'scroll_id' => $scrollId
+                ]);
+        } else {
+            /** @var Response $response */
 
             $response = Http::withBasicAuth(
                 config('services.wazuh_indexer.user'),
                 config('services.wazuh_indexer.password')
             )
-            ->withoutVerifying()
-            ->post(config('services.wazuh_indexer.url').'/wazuh-states-vulnerabilities-*/_search?scroll=2m',[
-                'size'=>500,
-                'query'=>[
-                    'match_all'=>(object)[]
-                ]
-            ]);
+                ->withoutVerifying()
+                ->post(config('services.wazuh_indexer.url') . '/wazuh-states-vulnerabilities-*/_search?scroll=2m', [
+                    'size' => 500,
+                    'query' => [
+                        'match_all' => (object)[]
+                    ]
+                ]);
         }
 
         return $response->json();
@@ -61,23 +60,23 @@ class WazuhIndexerService
                 ]
             ]
         ];
-        
+
         $url = config('services.wazuh_indexer.url') . '/wazuh-states-vulnerabilities-*/_search?scroll=5m';
-        
+
         error_log('Wazuh filtering vulnerability.detected_at from: ' . $date);
-        
+
         /** @var Response $response */
         $response = Http::withBasicAuth(
             config('services.wazuh_indexer.user'),
             config('services.wazuh_indexer.password')
         )
-        ->withoutVerifying()
-        ->post($url, $query);
+            ->withoutVerifying()
+            ->post($url, $query);
 
         $result = $response->json();
         error_log('Wazuh response status: ' . $response->status());
         error_log('Wazuh total hits: ' . ($result['hits']['total']['value'] ?? 'unknown'));
-        
+
         return $result;
     }
 
@@ -88,11 +87,11 @@ class WazuhIndexerService
             config('services.wazuh_indexer.user'),
             config('services.wazuh_indexer.password')
         )
-        ->withoutVerifying()
-        ->post(config('services.wazuh_indexer.url') . '/_search/scroll', [
-            'scroll' => '5m',
-            'scroll_id' => $scrollId
-        ]);
+            ->withoutVerifying()
+            ->post(config('services.wazuh_indexer.url') . '/_search/scroll', [
+                'scroll' => '5m',
+                'scroll_id' => $scrollId
+            ]);
 
         return $response->json();
     }
@@ -125,8 +124,8 @@ class WazuhIndexerService
             config('services.wazuh_indexer.user'),
             config('services.wazuh_indexer.password')
         )
-        ->withoutVerifying()
-        ->post($url, $query);
+            ->withoutVerifying()
+            ->post($url, $query);
 
         error_log('Test sample status: ' . $response->status());
         $result = $response->json();

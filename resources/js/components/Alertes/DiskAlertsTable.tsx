@@ -52,25 +52,31 @@ export default function DiskAlertsTable({
     return (
         <div className="flex flex-col gap-3">
             {/* Recherche */}
-            <div className="relative">
-                <FiSearch
-                    size={14}
-                    className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
-                />
-                <input
-                    type="text"
-                    placeholder="Rechercher une machine ou partition..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="w-full rounded-md border border-gray-200 bg-white py-2 pr-3 pl-8 text-sm placeholder-gray-400 focus:border-gray-400 focus:ring-1 focus:ring-gray-300 focus:outline-none"
-                />
-            </div>
-            <a
-                href={`/alertes/export/volumes`}
-                className="inline-flex shrink-0 items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700"
-            >
-                Exporter CSV
-            </a>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    {/* Recherche */}
+    <div className="relative w-full sm:max-w-md">
+        <FiSearch
+            size={14}
+            className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
+        />
+
+        <input
+            type="text"
+            placeholder="Rechercher une machine ou partition..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pr-3 pl-9 text-sm placeholder-gray-400 shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 focus:outline-none"
+        />
+    </div>
+
+    {/* Export */}
+    <a
+        href="/alertes/export/volumes"
+        className="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-emerald-700"
+    >
+        Exporter CSV
+    </a>
+</div>
 
             <div className="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
                 <table className="min-w-full text-sm text-gray-700">
