@@ -5,10 +5,11 @@ namespace App\Services\Collabs;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Validation\Rules\Date;
 
 class CollabsService
 {
-    private const CACHE_TTL = 600; // 10 min
+    private const CACHE_TTL = 600;
     private const MAX_DAYS = 90;
 
     /* =========================
@@ -18,52 +19,65 @@ class CollabsService
         ?string $search = null,
         ?int $machinesMin = null,
         ?int $machinesMax = null,
+        ?\DateTime $fromDate = null,
+        ?\DateTime $toDate = null,
         int $perPage = 20
     ): LengthAwarePaginator {
 
+        $month = now()->month;
+        $year  = now()->year;
+
         $query = DB::connection('sqlsrv')
-            ->table('vw_users_overview');
+            ->table('vw_user_daily_activity')
+            ->select([
+                'user_name',
+                DB::raw('SUM(active_seconds) as total_active_seconds'),
+                DB::raw('MAX(machines_count) as machines_count'),
+                DB::raw('SUM(unlock_count) as total_unlock_count'),
+            ])
+            ->whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->groupBy('user_name');
 
         if ($search) {
             $query->where('user_name', 'like', "%{$search}%");
         }
 
         if ($machinesMin !== null) {
-            $query->where('machines_count', '>=', $machinesMin);
+            $query->having('machines_count', '>=', $machinesMin);
         }
 
         if ($machinesMax !== null) {
-            $query->where('machines_count', '<=', $machinesMax);
+            $query->having('machines_count', '<=', $machinesMax);
+        }
+
+        if ($fromDate) {
+            $query->whereDate('date', '>=', $fromDate);
+        }
+
+        if ($toDate) {
+            $query->whereDate('date', '<=', $toDate);
         }
 
         return $query
             ->orderByDesc('total_active_seconds')
             ->paginate($perPage)
             ->withQueryString()
-            ->through(fn ($user) => $this->formatUser($user));
+            ->through(fn($user) => $this->formatUser($user));
     }
 
+
     /* =========================
-     | USERS OVERVIEW (LIMIT)
+     | FORMAT USER
      ========================= */
-    public function getUsersOverview(int $limit = 50)
-    {
-        return Cache::remember("users_overview_$limit", self::CACHE_TTL, function () use ($limit) {
-            return DB::connection('sqlsrv')
-                ->table('vw_users_overview')
-                ->orderByDesc('total_active_seconds')
-                ->limit($limit)
-                ->get()
-                ->map(fn ($user) => $this->formatUser($user));
-        });
-    }
-                  /**
- * @param object{
- *     user_name: string,
- *     total_active_seconds: int
- * } $user
- */
-       private function formatUser($user)
+
+    /**
+     * @param object{
+     *     user_name: string,
+     *     total_active_seconds: int
+     * } $user
+     */
+    private function formatUser($user)
     {
         $hours = floor($user->total_active_seconds / 3600);
         $minutes = floor(($user->total_active_seconds % 3600) / 60);
@@ -72,10 +86,4 @@ class CollabsService
 
         return $user;
     }
-
-    
 }
-
-
-
-   

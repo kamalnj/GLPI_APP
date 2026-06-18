@@ -29,15 +29,27 @@ class CollabDetails
     /* =========================
      | OVERVIEW
      ========================= */
-    private function getOverview(string $userName)
-    {
-        return Cache::remember("user_overview_$userName", self::CACHE_TTL, function () use ($userName) {
-            return DB::connection('sqlsrv')
-                ->table('vw_users_overview')
-                ->where('user_name', $userName)
-                ->first();
-        });
-    }
+private function getOverview(string $userName)
+{
+    $month = now()->month;
+    $year  = now()->year;
+
+    return Cache::remember("user_overview_{$userName}_{$year}_{$month}", self::CACHE_TTL, function () use ($userName, $month, $year) {
+        return DB::connection('sqlsrv')
+            ->table('vw_user_daily_activity')
+            ->select([
+                'user_name',
+                DB::raw('SUM(active_seconds) as total_active_seconds'),
+                DB::raw('SUM(unlock_count) as total_unlocks'),
+                DB::raw('MAX(machines_count) as machines_count'),
+            ])
+            ->where('user_name', $userName)
+            ->whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->groupBy('user_name')
+            ->first();
+    });
+}
 
     /* =========================
      | MACHINES

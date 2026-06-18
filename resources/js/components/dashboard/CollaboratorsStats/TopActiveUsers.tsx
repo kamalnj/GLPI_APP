@@ -33,7 +33,7 @@ export function TopActiveUsers({ users }: TopActiveUsersProps) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Activity className="h-5 w-5" />
-          Top 10 utilisateurs les plus actifs
+          Top 10 utilisateurs les plus actifs ce mois-ci
         </CardTitle>
       </CardHeader>
 

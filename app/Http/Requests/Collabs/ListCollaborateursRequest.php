@@ -18,6 +18,8 @@ class ListCollaborateursRequest extends FormRequest
             'machines_min'   => ['nullable', 'integer', 'min:0'],
             'machines_max'   => ['nullable', 'integer', 'min:0'],
             'perPage'        => ['nullable', 'integer', 'min:10', 'max:200'],
+            'from_date'      => ['nullable', 'date', 'before_or_equal:to_date'],
+            'to_date'        => ['nullable', 'date', 'after_or_equal:from_date'],
         ];
     }
 
@@ -49,4 +51,16 @@ class ListCollaborateursRequest extends FormRequest
     {
         return (int) ($this->validated('perPage') ?? 20);
     }
+
+  public function fromDate(): ?\DateTime
+{
+    $val = $this->validated('from_date');
+    return $val !== null ? new \DateTime($val) : null;
+}
+
+public function toDate(): ?\DateTime
+{
+    $val = $this->validated('to_date');
+    return $val !== null ? new \DateTime($val) : null;
+}
 }

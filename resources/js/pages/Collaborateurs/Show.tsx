@@ -110,7 +110,6 @@ export default function Show({
             <div className="space-y-6 p-4 sm:p-6">
                 <CollabHeader
                     userName={overview.user_name}
-                    lastActivity={overview.last_activity}
                 />
 
                 <StatsCards overview={overview} />

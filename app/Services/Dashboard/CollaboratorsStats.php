@@ -95,28 +95,39 @@ class CollaboratorsStats
     /**
      * Get top N active users
      */
-    private function getTopActiveUsers(int $limit = 10): array
-    {
-        return Cache::remember("collabs_top_active_users_$limit", self::CACHE_TTL, function () use ($limit) {
-            return DB::connection('sqlsrv')
-                ->table('vw_users_overview')
-                ->orderByDesc('total_active_seconds')
-                ->limit($limit)
-                ->get()
-                ->map(function ($user) {
-                    $hours = floor($user->total_active_seconds / 3600);
-                    $minutes = floor(($user->total_active_seconds % 3600) / 60);
+private function getTopActiveUsers(int $limit = 10): array
+{
+    $month = now()->month;
+    $year  = now()->year;
 
-                    return [
-                        'user_name' => $user->user_name,
-                        'active_seconds' => $user->total_active_seconds,
-                        'active_time' => "{$hours}h {$minutes}m",
-                        'machines_count' => $user->machines_count ?? 0,
-                    ];
-                })
-                ->toArray();
-        });
-    }
+    return Cache::remember("collabs_top_active_users_{$limit}_{$year}_{$month}", self::CACHE_TTL, function () use ($limit, $month, $year) {
+        return DB::connection('sqlsrv')
+            ->table('vw_user_daily_activity')
+            ->select([
+                'user_name',
+                DB::raw('SUM(active_seconds) as active_seconds'),
+                DB::raw('MAX(machines_count) as machines_count'),
+            ])
+            ->whereMonth('date', $month)   // 👈 on the query
+            ->whereYear('date', $year)     // 👈 on the query
+            ->groupBy('user_name')         // 👈 group by user
+            ->orderByDesc('active_seconds')
+            ->limit($limit)
+            ->get()
+            ->map(function ($user) {
+                $hours = floor($user->active_seconds / 3600);
+                $minutes = floor(($user->active_seconds % 3600) / 60);
+
+                return [
+                    'user_name'      => $user->user_name,
+                    'active_seconds' => $user->active_seconds,
+                    'active_time'    => "{$hours}h {$minutes}m",
+                    'machines_count' => $user->machines_count ?? 0,
+                ];
+            })
+            ->toArray();
+    });
+}
 
     /**
      * Get users with most unlocks (last 30 days)

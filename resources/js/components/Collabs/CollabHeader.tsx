@@ -8,7 +8,6 @@ interface CollabHeaderProps {
 
 export default function CollabHeader({
     userName,
-    lastActivity,
 }: CollabHeaderProps) {
     return (
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -16,9 +15,6 @@ export default function CollabHeader({
                 <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
                     {userName}
                 </h1>
-                <p className="mt-1 text-sm text-muted-foreground">
-                    Dernière activité : {lastActivity}
-                </p>
             </div>
 
             <Link

@@ -5,7 +5,6 @@ interface Props {
         machines_count: number;
         total_active_seconds: number;
         total_unlocks: number;
-        last_activity: string;
     };
 }
 
@@ -31,14 +30,10 @@ export default function StatsCards({ overview }: Props) {
             title: 'Unlocks',
             value: overview.total_unlocks,
         },
-        {
-            title: 'Dernière activité',
-            value: overview.last_activity,
-        },
     ];
 
     return (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             {cards.map((card) => (
                 <Card key={card.title}>
                     <CardContent className="p-6">

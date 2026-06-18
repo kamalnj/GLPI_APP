@@ -56,14 +56,12 @@ class alertesController extends Controller
         $stats = $this->alertStatsService->getAllStats();
 
         return Inertia::render('Alertes/Index', [
-            'ramAlerts'  => Inertia::defer(fn() => $this->alertService->getRamAlerts()),
             'diskAlerts' => Inertia::defer(fn() => $this->alertService->getDiskAlerts()),
             'patchWindowsAlerts' => Inertia::defer(fn() => $this->alertService->getPatchWindowsAlerts()),
             'outDateInventoryAlerts' => Inertia::defer(fn() => $this->alertService->getComputersWithoutInventoryUpdate()),
-            'ramStats'              => $stats['ramStats'],
             'diskStats'             => $stats['diskStats'],
             'patchStats'            => $stats['patchStats'],
-            'outDateInventoryStats' => $stats['outDateInventoryStats'],
+'outDateInventoryStats' => $stats['outOfDateInventoryStats'],
             'kpiStats'              => $stats['kpiStats'],
         ]);
     }

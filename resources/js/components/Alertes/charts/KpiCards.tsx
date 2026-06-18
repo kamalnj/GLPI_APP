@@ -100,9 +100,9 @@ export default function KpiCards({ stats }: Props) {
                 ]} />
 
                 <div className="flex flex-col gap-2">
-                    <LegendRow color="#639922" label="Saines"    value={stats.machinesOk} />
-                    <LegendRow color="#EF9F27" label="En alerte" value={stats.machinesAlert} />
-                    <LegendRow color="#E24B4A" label="Critiques" value={stats.machinesCritical} />
+                    <LegendRow color="#639922" label="Machines saines"    value={stats.machinesOk} />
+                    <LegendRow color="#EF9F27" label="Machines en alerte" value={stats.machinesAlert} />
+                    <LegendRow color="#E24B4A" label="Machines critiques" value={stats.machinesCritical} />
                 </div>
 
                 <Divider />

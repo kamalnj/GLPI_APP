@@ -25,16 +25,13 @@ class CollaborateursExportWithPeriod implements
     protected ?string $fromDate;
     protected ?string $toDate;
     protected ?string $search;
-    protected ?int $machinesMin;
-    protected ?int $machinesMax;
 
-    public function __construct(?string $fromDate = null, ?string $toDate = null, ?string $search = null, ?int $machinesMin = null, ?int $machinesMax = null)
+
+    public function __construct(?string $fromDate = null, ?string $toDate = null, ?string $search = null)
     {
         $this->fromDate = $fromDate;
         $this->toDate = $toDate ?? $fromDate;
         $this->search = $search;
-        $this->machinesMin = $machinesMin;
-        $this->machinesMax = $machinesMax;
     }
 
    public function query()
@@ -54,13 +51,7 @@ class CollaborateursExportWithPeriod implements
         $query->where('user_name', 'like', '%' . $this->search . '%');
     }
 
-    if ($this->machinesMin !== null) {
-        $query->havingRaw('SUM(machines_count) >= ?', [$this->machinesMin]);
-    }
 
-    if ($this->machinesMax !== null) {
-        $query->havingRaw('SUM(machines_count) <= ?', [$this->machinesMax]);
-    }
 
     if ($this->fromDate && $this->toDate) {
         $query->whereBetween('date', [

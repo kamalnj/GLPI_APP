@@ -20,16 +20,22 @@ class CollaborateursController extends Controller
    public function index(ListCollaborateursRequest $request)
     {
         return Inertia::render('Collaborateurs/Index', [
+            
             'users' => $this->collabsService->paginate(
                 $request->search(),
                 $request->machinesMin(),
                 $request->machinesMax(),
+                $request->fromDate(),
+                $request->toDate(),
                 $request->perPage()
-            ),
+                
+            ),      
             'filters' => [
                 'search' => $request->query('search'),
                 'machines_min' => $request->query('machines_min'),
                 'machines_max' => $request->query('machines_max'),
+                'from_date' => $request->query('from_date'),
+                'to_date' => $request->query('to_date'),
             ]
         ]);
     }
@@ -39,8 +45,6 @@ class CollaborateursController extends Controller
         $fromDate = $request->query('from_date', null);
         $toDate = $request->query('to_date', null);
         $search = $request->query('search', null);
-        $machinesMin = $request->query('machines_min', null);
-        $machinesMax = $request->query('machines_max', null);
 
         // Valider les dates
         if (!$fromDate) {
@@ -54,7 +58,7 @@ class CollaborateursController extends Controller
         $fileName = "Collaborateurs_{$dateLabel}_" . now()->format('His') . '.xlsx';
 
         return Excel::download(
-            new CollaborateursExportWithPeriod($fromDate, $toDate, $search, $machinesMin, $machinesMax),
+            new CollaborateursExportWithPeriod($fromDate, $toDate, $search),
             $fileName
         );
     }
