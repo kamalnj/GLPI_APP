@@ -21,7 +21,15 @@ class GlpiSyncRAM extends Command
         $batch = max(1, (int) $this->option('batch'));
 
         try {
+            $this->info("Starting GLPI RAM sync...");
+            $this->info("Batch size: {$batch}");
+
             $session = $client->initSession();
+
+            if (!$session) {
+                $this->error("Failed to init GLPI session");
+                return self::FAILURE;
+            }
 
             $computers = Computer::query()
                 ->select(['id', 'glpi_id'])
@@ -30,17 +38,26 @@ class GlpiSyncRAM extends Command
                 ->orderBy('id')
                 ->get();
 
+            $this->info("Computers found: " . $computers->count());
+
             if ($computers->isEmpty()) {
+                $this->warn("No computers found");
                 return self::FAILURE;
             }
 
             foreach ($computers as $computer) {
-                $glpiComputerId = (int) $computer->glpi_id;
 
+                $this->info("======================================");
+                $this->info("Computer ID: {$computer->id} | GLPI: {$computer->glpi_id}");
+
+                $glpiComputerId = (int) $computer->glpi_id;
                 $start = 0;
 
                 while (true) {
+
                     $end = $start + $batch - 1;
+
+                    $this->info("Fetching range: {$start}-{$end}");
 
                     $items = $client->getSubCollection(
                         'Computer',
@@ -53,22 +70,50 @@ class GlpiSyncRAM extends Command
                         ]
                     );
 
-                    if (empty($items)) {
+                    // 🔥 DEBUG RAW RESPONSE
+                    if (!is_array($items)) {
+                        $this->error("Invalid response from GLPI");
+                        dd($items);
+                    }
+
+                    $count = count($items);
+                    $this->info("Items received: {$count}");
+
+                    logger()->info('GLPI RAM batch', [
+                        'computer_id' => $computer->id,
+                        'glpi_id' => $glpiComputerId,
+                        'range' => "{$start}-{$end}",
+                        'count' => $count,
+                        'items' => $items,
+                    ]);
+
+                    if ($count === 0) {
+                        $this->warn("Empty batch, stopping pagination");
                         break;
                     }
 
-
                     foreach ($items as $item) {
+
                         $glpiRamItemId = (int) ($item['id'] ?? 0);
+
                         if ($glpiRamItemId <= 0) {
+                            $this->warn("Invalid RAM item (no ID)");
                             continue;
                         }
 
                         $ramRaw = $item['devicememories_id'] ?? null;
 
-                        $ramName = $this->resolveDropdownName($client, $session, 'DeviceMemory', $ramRaw);
+                        $this->info("RAM raw: " . json_encode($ramRaw));
+
+                        $ramName = $this->resolveDropdownName(
+                            $client,
+                            $session,
+                            'DeviceMemory',
+                            $ramRaw
+                        );
 
                         if (!$ramName) {
+                            $this->warn("RAM name not resolved for item {$glpiRamItemId}");
                             continue;
                         }
 
@@ -76,8 +121,7 @@ class GlpiSyncRAM extends Command
                         $serial = $this->stringOrNull($item['serial'] ?? null);
                         $dateMod = $this->stringOrNull($item['date_mod'] ?? null);
 
-
-                        ComputerRAM::updateOrCreate(
+                        $ram = ComputerRAM::updateOrCreate(
                             ['glpi_id' => $glpiRamItemId],
                             [
                                 'computer_id' => (int) $computer->id,
@@ -86,12 +130,14 @@ class GlpiSyncRAM extends Command
                                 'serial' => $serial,
                                 'date_mod' => $dateMod,
                                 'synced_at' => now(),
-                                
                             ]
                         );
+
+                        $this->info("Saved RAM ID {$ram->id} (GLPI {$glpiRamItemId})");
                     }
 
-                    if (count($items) < $batch) {
+                    if ($count < $batch) {
+                        $this->info("Last batch reached, stopping pagination");
                         break;
                     }
 
@@ -99,16 +145,22 @@ class GlpiSyncRAM extends Command
                 }
             }
 
+            $this->info("SYNC FINISHED SUCCESSFULLY");
+
             return self::SUCCESS;
+
         } catch (Throwable $e) {
+            $this->error("ERROR: " . $e->getMessage());
             report($e);
             return self::FAILURE;
+
         } finally {
             if (is_string($session) && $session !== '') {
                 try {
                     $client->killSession($session);
+                    $this->info("GLPI session closed");
                 } catch (Throwable $e) {
-                    // ignore
+                    $this->warn("Failed to close GLPI session");
                 }
             }
         }
@@ -122,33 +174,43 @@ class GlpiSyncRAM extends Command
         }
 
         $id = $this->toIntOrZero($value);
+
         if ($id <= 0) {
             return null;
         }
 
         $item = $client->getItem($itemtype, $id, $session);
+
         $name = $item['name'] ?? null;
 
-        return is_string($name) && trim($name) !== '' ? trim($name) : null;
+        return is_string($name) && trim($name) !== ''
+            ? trim($name)
+            : null;
     }
 
     private function stringOrNull(mixed $v): ?string
     {
-        if (!is_string($v))
+        if (!is_string($v)) {
             return null;
+        }
+
         $v = trim($v);
+
         return $v === '' ? null : $v;
     }
 
     private function toIntOrZero(mixed $v): int
     {
-        if (is_int($v))
-            return $v;
-        if (is_string($v) && ctype_digit($v))
+        if (is_int($v)) return $v;
+
+        if (is_string($v) && ctype_digit($v)) {
             return (int) $v;
-        if (is_numeric($v))
+        }
+
+        if (is_numeric($v)) {
             return (int) $v;
+        }
+
         return 0;
     }
-
 }
