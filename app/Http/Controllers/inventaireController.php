@@ -10,7 +10,7 @@ use Inertia\Response;
 use Illuminate\Support\Facades\Cache;
 
 
-class inventaireController extends Controller
+class InventaireController extends Controller
 {
     public function index(ListComputersRequest $request, ComputerInventoryService $service, StatsInventaire $statsInventaire): Response
     {
