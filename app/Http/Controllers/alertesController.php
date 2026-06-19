@@ -12,7 +12,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Maatwebsite\Excel\Facades\Excel;
 
-class alertesController extends Controller
+class AlertesController extends Controller
 {
     public function __construct(protected AlertService $alertService, protected AlertStatsService $alertStatsService) {}
     public function exportDisque()
