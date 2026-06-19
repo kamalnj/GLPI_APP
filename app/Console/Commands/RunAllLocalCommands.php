@@ -3,35 +3,35 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 
 class RunAllLocalCommands extends Command
 {
-    protected $signature = 'local:run-all';
-    protected $description = 'Exécute toutes les commandes nécessaires en local';
+    protected $signature = 'prod:run-all';
+    protected $description = 'Exécute toutes les commandes nécessaires en production';
 
     public function handle()
     {
         if (!app()->environment('production')) {
-            $this->error('Cette commande ne peut être exécutée qu’en local.');
+            $this->error('Cette commande ne peut être exécutée qu\'en production.');
             return 1;
         }
 
         $startTime = microtime(true);
 
-        $this->info('Début de l’exécution des commandes locales...');
+        $this->info('Début de l\'exécution des commandes...');
 
         $commands = [
-            // 'glpi:sync-computers',
-            // 'glpi:sync-cpu',
-            // 'glpi:sync-ram',
-            // 'glpi:sync-volumes',
-            // 'glpi:sync-os',
-            // 'glpi:sync-softwares', 
-            // 'glpi:sync-antiviruses',
+            'glpi:sync-computers',
+            'glpi:sync-cpu',
+            'glpi:sync-ram',
+            'glpi:sync-volumes',
+            'glpi:sync-os',
+            'glpi:sync-softwares',
+            'glpi:sync-antiviruses',
             'wazuh:sync-agents',
             'wazuh:link-computers',
-            // 'wazuh:sync-ram',
-            // 'wazuh:sync-vulns',
+            'wazuh:sync-vulns',
         ];
 
         foreach ($commands as $command) {
@@ -39,11 +39,21 @@ class RunAllLocalCommands extends Command
             $this->call($command);
         }
 
-        $endTime = microtime(true);
-        $executionTime = $endTime - $startTime;
-        $this->info("Temps d'exécution total: " . round($executionTime, 2) . " secondes");
+        // ✅ Post-sync : cache automatique
+        $this->newLine();
+        $this->info('🧹 Nettoyage du cache...');
+        $this->call('optimize:clear');
 
-        $this->info('Toutes les commandes locales ont été exécutées avec succès !');
+        $this->info('⚡ Reconstruction du cache...');
+        $this->call('optimize');
+
+        $endTime = microtime(true);
+        $executionTime = round($endTime - $startTime, 2);
+
+        $this->newLine();
+        $this->info("✅ Toutes les commandes exécutées avec succès !");
+        $this->info("⏱️  Temps total : {$executionTime} secondes");
+
         return 0;
     }
 }

@@ -5,13 +5,10 @@ services:
       context: .
       dockerfile: docker/php/Dockerfile
     container_name: laravel_app
-    ports:
-      - "5173:5173" 
     volumes:
       - .:/var/www
     depends_on:
-      mysql:
-        condition: service_healthy
+      - mysql
 
   nginx:
     image: nginx:stable
@@ -24,23 +21,17 @@ services:
     depends_on:
       - app
 
-  mysql:                                
+  mysql:
     image: mysql:8
     container_name: mysql
     restart: always
     environment:
       MYSQL_DATABASE: app
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_ROOT_HOST: "%"
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
 
 volumes:
   mysql_data:

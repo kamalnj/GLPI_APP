@@ -21,7 +21,7 @@ class LinkComputersToAgents extends Command
             $computer = Computer::where('name', $agent->name)->first();
 
             if (!$computer) {
-                $this->warn("Computer not found: ".$agent->name);
+                $this->warn("Computer not found: " . $agent->name);
                 continue;
             }
 
@@ -30,10 +30,8 @@ class LinkComputersToAgents extends Command
             ]);
 
             $this->info("Linked {$agent->name}");
-
         }
 
         $this->info("Linking finished");
-
     }
 }

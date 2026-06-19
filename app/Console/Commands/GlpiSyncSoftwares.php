@@ -97,7 +97,8 @@ class GlpiSyncSoftwares extends Command
                 )));
 
                 $uncachedSvIds = array_values(array_filter(
-                    $svIds, fn($id) => !isset($this->svCache[$id])
+                    $svIds,
+                    fn($id) => !isset($this->svCache[$id])
                 ));
 
                 if (!empty($uncachedSvIds)) {
@@ -112,7 +113,8 @@ class GlpiSyncSoftwares extends Command
                 )));
 
                 $uncachedSwIds = array_values(array_filter(
-                    $swIds, fn($id) => !isset($this->swCache[$id])
+                    $swIds,
+                    fn($id) => !isset($this->swCache[$id])
                 ));
 
                 if (!empty($uncachedSwIds)) {
@@ -191,7 +193,6 @@ class GlpiSyncSoftwares extends Command
             $this->info("   Cache — SoftwareVersion: " . count($this->svCache) . " | Software: " . count($this->swCache));
 
             return self::SUCCESS;
-
         } catch (Throwable $e) {
             $this->error('❌ Sync failed: ' . $e->getMessage());
             return self::FAILURE;

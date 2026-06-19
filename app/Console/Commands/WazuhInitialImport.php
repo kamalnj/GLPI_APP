@@ -17,10 +17,11 @@ class WazuhInitialImport extends Command
 
     public function handle()
     {
-
         $service = new WazuhIndexerService();
 
         $scrollId = null;
+
+        $total = 0;
 
         do {
 
@@ -30,54 +31,63 @@ class WazuhInitialImport extends Command
 
             $hits = $result['hits']['hits'] ?? [];
 
-         foreach ($hits as $hit) {
+            foreach ($hits as $hit) {
 
-    $data = $hit['_source'];
+                $data = $hit['_source'];
 
-    $wazuhAgentId = ltrim($data['agent']['id'], '0');
+                $wazuhAgentId = ltrim($data['agent']['id'], '0');
 
-    $agent = Agents::where('wazuh_agent_id', $wazuhAgentId)->first();
+                $agent = Agents::where('wazuh_agent_id', $wazuhAgentId)->first();
 
-    if (!$agent) {
-        $this->warn("Agent not found: " . $wazuhAgentId);
-        continue;
-    }
+                if (!$agent) {
+                    $this->warn("Agent not found: {$wazuhAgentId}");
+                    continue;
+                }
 
-    $cve = $data['vulnerability']['id'] ?? null;
+                $cve = $data['vulnerability']['id'] ?? null;
 
-    if (!$cve) {
-        continue;
-    }
+                if (!$cve) {
+                    continue;
+                }
 
-    $vuln = Vulnerabilite::updateOrCreate(
-        ['cve' => $cve],
-        [
-            'severity' => $data['vulnerability']['severity'] ?? null,
-            'score' => $data['vulnerability']['score']['base'] ?? null,
-            'description' => $data['vulnerability']['description'] ?? null
-        ]
-    );
+                $vuln = Vulnerabilite::updateOrCreate(
+                    ['cve' => $cve],
+                    [
+                        'severity' => $data['vulnerability']['severity'] ?? null,
+                        'score' => $data['vulnerability']['score']['base'] ?? null,
+                        'description' => $data['vulnerability']['description'] ?? null,
+                    ]
+                );
 
-    AgentVulne::updateOrCreate(
-        [
-            'agent_id' => $agent->id,
-            'vulnerability_id' => $vuln->id
-        ],
-        [
-            'package' => $data['package']['name'] ?? null,
-            'package_version' => $data['package']['version'] ?? null,
-            'detected_at' => isset($data['vulnerability']['detected_at']) 
-                ? Carbon::parse($data['vulnerability']['detected_at'])->format('Y-m-d H:i:s') 
-                : now(),
-        ]
-    );
+                AgentVulne::updateOrCreate(
+                    [
+                        'agent_id' => $agent->id,
+                        'vulnerability_id' => $vuln->id,
+                    ],
+                    [
+                        'package' => $data['package']['name'] ?? null,
+                        'package_version' => $data['package']['version'] ?? null,
+                        'detected_at' => isset($data['vulnerability']['detected_at'])
+                            ? Carbon::parse($data['vulnerability']['detected_at'])
+                            : now(),
 
-}
+                        /**
+                         * IMPORTANT:
+                         * Initial import = on initialise last_seen_at
+                         * mais on NE gère PAS resolved ici
+                         */
+                        'last_seen_at' => now(),
+                        'active' => true,
+                    ]
+                );
 
-            $this->info("Batch processed : " . count($hits));
+                $total++;
+            }
 
+            $this->info("Batch processed: " . count($hits));
         } while (!empty($hits));
 
         $this->info("Initial import finished");
+        $this->info("Total imported: {$total}");
     }
 }

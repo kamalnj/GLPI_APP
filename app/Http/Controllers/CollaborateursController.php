@@ -12,15 +12,15 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class CollaborateursController extends Controller
 {
-       public function __construct(
+    public function __construct(
         protected CollabsService $collabsService,
         protected CollabDetails $collabDetails
     ) {}
 
-   public function index(ListCollaborateursRequest $request)
+    public function index(ListCollaborateursRequest $request)
     {
         return Inertia::render('Collaborateurs/Index', [
-            
+
             'users' => $this->collabsService->paginate(
                 $request->search(),
                 $request->machinesMin(),
@@ -28,8 +28,8 @@ class CollaborateursController extends Controller
                 $request->fromDate(),
                 $request->toDate(),
                 $request->perPage()
-                
-            ),      
+
+            ),
             'filters' => [
                 'search' => $request->query('search'),
                 'machines_min' => $request->query('machines_min'),
@@ -51,7 +51,7 @@ class CollaborateursController extends Controller
             return redirect()->back()->withErrors(['error' => 'Veuillez sélectionner une date']);
         }
 
-        $dateLabel = $toDate && $toDate !== $fromDate 
+        $dateLabel = $toDate && $toDate !== $fromDate
             ? "Du {$fromDate} au {$toDate}"
             : $fromDate;
 
@@ -64,12 +64,12 @@ class CollaborateursController extends Controller
     }
 
     public function show(Request $request, string $user)
-{
-    $mode = $request->input('mode', 'current'); 
+    {
+        $mode = $request->input('mode', 'current');
 
-    return Inertia::render('Collaborateurs/Show', [
-        ...$this->collabDetails->getUserDetails($user, $mode),
-        'mode' => $mode
-    ]);
-}
+        return Inertia::render('Collaborateurs/Show', [
+            ...$this->collabDetails->getUserDetails($user, $mode),
+            'mode' => $mode
+        ]);
+    }
 }

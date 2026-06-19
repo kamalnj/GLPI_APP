@@ -2,7 +2,7 @@ export default function StatCard({
     icon,
     label,
     count,
-    color
+    color,
 }: {
     icon: React.ReactNode;
     label: string;
@@ -10,7 +10,9 @@ export default function StatCard({
     color: string;
 }) {
     return (
-        <div className={`flex items-center gap-4 px-5 py-4 rounded-xl border ${color} bg-white shadow-sm`}>
+        <div
+            className={`flex items-center gap-4 rounded-xl border px-5 py-4 ${color} bg-white shadow-sm`}
+        >
             <div className="text-2xl">{icon}</div>
             <div>
                 <p className="text-2xl font-bold text-gray-800">{count}</p>

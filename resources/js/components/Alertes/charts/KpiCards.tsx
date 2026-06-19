@@ -6,7 +6,11 @@ interface Props {
 }
 
 // ── Barre segmentée ──────────────────────────────────────────────────────────
-function SegBar({ segments }: { segments: { value: number; color: string }[] }) {
+function SegBar({
+    segments,
+}: {
+    segments: { value: number; color: string }[];
+}) {
     const total = segments.reduce((s, seg) => s + seg.value, 0);
     if (total === 0) return null;
 
@@ -67,9 +71,9 @@ function Divider() {
 
 // ── Label de santé ───────────────────────────────────────────────────────────
 function healthLabel(pct: number): { text: string; color: string } {
-    if (pct >= 90) return { text: 'Bon',         color: '#3B6D11' };
-    if (pct >= 70) return { text: 'Acceptable',  color: '#854F0B' };
-    return              { text: 'Critique',     color: '#A32D2D' };
+    if (pct >= 90) return { text: 'Bon', color: '#3B6D11' };
+    if (pct >= 70) return { text: 'Acceptable', color: '#854F0B' };
+    return { text: 'Critique', color: '#A32D2D' };
 }
 
 // ── Composant principal ──────────────────────────────────────────────────────
@@ -78,31 +82,50 @@ export default function KpiCards({ stats }: Props) {
 
     return (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-
             {/* Card 1 — Santé globale */}
             <div className="flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-5">
                 <p className="text-xs text-gray-500">Santé du parc</p>
 
                 <div>
-                    <span className="text-[42px] font-medium leading-none" style={{ color: health.color }}>
+                    <span
+                        className="text-[42px] leading-none font-medium"
+                        style={{ color: health.color }}
+                    >
                         {stats.healthPct}
                     </span>
                     <span className="ml-0.5 text-lg text-gray-400">%</span>
-                    <p className="mt-1.5 text-sm font-medium" style={{ color: health.color }}>
+                    <p
+                        className="mt-1.5 text-sm font-medium"
+                        style={{ color: health.color }}
+                    >
                         {health.text}
                     </p>
                 </div>
 
-                <SegBar segments={[
-                    { value: stats.machinesOk,       color: '#639922' },
-                    { value: stats.machinesAlert,     color: '#EF9F27' },
-                    { value: stats.machinesCritical,  color: '#E24B4A' },
-                ]} />
+                <SegBar
+                    segments={[
+                        { value: stats.machinesOk, color: '#639922' },
+                        { value: stats.machinesAlert, color: '#EF9F27' },
+                        { value: stats.machinesCritical, color: '#E24B4A' },
+                    ]}
+                />
 
                 <div className="flex flex-col gap-2">
-                    <LegendRow color="#639922" label="Machines saines"    value={stats.machinesOk} />
-                    <LegendRow color="#EF9F27" label="Machines en alerte" value={stats.machinesAlert} />
-                    <LegendRow color="#E24B4A" label="Machines critiques" value={stats.machinesCritical} />
+                    <LegendRow
+                        color="#639922"
+                        label="Machines saines"
+                        value={stats.machinesOk}
+                    />
+                    <LegendRow
+                        color="#EF9F27"
+                        label="Machines en alerte"
+                        value={stats.machinesAlert}
+                    />
+                    <LegendRow
+                        color="#E24B4A"
+                        label="Machines critiques"
+                        value={stats.machinesCritical}
+                    />
                 </div>
 
                 <Divider />
@@ -117,24 +140,39 @@ export default function KpiCards({ stats }: Props) {
                 <p className="text-xs text-gray-500">Alertes actives</p>
 
                 <div>
-                    <span className="text-[42px] font-medium leading-none text-red-800">
+                    <span className="text-[42px] leading-none font-medium text-red-800">
                         {stats.totalCritical}
                     </span>
-                    <p className="mt-1.5 text-sm font-medium text-red-800">critiques</p>
+                    <p className="mt-1.5 text-sm font-medium text-red-800">
+                        critiques
+                    </p>
                 </div>
 
                 <Divider />
 
                 <div className="flex flex-col gap-2">
-                    <LegendRow icon={<HardDrive   size={13} />} label="Disques"   value={stats.countDisk} />
-                    <LegendRow icon={<Download    size={13} />} label="Patches"   value={stats.countPatch} />
-                    <LegendRow icon={<Clock       size={13} />} label="Inventaire" value={stats.countInventory} />
+                    <LegendRow
+                        icon={<HardDrive size={13} />}
+                        label="Disques"
+                        value={stats.countDisk}
+                    />
+                    <LegendRow
+                        icon={<Download size={13} />}
+                        label="Patches"
+                        value={stats.countPatch}
+                    />
+                    <LegendRow
+                        icon={<Clock size={13} />}
+                        label="Inventaire"
+                        value={stats.countInventory}
+                    />
                 </div>
 
                 <Divider />
                 <CardFoot>
                     <Clock size={11} />
-                    Total : {stats.totalCritical + stats.totalAlert} alertes ouvertes
+                    Total : {stats.totalCritical + stats.totalAlert} alertes
+                    ouvertes
                 </CardFoot>
             </div>
 
@@ -143,7 +181,7 @@ export default function KpiCards({ stats }: Props) {
                 <p className="text-xs text-gray-500">Machines concernées</p>
 
                 <div>
-                    <span className="text-[42px] font-medium leading-none text-gray-800">
+                    <span className="text-[42px] leading-none font-medium text-gray-800">
                         {stats.machinesWithAlerts}
                     </span>
                     <p className="mt-1.5 text-sm text-gray-500">
@@ -151,16 +189,30 @@ export default function KpiCards({ stats }: Props) {
                     </p>
                 </div>
 
-                <SegBar segments={[
-                    { value: stats.machinesCritical,  color: '#E24B4A' },
-                    { value: stats.machinesAlert,     color: '#EF9F27' },
-                    { value: stats.machinesOk,        color: '#D3D1C7' },
-                ]} />
+                <SegBar
+                    segments={[
+                        { value: stats.machinesCritical, color: '#E24B4A' },
+                        { value: stats.machinesAlert, color: '#EF9F27' },
+                        { value: stats.machinesOk, color: '#D3D1C7' },
+                    ]}
+                />
 
                 <div className="flex flex-col gap-2">
-                    <LegendRow color="#E24B4A" label="Niveau critique" value={stats.machinesCritical} />
-                    <LegendRow color="#EF9F27" label="Niveau alerte"   value={stats.machinesAlert} />
-                    <LegendRow color="#D3D1C7" label="OK"              value={stats.machinesOk} />
+                    <LegendRow
+                        color="#E24B4A"
+                        label="Niveau critique"
+                        value={stats.machinesCritical}
+                    />
+                    <LegendRow
+                        color="#EF9F27"
+                        label="Niveau alerte"
+                        value={stats.machinesAlert}
+                    />
+                    <LegendRow
+                        color="#D3D1C7"
+                        label="OK"
+                        value={stats.machinesOk}
+                    />
                 </div>
 
                 <Divider />
@@ -169,7 +221,6 @@ export default function KpiCards({ stats }: Props) {
                     Données actuelles
                 </CardFoot>
             </div>
-
         </div>
     );
 }

@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 class Vulnerabilite extends Model
-{      
-        protected $table = 'vulnerabilities';
+{
+    protected $table = 'vulnerabilities';
 
     protected $fillable = [
         'cve',
@@ -14,10 +14,10 @@ class Vulnerabilite extends Model
         'score',
         'description',
     ];
-        public function agentVulnerabilities()
-        {
-            return $this->hasMany(AgentVulne::class, 'vulnerability_id', 'id');
-        }
+    public function agentVulnerabilities()
+    {
+        return $this->hasMany(AgentVulne::class, 'vulnerability_id', 'id');
+    }
     public function agents()
     {
         return $this->belongsToMany(

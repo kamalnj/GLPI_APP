@@ -24,5 +24,4 @@ class SoftwareApplication extends Model
     {
         return $this->belongsTo(Computer::class);
     }
-    
 }

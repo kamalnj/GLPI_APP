@@ -9,13 +9,9 @@ interface Props {
 }
 
 export default function StatsCards({ overview }: Props) {
-    const hours = Math.floor(
-        overview.total_active_seconds / 3600
-    );
+    const hours = Math.floor(overview.total_active_seconds / 3600);
 
-    const minutes = Math.floor(
-        (overview.total_active_seconds % 3600) / 60
-    );
+    const minutes = Math.floor((overview.total_active_seconds % 3600) / 60);
 
     const cards = [
         {

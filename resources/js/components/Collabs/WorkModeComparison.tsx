@@ -23,10 +23,13 @@ export default function WorkModeComparison({
 }: Props) {
     const total = onsite_hours + remote_hours;
 
-    const { onsitePercent, remotePercent } = useMemo(() => ({
-        onsitePercent: total ? (onsite_hours / total) * 100 : 0,
-        remotePercent: total ? (remote_hours / total) * 100 : 0,
-    }), [onsite_hours, remote_hours, total]);
+    const { onsitePercent, remotePercent } = useMemo(
+        () => ({
+            onsitePercent: total ? (onsite_hours / total) * 100 : 0,
+            remotePercent: total ? (remote_hours / total) * 100 : 0,
+        }),
+        [onsite_hours, remote_hours, total],
+    );
 
     const switchMode = useCallback(
         (newMode: 'current' | 'previous') => {
@@ -34,10 +37,10 @@ export default function WorkModeComparison({
             router.get(
                 `/collaborateurs/${userName}`,
                 { mode: newMode },
-                { preserveState: true, replace: true }
+                { preserveState: true, replace: true },
             );
         },
-        [mode, userName]
+        [mode, userName],
     );
 
     return (
@@ -60,7 +63,7 @@ export default function WorkModeComparison({
                                 key={key}
                                 onClick={() => switchMode(key)}
                                 aria-pressed={mode === key}
-                                className={`rounded-md px-3 py-1 text-xs font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                                className={`rounded-md px-3 py-1 text-xs font-medium transition-all focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none ${
                                     mode === key
                                         ? 'bg-background text-foreground shadow-sm'
                                         : 'text-muted-foreground hover:text-foreground'
@@ -90,9 +93,11 @@ export default function WorkModeComparison({
                                         On-site
                                     </span>
                                 </div>
-                                <p className="text-2xl font-bold tabular-nums text-emerald-600 dark:text-emerald-400">
+                                <p className="text-2xl font-bold text-emerald-600 tabular-nums dark:text-emerald-400">
                                     {onsite_hours}
-                                    <span className="text-sm font-medium">h</span>
+                                    <span className="text-sm font-medium">
+                                        h
+                                    </span>
                                 </p>
                                 <p className="mt-0.5 text-xs text-muted-foreground">
                                     {onsitePercent.toFixed(1)}% du total
@@ -108,9 +113,11 @@ export default function WorkModeComparison({
                                         Remote
                                     </span>
                                 </div>
-                                <p className="text-2xl font-bold tabular-nums text-blue-600 dark:text-blue-400">
+                                <p className="text-2xl font-bold text-blue-600 tabular-nums dark:text-blue-400">
                                     {remote_hours}
-                                    <span className="text-sm font-medium">h</span>
+                                    <span className="text-sm font-medium">
+                                        h
+                                    </span>
                                 </p>
                                 <p className="mt-0.5 text-xs text-muted-foreground">
                                     {remotePercent.toFixed(1)}% du total

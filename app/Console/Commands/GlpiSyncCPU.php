@@ -102,11 +102,9 @@ class GlpiSyncCPU extends Command
             }
 
             return self::SUCCESS;
-
         } catch (Throwable $e) {
             report($e);
             return self::FAILURE;
-
         } finally {
             if (is_string($session) && $session !== '') {
                 try {
@@ -151,25 +149,24 @@ class GlpiSyncCPU extends Command
         return 0;
     }
     private function detectCpuTier(?string $cpuName): ?string
-{
-    if (!is_string($cpuName) || trim($cpuName) === '') return null;
+    {
+        if (!is_string($cpuName) || trim($cpuName) === '') return null;
 
-    $s = strtolower($cpuName);
+        $s = strtolower($cpuName);
 
-    // Intel Core i3/i5/i7/i9
-    if (preg_match('/\bi\s*(3|5|7|9)\b/', $s, $m)) {
-        return 'i' . $m[1];
+        // Intel Core i3/i5/i7/i9
+        if (preg_match('/\bi\s*(3|5|7|9)\b/', $s, $m)) {
+            return 'i' . $m[1];
+        }
+
+        // AMD Ryzen 3/5/7/9
+        if (preg_match('/\bryzen\s*(3|5|7|9)\b/', $s, $m)) {
+            return 'ryzen' . $m[1];
+        }
+
+        // Xeon (optionnel)
+        if (str_contains($s, 'xeon')) return 'xeon';
+
+        return 'other';
     }
-
-    // AMD Ryzen 3/5/7/9
-    if (preg_match('/\bryzen\s*(3|5|7|9)\b/', $s, $m)) {
-        return 'ryzen' . $m[1];
-    }
-
-    // Xeon (optionnel)
-    if (str_contains($s, 'xeon')) return 'xeon';
-
-    return 'other';
-}
-
 }

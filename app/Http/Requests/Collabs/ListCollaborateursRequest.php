@@ -52,15 +52,15 @@ class ListCollaborateursRequest extends FormRequest
         return (int) ($this->validated('perPage') ?? 20);
     }
 
-  public function fromDate(): ?\DateTime
-{
-    $val = $this->validated('from_date');
-    return $val !== null ? new \DateTime($val) : null;
-}
+    public function fromDate(): ?\DateTime
+    {
+        $val = $this->validated('from_date');
+        return $val !== null ? new \DateTime($val) : null;
+    }
 
-public function toDate(): ?\DateTime
-{
-    $val = $this->validated('to_date');
-    return $val !== null ? new \DateTime($val) : null;
-}
+    public function toDate(): ?\DateTime
+    {
+        $val = $this->validated('to_date');
+        return $val !== null ? new \DateTime($val) : null;
+    }
 }

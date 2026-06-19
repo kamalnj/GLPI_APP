@@ -111,7 +111,8 @@ class GlpiApi
      * GET sub-collection: /apirest.php/{parentType}/{parentId}/{childType}
      * Example: /Computer/1/Item_Disk
      */
-    public function getSubCollection(string $parentType,int $parentId,string $childType,string $sessionToken,array $query = []): array {
+    public function getSubCollection(string $parentType, int $parentId, string $childType, string $sessionToken, array $query = []): array
+    {
         /** @var Response $res */
         $res = $this->http()
             ->withHeaders(['Session-Token' => $sessionToken])
@@ -139,38 +140,38 @@ class GlpiApi
         if (empty($ids)) {
             return [];
         }
- 
+
         // Construit items[0][itemtype]=X&items[0][items_id]=1&...
         $params = $query;
- 
+
         foreach (array_values($ids) as $index => $id) {
             $params["items[{$index}][itemtype]"]  = $itemtype;
             $params["items[{$index}][items_id]"]  = $id;
         }
- 
+
         /** @var Response $res */
         $res = $this->http()
             ->withHeaders(['Session-Token' => $sessionToken])
             ->get($this->baseUrl . '/apirest.php/getMultipleItems', $params);
- 
+
         $res->throw();
- 
+
         $data = $res->json();
- 
+
         return is_array($data) ? $data : [];
     }
- 
-public function search(string $itemType, string $sessionToken, array $params = [])
-{
-    /** @var Response $res */
-    $res = $this->http()
-        ->withHeaders(['Session-Token' => $sessionToken])
-        ->get($this->baseUrl . '/apirest.php/search/' . trim($itemType, '/'), $params);
 
-    $res->throw();
+    public function search(string $itemType, string $sessionToken, array $params = [])
+    {
+        /** @var Response $res */
+        $res = $this->http()
+            ->withHeaders(['Session-Token' => $sessionToken])
+            ->get($this->baseUrl . '/apirest.php/search/' . trim($itemType, '/'), $params);
 
-    $data = $res->json();
+        $res->throw();
 
-    return is_array($data) ? $data : [];
-}
+        $data = $res->json();
+
+        return is_array($data) ? $data : [];
+    }
 }

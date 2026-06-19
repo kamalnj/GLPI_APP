@@ -14,17 +14,14 @@ export default function MachinesPanel({
     pageSize,
 }: MachinesPanelProps) {
     return (
-        <div
-            role="tabpanel"
-            id="panel-machines"
-            aria-labelledby="tab-machines"
-        >
+        <div role="tabpanel" id="panel-machines" aria-labelledby="tab-machines">
             {visibleMachines.length > 0 ? (
                 <>
                     <MachinesTable machines={visibleMachines} />
                     {machines.length > pageSize && (
                         <p className="mt-2 text-center text-xs text-muted-foreground">
-                            Affichage de {pageSize} sur {machines.length} machines
+                            Affichage de {pageSize} sur {machines.length}{' '}
+                            machines
                         </p>
                     )}
                 </>

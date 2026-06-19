@@ -12,19 +12,21 @@ class StatsInventaire
     {
         return Computer::count();
     }
-    
+
     public function getCountComputersVulnerable()
     {
-        return Computer::whereHas('vulnerabilities')->count();
+        return Computer::whereHas('vulnerabilities', function ($q) {
+            $q->where('agent_vulnerabilities.active', true);
+        })->count();
     }
-    
+
     public function getCountComputersWithoutSophos()
     {
         return Computer::whereDoesntHave('antiviruses', function ($query) {
             $query->where('name', 'like', '%Sophos%');
         })->count();
     }
-    
+
     public function getAllComputersByGroupe()
     {
         // Use raw COUNT for efficiency

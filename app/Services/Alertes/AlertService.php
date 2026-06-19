@@ -81,10 +81,10 @@ class AlertService
                 'synced_at'    => $patch->synced_at,
             ]);
     }
-public function getComputersWithoutInventoryUpdate()
-{
-    return Computer::select('id', 'name', 'last_inventory_update','synced_at')
-        ->where('last_inventory_update', '<=', now()->subDays(7))
-        ->get();
-}
+    public function getComputersWithoutInventoryUpdate()
+    {
+        return Computer::select('id', 'name', 'last_inventory_update', 'synced_at')
+            ->where('last_inventory_update', '<=', now()->subDays(7))
+            ->get();
+    }
 }

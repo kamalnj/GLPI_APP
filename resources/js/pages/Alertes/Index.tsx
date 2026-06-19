@@ -2,13 +2,7 @@ import { useState, useMemo, lazy, Suspense } from 'react';
 import { Head } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
-import {
-    HardDrive,
-    MemoryStick,
-    XCircle,
-    Download,
-    Clock,
-} from 'lucide-react';
+import { HardDrive, MemoryStick, XCircle, Download, Clock } from 'lucide-react';
 import {
     DiskAlert,
     KpiStats,
@@ -114,7 +108,6 @@ export default function Index({
     const [activeTab, setActiveTab] = useState<
         'disk' | 'patchwindows' | 'outdateinventory'
     >('disk');
-
 
     const tabs = [
         {

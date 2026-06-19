@@ -147,7 +147,7 @@ class AlertStatsService
                 // Card 2 — active alerts (summed across all sources, not deduplicated)
                 'totalCritical'      => $totalCritical,
                 'totalAlert'         => $totalAlert,
-                'countDisk'          => $diskCritical ,
+                'countDisk'          => $diskCritical,
                 'countPatch'         => $patchCritical,
                 'countInventory'     => $inventoryOutOfDate,
 

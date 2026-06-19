@@ -37,8 +37,8 @@ function AgeBadge({ detectedAt }: { detectedAt: string | null }) {
         days > 90
             ? 'text-red-500 bg-red-50'
             : days > 30
-                ? 'text-amber-600 bg-amber-50'
-                : 'text-gray-500 bg-gray-100';
+              ? 'text-amber-600 bg-amber-50'
+              : 'text-gray-500 bg-gray-100';
     return (
         <span
             className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${color}`}

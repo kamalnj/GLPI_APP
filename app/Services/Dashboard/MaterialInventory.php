@@ -20,7 +20,10 @@ class MaterialInventory
      */
     public function numberOfDifferentModels()
     {
-        return Cache::remember('dashboard.different_models_count', self::CACHE_TTL, fn() => 
+        return Cache::remember(
+            'dashboard.different_models_count',
+            self::CACHE_TTL,
+            fn() =>
             Computer::distinct('computer_model')->count('computer_model')
         );
     }
@@ -30,7 +33,10 @@ class MaterialInventory
      */
     public function topModel()
     {
-        return Cache::remember('dashboard.top_model', self::CACHE_TTL, fn() =>
+        return Cache::remember(
+            'dashboard.top_model',
+            self::CACHE_TTL,
+            fn() =>
             Computer::select('computer_model')
                 ->selectRaw('COUNT(*) as count')
                 ->groupBy('computer_model')
@@ -44,7 +50,10 @@ class MaterialInventory
      */
     public function modelRepartitionTop10()
     {
-        return Cache::remember('dashboard.model_repartition_top10', self::CACHE_TTL, fn() =>
+        return Cache::remember(
+            'dashboard.model_repartition_top10',
+            self::CACHE_TTL,
+            fn() =>
             Computer::select('computer_model')
                 ->selectRaw('COUNT(*) as count')
                 ->groupBy('computer_model')
@@ -66,7 +75,10 @@ class MaterialInventory
      */
     public function ramByNumberOfDevices()
     {
-        return Cache::remember('dashboard.ram_distribution', self::CACHE_TTL, fn() =>
+        return Cache::remember(
+            'dashboard.ram_distribution',
+            self::CACHE_TTL,
+            fn() =>
             DB::table('computer_rams')
                 ->select(
                     DB::raw('CASE 

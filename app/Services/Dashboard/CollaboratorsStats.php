@@ -52,9 +52,9 @@ class CollaboratorsStats
                     'n',
                     function ($join) {
                         $join->on('d.user_name', '=', 'n.user_name')
-                             ->on('d.machine_name', '=', 'n.machine_name')
-                             ->on(DB::raw('CAST(d.date AS DATE)'), '=', 'n.day')
-                             ->where('n.rn', '=', 1);
+                            ->on('d.machine_name', '=', 'n.machine_name')
+                            ->on(DB::raw('CAST(d.date AS DATE)'), '=', 'n.day')
+                            ->where('n.rn', '=', 1);
                     }
                 )
                 ->whereBetween('d.date', [$start, $end])
@@ -95,39 +95,39 @@ class CollaboratorsStats
     /**
      * Get top N active users
      */
-private function getTopActiveUsers(int $limit = 10): array
-{
-    $month = now()->month;
-    $year  = now()->year;
+    private function getTopActiveUsers(int $limit = 10): array
+    {
+        $month = now()->month;
+        $year  = now()->year;
 
-    return Cache::remember("collabs_top_active_users_{$limit}_{$year}_{$month}", self::CACHE_TTL, function () use ($limit, $month, $year) {
-        return DB::connection('sqlsrv')
-            ->table('vw_user_daily_activity')
-            ->select([
-                'user_name',
-                DB::raw('SUM(active_seconds) as active_seconds'),
-                DB::raw('MAX(machines_count) as machines_count'),
-            ])
-            ->whereMonth('date', $month)   // 👈 on the query
-            ->whereYear('date', $year)     // 👈 on the query
-            ->groupBy('user_name')         // 👈 group by user
-            ->orderByDesc('active_seconds')
-            ->limit($limit)
-            ->get()
-            ->map(function ($user) {
-                $hours = floor($user->active_seconds / 3600);
-                $minutes = floor(($user->active_seconds % 3600) / 60);
+        return Cache::remember("collabs_top_active_users_{$limit}_{$year}_{$month}", self::CACHE_TTL, function () use ($limit, $month, $year) {
+            return DB::connection('sqlsrv')
+                ->table('vw_user_daily_activity')
+                ->select([
+                    'user_name',
+                    DB::raw('SUM(active_seconds) as active_seconds'),
+                    DB::raw('MAX(machines_count) as machines_count'),
+                ])
+                ->whereMonth('date', $month)   // 👈 on the query
+                ->whereYear('date', $year)     // 👈 on the query
+                ->groupBy('user_name')         // 👈 group by user
+                ->orderByDesc('active_seconds')
+                ->limit($limit)
+                ->get()
+                ->map(function ($user) {
+                    $hours = floor($user->active_seconds / 3600);
+                    $minutes = floor(($user->active_seconds % 3600) / 60);
 
-                return [
-                    'user_name'      => $user->user_name,
-                    'active_seconds' => $user->active_seconds,
-                    'active_time'    => "{$hours}h {$minutes}m",
-                    'machines_count' => $user->machines_count ?? 0,
-                ];
-            })
-            ->toArray();
-    });
-}
+                    return [
+                        'user_name'      => $user->user_name,
+                        'active_seconds' => $user->active_seconds,
+                        'active_time'    => "{$hours}h {$minutes}m",
+                        'machines_count' => $user->machines_count ?? 0,
+                    ];
+                })
+                ->toArray();
+        });
+    }
 
     /**
      * Get users with most unlocks (last 30 days)
@@ -154,7 +154,7 @@ private function getTopActiveUsers(int $limit = 10): array
                         'user_name' => $user->user_name,
                         'total_unlocks' => $user->total_unlocks ?? 0,
                         'active_days' => $user->active_days ?? 0,
-                        'avg_unlocks_per_day' => $user->active_days > 0 
+                        'avg_unlocks_per_day' => $user->active_days > 0
                             ? round(($user->total_unlocks ?? 0) / $user->active_days, 2)
                             : 0,
                     ];
@@ -191,7 +191,7 @@ private function getTopActiveUsers(int $limit = 10): array
                 )
                 ->where(function ($query) {
                     $query->whereNull('activity.last_30_active_seconds')
-                          ->orWhereRaw('activity.last_30_active_seconds < 3600'); // Less than 1 hour
+                        ->orWhereRaw('activity.last_30_active_seconds < 3600'); // Less than 1 hour
                 })
                 ->limit(20)
                 ->get()

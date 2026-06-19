@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
@@ -8,30 +9,28 @@ use App\Models\Agents;
 class SyncWazuhAgents extends Command
 {
 
-    protected $signature='wazuh:sync-agents';
+    protected $signature = 'wazuh:sync-agents';
 
     public function handle()
     {
 
-        $service=new WazuhApiService();
+        $service = new WazuhApiService();
 
-        $agents=$service->getAgents();
+        $agents = $service->getAgents();
 
-        foreach($agents as $agent){
+        foreach ($agents as $agent) {
 
             Agents::updateOrCreate(
-                ['wazuh_agent_id'=>$agent['id']],
+                ['wazuh_agent_id' => $agent['id']],
                 [
-                    'name'=>$agent['name'] ?? null,
-                    'ip'=>$agent['ip'] ?? null,
-                    'os'=>$agent['os']['name'] ?? null,
-                    'synced_at'=>now()
+                    'name' => $agent['name'] ?? null,
+                    'ip' => $agent['ip'] ?? null,
+                    'os' => $agent['os']['name'] ?? null,
+                    'synced_at' => now()
                 ]
             );
-
         }
 
         $this->info("Agents synced");
-
     }
 }

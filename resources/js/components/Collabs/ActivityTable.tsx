@@ -44,7 +44,7 @@ function getLabel(a: Activity, type: 'day' | 'week' | 'month') {
 
 export default function ActivityTable({ activities, type = 'day' }: Props) {
     const parentRef = useRef<HTMLDivElement>(null);
-    
+
     const formattedActivities = useMemo(() => {
         return activities.map((a) => ({
             ...a,
@@ -64,7 +64,7 @@ export default function ActivityTable({ activities, type = 'day' }: Props) {
     const totalSize = virtualizer.getTotalSize();
 
     const paddingTop =
-        virtualItems.length > 0 ? virtualItems?.[0]?.start ?? 0 : 0;
+        virtualItems.length > 0 ? (virtualItems?.[0]?.start ?? 0) : 0;
     const paddingBottom =
         virtualItems.length > 0
             ? totalSize - (virtualItems?.[virtualItems.length - 1]?.end ?? 0)
@@ -91,7 +91,9 @@ export default function ActivityTable({ activities, type = 'day' }: Props) {
                     }}
                 >
                     <Table>
-                        <TableHeader style={{ position: 'sticky', top: 0, zIndex: 10 }}>
+                        <TableHeader
+                            style={{ position: 'sticky', top: 0, zIndex: 10 }}
+                        >
                             <TableRow>
                                 <TableHead>Période</TableHead>
                                 <TableHead>Temps actif</TableHead>

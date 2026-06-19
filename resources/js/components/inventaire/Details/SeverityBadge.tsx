@@ -36,7 +36,11 @@ const severityConfig: Record<
     },
 };
 
-export default function SeverityBadge({ severity }: { severity: string | null }) {
+export default function SeverityBadge({
+    severity,
+}: {
+    severity: string | null;
+}) {
     const cfg =
         severityConfig[severity?.toUpperCase() ?? ''] ?? severityConfig['INFO'];
     return (

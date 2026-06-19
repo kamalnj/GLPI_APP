@@ -22,7 +22,7 @@ class ComputerRAM extends Model
         'ram_synced_at',
         'ram_alert_level',
     ];
-       public function computer(): BelongsTo
+    public function computer(): BelongsTo
     {
         return $this->belongsTo(Computer::class, 'computer_id');
     }

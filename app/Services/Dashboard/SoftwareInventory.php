@@ -213,19 +213,19 @@ class SoftwareInventory
 
                 return [
                     'average_softwares_per_device' =>
-                        round($this->averageSoftwaresPerDevice(), 2),
+                    round($this->averageSoftwaresPerDevice(), 2),
 
                     'devices_above_average' =>
-                        $this->countDevicesAboveAverage(),
+                    $this->countDevicesAboveAverage(),
 
                     'top_installed_softwares' =>
-                        $this->topInstalledSoftwares(),
+                    $this->topInstalledSoftwares(),
 
                     'devices_above_average_with_low_disk' =>
-                        $this->devicesAboveAverageWithLowDiskSpace(),
+                    $this->devicesAboveAverageWithLowDiskSpace(),
 
                     'top_device_by_software_count' =>
-                        $this->topDeviceByNumberOfSoftwares(),
+                    $this->topDeviceByNumberOfSoftwares(),
                 ];
             }
         );

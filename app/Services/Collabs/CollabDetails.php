@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Cache;
 
 class CollabDetails
 {
-    private const CACHE_TTL = 600; 
+    private const CACHE_TTL = 600;
     private const MAX_DAYS = 90;
     /* =========================
      | USER DETAILS
@@ -22,34 +22,34 @@ class CollabDetails
             'activityDay' => $this->getActivity($userName, 'day'),
             'activityWeek' => $this->getActivity($userName, 'week'),
             'activityMonth' => $this->getActivity($userName, 'month'),
-            'workModeComparison' => $this->getWorkModeComparison($userName,$mode),
+            'workModeComparison' => $this->getWorkModeComparison($userName, $mode),
         ];
     }
 
     /* =========================
      | OVERVIEW
      ========================= */
-private function getOverview(string $userName)
-{
-    $month = now()->month;
-    $year  = now()->year;
+    private function getOverview(string $userName)
+    {
+        $month = now()->month;
+        $year  = now()->year;
 
-    return Cache::remember("user_overview_{$userName}_{$year}_{$month}", self::CACHE_TTL, function () use ($userName, $month, $year) {
-        return DB::connection('sqlsrv')
-            ->table('vw_user_daily_activity')
-            ->select([
-                'user_name',
-                DB::raw('SUM(active_seconds) as total_active_seconds'),
-                DB::raw('SUM(unlock_count) as total_unlocks'),
-                DB::raw('MAX(machines_count) as machines_count'),
-            ])
-            ->where('user_name', $userName)
-            ->whereMonth('date', $month)
-            ->whereYear('date', $year)
-            ->groupBy('user_name')
-            ->first();
-    });
-}
+        return Cache::remember("user_overview_{$userName}_{$year}_{$month}", self::CACHE_TTL, function () use ($userName, $month, $year) {
+            return DB::connection('sqlsrv')
+                ->table('vw_user_daily_activity')
+                ->select([
+                    'user_name',
+                    DB::raw('SUM(active_seconds) as total_active_seconds'),
+                    DB::raw('SUM(unlock_count) as total_unlocks'),
+                    DB::raw('MAX(machines_count) as machines_count'),
+                ])
+                ->where('user_name', $userName)
+                ->whereMonth('date', $month)
+                ->whereYear('date', $year)
+                ->groupBy('user_name')
+                ->first();
+        });
+    }
 
     /* =========================
      | MACHINES
@@ -128,22 +128,22 @@ private function getOverview(string $userName)
     }
 
     //Remote vs Onsite
-public function getWorkModeComparison(string $userName, string $mode = 'current')
-{
-    if ($mode === 'previous') {
-        $start = now()->subMonth()->startOfMonth();
-        $end = now()->subMonth()->endOfMonth();
-    } else {
-        $start = now()->startOfMonth();
-        $end = now()->endOfMonth();
-    }
+    public function getWorkModeComparison(string $userName, string $mode = 'current')
+    {
+        if ($mode === 'previous') {
+            $start = now()->subMonth()->startOfMonth();
+            $end = now()->subMonth()->endOfMonth();
+        } else {
+            $start = now()->startOfMonth();
+            $end = now()->endOfMonth();
+        }
 
-    $data = DB::connection('sqlsrv')
-        ->table('daily_summary_central as d')
-        ->leftJoinSub(
-            DB::connection('sqlsrv')
-                ->table('network_changes_central')
-                ->selectRaw("
+        $data = DB::connection('sqlsrv')
+            ->table('daily_summary_central as d')
+            ->leftJoinSub(
+                DB::connection('sqlsrv')
+                    ->table('network_changes_central')
+                    ->selectRaw("
                     user_name,
                     machine_name,
                     CAST(date AS DATE) as day,
@@ -154,17 +154,17 @@ public function getWorkModeComparison(string $userName, string $mode = 'current'
                         ORDER BY date DESC
                     ) as rn
                 "),
-            'n',
-            function ($join) {
-                $join->on('d.user_name', '=', 'n.user_name')
-                     ->on('d.machine_name', '=', 'n.machine_name')
-                     ->on(DB::raw('CAST(d.date AS DATE)'), '=', 'n.day')
-                     ->where('n.rn', '=', 1);
-            }
-        )
-        ->where('d.user_name', $userName)
-        ->whereBetween('d.date', [$start, $end])
-        ->selectRaw("
+                'n',
+                function ($join) {
+                    $join->on('d.user_name', '=', 'n.user_name')
+                        ->on('d.machine_name', '=', 'n.machine_name')
+                        ->on(DB::raw('CAST(d.date AS DATE)'), '=', 'n.day')
+                        ->where('n.rn', '=', 1);
+                }
+            )
+            ->where('d.user_name', $userName)
+            ->whereBetween('d.date', [$start, $end])
+            ->selectRaw("
             SUM(CASE 
                 WHEN n.ssid = 's2m'
                   OR n.ip_address LIKE '10.0.2.%'
@@ -182,13 +182,13 @@ public function getWorkModeComparison(string $userName, string $mode = 'current'
                 THEN d.active_seconds ELSE 0 END
             ) AS remote_seconds
         ")
-        ->first();
+            ->first();
 
-    return [
-        'mode' => $mode,
-        'onsite_hours' => round(($data->onsite_seconds ?? 0) / 3600, 2),
-        'remote_hours' => round(($data->remote_seconds ?? 0) / 3600, 2),
-        'total_hours' => round((($data->onsite_seconds ?? 0) + ($data->remote_seconds ?? 0)) / 3600, 2),
-    ];
-}
+        return [
+            'mode' => $mode,
+            'onsite_hours' => round(($data->onsite_seconds ?? 0) / 3600, 2),
+            'remote_hours' => round(($data->remote_seconds ?? 0) / 3600, 2),
+            'total_hours' => round((($data->onsite_seconds ?? 0) + ($data->remote_seconds ?? 0)) / 3600, 2),
+        ];
+    }
 }

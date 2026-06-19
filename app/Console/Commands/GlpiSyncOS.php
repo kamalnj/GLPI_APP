@@ -97,11 +97,9 @@ class GlpiSyncOS extends Command
             }
 
             return self::SUCCESS;
-
         } catch (Throwable $e) {
             report($e);
             return self::FAILURE;
-
         } finally {
             if (is_string($session) && $session !== '') {
                 try {

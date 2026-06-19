@@ -64,7 +64,7 @@ class VulneExport implements
             ? \Carbon\Carbon::parse($agentVulne->detected_at)
             : null;
 
-    
+
 
         return [
             $vulnerability->id ?? '—',
@@ -151,7 +151,7 @@ class VulneExport implements
                 ]);
             }
 
-  
+
 
             // Zebra striping
             if ($row % 2 == 0) {

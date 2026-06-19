@@ -52,20 +52,20 @@ class ListComputersRequest extends FormRequest
         return (bool) ($this->validated('missing_sophos') ?? false);
     }
 
-      public function group(): ?string
-   {
-    $v = $this->validated('group');
-    if (!is_string($v)) return null;
+    public function group(): ?string
+    {
+        $v = $this->validated('group');
+        if (!is_string($v)) return null;
 
-    $v = trim($v);
-    return $v === '' ? null : strtolower($v);
-}
+        $v = trim($v);
+        return $v === '' ? null : strtolower($v);
+    }
     public function cpuTier(): ?string
-{
-    $v = $this->validated('cpu_tier');
-    if (!is_string($v)) return null;
+    {
+        $v = $this->validated('cpu_tier');
+        if (!is_string($v)) return null;
 
-    $v = trim($v);
-    return $v === '' ? null : strtolower($v);
-}
+        $v = trim($v);
+        return $v === '' ? null : strtolower($v);
+    }
 }

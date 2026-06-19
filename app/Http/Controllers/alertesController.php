@@ -39,7 +39,7 @@ class alertesController extends Controller
             $filename
         );
     }
-     public function exportInventory()
+    public function exportInventory()
     {
         $filename = sprintf(
             'Inventaire_ALL_%s.xlsx',
@@ -61,7 +61,7 @@ class alertesController extends Controller
             'outDateInventoryAlerts' => Inertia::defer(fn() => $this->alertService->getComputersWithoutInventoryUpdate()),
             'diskStats'             => $stats['diskStats'],
             'patchStats'            => $stats['patchStats'],
-'outDateInventoryStats' => $stats['outOfDateInventoryStats'],
+            'outDateInventoryStats' => $stats['outOfDateInventoryStats'],
             'kpiStats'              => $stats['kpiStats'],
         ]);
     }

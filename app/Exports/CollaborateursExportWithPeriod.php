@@ -34,34 +34,34 @@ class CollaborateursExportWithPeriod implements
         $this->search = $search;
     }
 
-   public function query()
-{
-    $query = DB::connection('sqlsrv')
-        ->table('vw_user_daily_activity')
-        ->select(
-            'user_name',
-            DB::raw('MIN(date) as date'), 
-            DB::raw('MAX(machines_count) as machines_count'),
-            DB::raw('SUM(active_seconds) as active_seconds'),
-            DB::raw('SUM(unlock_count) as unlock_count')
-        )
-        ->groupBy('user_name');
+    public function query()
+    {
+        $query = DB::connection('sqlsrv')
+            ->table('vw_user_daily_activity')
+            ->select(
+                'user_name',
+                DB::raw('MIN(date) as date'),
+                DB::raw('MAX(machines_count) as machines_count'),
+                DB::raw('SUM(active_seconds) as active_seconds'),
+                DB::raw('SUM(unlock_count) as unlock_count')
+            )
+            ->groupBy('user_name');
 
-    if ($this->search) {
-        $query->where('user_name', 'like', '%' . $this->search . '%');
+        if ($this->search) {
+            $query->where('user_name', 'like', '%' . $this->search . '%');
+        }
+
+
+
+        if ($this->fromDate && $this->toDate) {
+            $query->whereBetween('date', [
+                $this->fromDate,
+                $this->toDate,
+            ]);
+        }
+
+        return $query->orderByDesc('active_seconds');
     }
-
-
-
-    if ($this->fromDate && $this->toDate) {
-        $query->whereBetween('date', [
-            $this->fromDate,
-            $this->toDate,
-        ]);
-    }
-
-    return $query->orderByDesc('active_seconds');
-}
 
     public function headings(): array
     {

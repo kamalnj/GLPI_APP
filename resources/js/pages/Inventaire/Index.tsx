@@ -3,7 +3,7 @@ import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import type { Paginated } from '@/types/pagination';
 import type { Computer } from '@/features/inventaire/types';
-import { useState,   } from 'react';
+import { useState } from 'react';
 import InventaireTable from '@/components/inventaire/TableInventaire';
 import Pagination from '@/components/Pagination';
 import { Search, ShieldAlert, Cpu, Layers } from 'lucide-react';

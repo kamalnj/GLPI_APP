@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ComputerPatchSecurity extends Model
 {
-    
+
     protected $table = 'computer_patch_securite';
     protected $casts = [
         'synced_at' => 'datetime',

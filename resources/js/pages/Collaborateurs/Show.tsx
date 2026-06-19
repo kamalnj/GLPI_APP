@@ -1,7 +1,12 @@
 import { useState, useMemo, useCallback } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
-import { Cpu, Network as NetworkIcon, Activity as ActivityIcon, LucideIcon } from 'lucide-react';
+import {
+    Cpu,
+    Network as NetworkIcon,
+    Activity as ActivityIcon,
+    LucideIcon,
+} from 'lucide-react';
 
 import CollabHeader from '@/components/Collabs/CollabHeader';
 import TabNavigation from '@/components/Collabs/TabNavigation';
@@ -11,8 +16,6 @@ import ActivityPanel from '@/components/Collabs/ActivityPanel';
 import StatsCards from '@/components/Collabs/StatsCards';
 import WorkModeComparison from '@/components/Collabs/WorkModeComparison';
 import { BreadcrumbItem } from '@/types/navigation';
-
-
 
 type Tab = 'machines' | 'networks' | 'activity';
 type ActivityPeriod = 'day' | 'week' | 'month';
@@ -58,17 +61,16 @@ export default function Show({
     workModeComparison,
     mode,
 }: ShowProps) {
-        const breadcrumbs: BreadcrumbItem[] = [
-            {
-                title: 'Collaborateurs',
-                href: '/collaborateurs',
-            },
-            {
-                title: overview.user_name,
-                href: '#' ,
-            },
-            
-        ];
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: 'Collaborateurs',
+            href: '/collaborateurs',
+        },
+        {
+            title: overview.user_name,
+            href: '#',
+        },
+    ];
     const [tab, setTab] = useState<Tab>('machines');
     const [activityPeriod, setActivityPeriod] = useState<ActivityPeriod>('day');
 
@@ -108,9 +110,7 @@ export default function Show({
             <Head title={overview.user_name} />
 
             <div className="space-y-6 p-4 sm:p-6">
-                <CollabHeader
-                    userName={overview.user_name}
-                />
+                <CollabHeader userName={overview.user_name} />
 
                 <StatsCards overview={overview} />
                 <WorkModeComparison

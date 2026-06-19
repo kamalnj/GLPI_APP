@@ -49,7 +49,7 @@ class InventaireExport implements
             $computer->synced_at
                 ? $computer->synced_at->format('Y-m-d H:i:s')
                 : 'N/A',
-          
+
         ];
     }
 

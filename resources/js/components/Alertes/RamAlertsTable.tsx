@@ -5,19 +5,28 @@ import UsageBar from './UsageBar';
 import LevelBadge from './LevelBadge';
 
 const rowBg = (level: AlertLevel) =>
-    level === 'critical' ? 'bg-red-50/40 hover:bg-red-50' : 'bg-amber-50/30 hover:bg-amber-50/60';
+    level === 'critical'
+        ? 'bg-red-50/40 hover:bg-red-50'
+        : 'bg-amber-50/30 hover:bg-amber-50/60';
 
 export const formatDate = (date: string) =>
     new Date(date).toLocaleString('fr-FR', {
-        day: '2-digit', month: '2-digit', year: 'numeric',
-        hour: '2-digit', minute: '2-digit',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
     });
 
 const ROW_HEIGHT = 53;
 const VISIBLE_ROWS = 15;
 const CONTAINER_HEIGHT = ROW_HEIGHT * VISIBLE_ROWS;
 
-export default function RamAlertsTable({ ramAlerts }: { ramAlerts: RamAlert[] }) {
+export default function RamAlertsTable({
+    ramAlerts,
+}: {
+    ramAlerts: RamAlert[];
+}) {
     const [search, setSearch] = useState('');
     const [scrollTop, setScrollTop] = useState(0);
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -29,7 +38,7 @@ export default function RamAlertsTable({ ramAlerts }: { ramAlerts: RamAlert[] })
         return ramAlerts.filter(
             (r) =>
                 r.computer_name?.toLowerCase().includes(q) ||
-                r.ram_name?.toLowerCase().includes(q)
+                r.ram_name?.toLowerCase().includes(q),
         );
     }, [ramAlerts, search]);
 
@@ -51,36 +60,41 @@ export default function RamAlertsTable({ ramAlerts }: { ramAlerts: RamAlert[] })
 
     return (
         <div className="flex flex-col gap-3">
-
             {/* Recherche */}
             <div className="relative">
-                <FiSearch size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                <FiSearch
+                    size={14}
+                    className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
+                />
                 <input
                     type="text"
                     placeholder="Rechercher une machine ou barrette..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="w-full rounded-md border border-gray-200 bg-white py-2 pl-8 pr-3 text-sm placeholder-gray-400 focus:border-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-300"
+                    className="w-full rounded-md border border-gray-200 bg-white py-2 pr-3 pl-8 text-sm placeholder-gray-400 focus:border-gray-400 focus:ring-1 focus:ring-gray-300 focus:outline-none"
                 />
             </div>
 
             <div className="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
-
                 {/* En-tête fixe */}
                 <table className="min-w-full text-sm text-gray-700">
-                    <thead className="bg-gray-50 text-xs uppercase text-gray-400 tracking-wide">
+                    <thead className="bg-gray-50 text-xs tracking-wide text-gray-400 uppercase">
                         <tr>
                             <th className="px-4 py-3 text-left">Machine</th>
                             <th className="px-4 py-3 text-left">Barrette</th>
                             <th className="px-4 py-3 text-left">Utilisation</th>
                             <th className="px-4 py-3 text-left">Niveau</th>
-                            <th className="px-4 py-3 text-left">Dernière sync</th>
+                            <th className="px-4 py-3 text-left">
+                                Dernière sync
+                            </th>
                         </tr>
                     </thead>
                 </table>
 
                 {filtered.length === 0 ? (
-                    <p className="py-8 text-center text-sm text-gray-400">Aucune alerte RAM trouvée.</p>
+                    <p className="py-8 text-center text-sm text-gray-400">
+                        Aucune alerte RAM trouvée.
+                    </p>
                 ) : (
                     /* Zone scrollable */
                     <div
@@ -88,19 +102,48 @@ export default function RamAlertsTable({ ramAlerts }: { ramAlerts: RamAlert[] })
                         onScroll={handleScroll}
                         style={{ height: CONTAINER_HEIGHT, overflowY: 'auto' }}
                     >
-                        <div style={{ height: totalHeight, position: 'relative' }}>
+                        <div
+                            style={{
+                                height: totalHeight,
+                                position: 'relative',
+                            }}
+                        >
                             <table
                                 className="min-w-full text-sm text-gray-700"
-                                style={{ position: 'absolute', top: offsetY, left: 0, right: 0 }}
+                                style={{
+                                    position: 'absolute',
+                                    top: offsetY,
+                                    left: 0,
+                                    right: 0,
+                                }}
                             >
                                 <tbody className="divide-y divide-gray-100">
                                     {visibleItems.map((r) => (
-                                        <tr key={r.id} className={`transition-colors ${rowBg(r.alert_level)}`} style={{ height: ROW_HEIGHT }}>
-                                            <td className="px-4 py-3 font-semibold text-gray-800">{r.computer_name}</td>
-                                            <td className="px-4 py-3 text-gray-500">{r.ram_name}</td>
-                                            <td className="px-4 py-3"><UsageBar value={r.ram_usage} level={r.alert_level} /></td>
-                                            <td className="px-4 py-3"><LevelBadge level={r.alert_level} /></td>
-                                            <td className="px-4 py-3 text-gray-400 text-xs">{formatDate(r.synced_at)}</td>
+                                        <tr
+                                            key={r.id}
+                                            className={`transition-colors ${rowBg(r.alert_level)}`}
+                                            style={{ height: ROW_HEIGHT }}
+                                        >
+                                            <td className="px-4 py-3 font-semibold text-gray-800">
+                                                {r.computer_name}
+                                            </td>
+                                            <td className="px-4 py-3 text-gray-500">
+                                                {r.ram_name}
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <UsageBar
+                                                    value={r.ram_usage}
+                                                    level={r.alert_level}
+                                                />
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <LevelBadge
+                                                    level={r.alert_level}
+                                                />
+                                            </td>
+                                            <td className="px-4 py-3 text-xs text-gray-400">
+                                                {formatDate(r.synced_at)}
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -112,7 +155,9 @@ export default function RamAlertsTable({ ramAlerts }: { ramAlerts: RamAlert[] })
 
             {/* Compteur */}
             {filtered.length !== ramAlerts.length && (
-                <p className="text-xs text-gray-400 text-right">{filtered.length} / {ramAlerts.length} alertes</p>
+                <p className="text-right text-xs text-gray-400">
+                    {filtered.length} / {ramAlerts.length} alertes
+                </p>
             )}
         </div>
     );

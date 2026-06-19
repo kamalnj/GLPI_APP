@@ -43,7 +43,6 @@ export function TableCollabs({ users, filters = {} }: Props) {
         newSearch: string,
         fromDate: string,
         toDate: string,
-
     ) => {
         const params = new URLSearchParams();
         if (newSearch) params.append('search', String(newSearch));
@@ -88,79 +87,87 @@ export function TableCollabs({ users, filters = {} }: Props) {
     return (
         <div className="flex flex-col gap-4 p-6">
             {/* Filters */}
-       <div className="flex flex-col gap-2 rounded-xl border border-border bg-muted/30 p-3 sm:flex-row sm:items-end sm:justify-between">
-  {/* Filter Fields */}
-  <div className="flex flex-1 flex-col gap-2 sm:flex-row sm:items-end">
-    {/* Search */}
-    <div className="flex flex-col gap-1 sm:flex-1">
-      <label className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-        Utilisateur
-      </label>
-      <div className="relative">
-        <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          type="text"
-          placeholder="Rechercher..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleFilter()}
-          className="h-9 pl-8 text-sm"
-        />
-      </div>
-    </div>
+            <div className="flex flex-col gap-2 rounded-xl border border-border bg-muted/30 p-3 sm:flex-row sm:items-end sm:justify-between">
+                {/* Filter Fields */}
+                <div className="flex flex-1 flex-col gap-2 sm:flex-row sm:items-end">
+                    {/* Search */}
+                    <div className="flex flex-col gap-1 sm:flex-1">
+                        <label className="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
+                            Utilisateur
+                        </label>
+                        <div className="relative">
+                            <Search className="pointer-events-none absolute top-1/2 left-2.5 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+                            <Input
+                                type="text"
+                                placeholder="Rechercher..."
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                onKeyDown={(e) =>
+                                    e.key === 'Enter' && handleFilter()
+                                }
+                                className="h-9 pl-8 text-sm"
+                            />
+                        </div>
+                    </div>
 
-    {/* Date range */}
-    <div className="flex items-end gap-1.5">
-      <div className="flex flex-col gap-1">
-        <label className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-          De
-        </label>
-        <Input
-          type="date"
-          value={fromDate}
-          onChange={(e) => setFromDate(e.target.value)}
-          className="h-9 w-36 text-sm"
-        />
-      </div>
-      <span className="mb-2 text-xs text-muted-foreground">→</span>
-      <div className="flex flex-col gap-1">
-        <label className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-          À
-        </label>
-        <Input
-          type="date"
-          value={toDate}
-          onChange={(e) => setToDate(e.target.value)}
-          className="h-9 w-36 text-sm"
-        />
-      </div>
-    </div>
-  </div>
+                    {/* Date range */}
+                    <div className="flex items-end gap-1.5">
+                        <div className="flex flex-col gap-1">
+                            <label className="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
+                                De
+                            </label>
+                            <Input
+                                type="date"
+                                value={fromDate}
+                                onChange={(e) => setFromDate(e.target.value)}
+                                className="h-9 w-36 text-sm"
+                            />
+                        </div>
+                        <span className="mb-2 text-xs text-muted-foreground">
+                            →
+                        </span>
+                        <div className="flex flex-col gap-1">
+                            <label className="text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
+                                À
+                            </label>
+                            <Input
+                                type="date"
+                                value={toDate}
+                                onChange={(e) => setToDate(e.target.value)}
+                                className="h-9 w-36 text-sm"
+                            />
+                        </div>
+                    </div>
+                </div>
 
-  {/* Actions */}
-  <div className="flex items-center gap-2 pt-1 sm:pt-0">
-    {hasActiveFilters && (
-      <button
-        onClick={handleClearFilters}
-        className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-background px-3 text-sm text-muted-foreground transition hover:border-destructive/50 hover:text-destructive"
-      >
-        <X className="h-3.5 w-3.5" />
-        Réinitialiser
-      </button>
-    )}
-    <Button size="sm" onClick={handleFilter} className="h-9 px-4">
-      <Filter className="mr-1.5 h-3.5 w-3.5" />
-      Filtrer
-    </Button>
-    <button
-      onClick={handleExport}
-      className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg bg-emerald-600 px-4 text-sm font-medium text-white shadow-sm transition hover:bg-emerald-700 active:scale-95"
-    >
-      <Download className="h-3.5 w-3.5" />
-      Exporter
-    </button>
-  </div>
-</div>
+                {/* Actions */}
+                <div className="flex items-center gap-2 pt-1 sm:pt-0">
+                    {hasActiveFilters && (
+                        <button
+                            onClick={handleClearFilters}
+                            className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border bg-background px-3 text-sm text-muted-foreground transition hover:border-destructive/50 hover:text-destructive"
+                        >
+                            <X className="h-3.5 w-3.5" />
+                            Réinitialiser
+                        </button>
+                    )}
+                    <Button
+                        size="sm"
+                        onClick={handleFilter}
+                        className="h-9 px-4"
+                    >
+                        <Filter className="mr-1.5 h-3.5 w-3.5" />
+                        Filtrer
+                    </Button>
+                    <button
+                        onClick={handleExport}
+                        className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg bg-emerald-600 px-4 text-sm font-medium text-white shadow-sm transition hover:bg-emerald-700 active:scale-95"
+                    >
+                        <Download className="h-3.5 w-3.5" />
+                        Exporter
+                    </button>
+                </div>
+            </div>
 
             {/* Table */}
             <div className="overflow-hidden rounded-lg border">

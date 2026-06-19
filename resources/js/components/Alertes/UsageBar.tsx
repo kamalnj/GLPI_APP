@@ -1,9 +1,9 @@
-import { AlertLevel } from "@/types/types";
+import { AlertLevel } from '@/types/types';
 
 export default function UsageBar({
     value,
     level,
-    inverted = false
+    inverted = false,
 }: {
     value: number;
     level: AlertLevel;
@@ -14,7 +14,7 @@ export default function UsageBar({
 
     return (
         <div className="flex items-center gap-2">
-            <div className="w-24 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+            <div className="h-1.5 w-24 overflow-hidden rounded-full bg-gray-200">
                 <div
                     className={`h-full ${color}`}
                     style={{ width: `${Math.min(fill, 100)}%` }}

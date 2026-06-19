@@ -22,11 +22,7 @@ export default function ActivityPanel({
     onPeriodChange,
 }: ActivityPanelProps) {
     return (
-        <div
-            role="tabpanel"
-            id="panel-activity"
-            aria-labelledby="tab-activity"
-        >
+        <div role="tabpanel" id="panel-activity" aria-labelledby="tab-activity">
             <div
                 className="mb-4 inline-flex gap-1 rounded-lg border p-1"
                 role="group"
@@ -49,10 +45,7 @@ export default function ActivityPanel({
             </div>
 
             {activities.length > 0 ? (
-                <ActivityTable
-                    activities={activities}
-                    type={activityPeriod}
-                />
+                <ActivityTable activities={activities} type={activityPeriod} />
             ) : (
                 <EmptyState
                     icon={ActivityIcon}

@@ -40,17 +40,11 @@ export default function MachinesTable({ machines }: Props) {
                     <TableBody>
                         {machines.map((machine) => (
                             <TableRow key={machine.machine_name}>
-                                <TableCell>
-                                    {machine.machine_name}
-                                </TableCell>
+                                <TableCell>{machine.machine_name}</TableCell>
 
-                                <TableCell>
-                                    {machine.total_unlocks}
-                                </TableCell>
+                                <TableCell>{machine.total_unlocks}</TableCell>
 
-                                <TableCell>
-                                    {machine.last_activity}
-                                </TableCell>
+                                <TableCell>{machine.last_activity}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

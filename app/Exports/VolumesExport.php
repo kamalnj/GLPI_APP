@@ -44,24 +44,24 @@ class VolumesExport implements
         ];
     }
 
- public function map($computerVolume): array
-{
-    $total = (float) $computerVolume->total_size;
-    $free  = (float) $computerVolume->free_size;
+    public function map($computerVolume): array
+    {
+        $total = (float) $computerVolume->total_size;
+        $free  = (float) $computerVolume->free_size;
 
-    return [
-        $computerVolume->computer?->name ?? 'N/A',
-        $computerVolume->mountpoint ?? 'N/A',
+        return [
+            $computerVolume->computer?->name ?? 'N/A',
+            $computerVolume->mountpoint ?? 'N/A',
 
-        $total > 0 ? round($total / 1024, 2) : 0,
-        $free > 0 ? round($free / 1024, 2) : 0,
+            $total > 0 ? round($total / 1024, 2) : 0,
+            $free > 0 ? round($free / 1024, 2) : 0,
 
-        ($computerVolume->free_percent ?? 0) . '%',
-        strtoupper($computerVolume->alert_level ?? 'N/A'),
+            ($computerVolume->free_percent ?? 0) . '%',
+            strtoupper($computerVolume->alert_level ?? 'N/A'),
 
-        $computerVolume->synced_at?->format('Y-m-d H:i:s') ?? 'N/A',
-    ];
-}
+            $computerVolume->synced_at?->format('Y-m-d H:i:s') ?? 'N/A',
+        ];
+    }
 
     public function styles(Worksheet $sheet)
     {

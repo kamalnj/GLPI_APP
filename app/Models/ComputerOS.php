@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ComputerOS extends Model
 {
-        protected $table = 'computer_os';
+    protected $table = 'computer_os';
 
     protected $fillable = [
         'glpi_id',

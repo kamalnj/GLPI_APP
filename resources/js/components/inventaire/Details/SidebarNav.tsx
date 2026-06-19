@@ -15,7 +15,11 @@ type Props = {
     onSelect: (id: string) => void;
 };
 
-export default function SidebarNav({ sections, activeSection, onSelect }: Props) {
+export default function SidebarNav({
+    sections,
+    activeSection,
+    onSelect,
+}: Props) {
     return (
         <nav className="w-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
             <div className="px-4 pt-4 pb-2">
@@ -31,17 +35,25 @@ export default function SidebarNav({ sections, activeSection, onSelect }: Props)
                         <li key={section.id} className="shrink-0 md:shrink">
                             <button
                                 onClick={() => onSelect(section.id)}
-                                className={`nav-btn flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 md:py-2.5 text-sm whitespace-nowrap ${
+                                className={`nav-btn flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm whitespace-nowrap md:py-2.5 ${
                                     isActive
                                         ? 'bg-gray-900 font-semibold text-white'
                                         : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                                 }`}
                             >
                                 <div className="flex items-center gap-2">
-                                    <span className={isActive ? 'text-white' : 'text-gray-400'}>
+                                    <span
+                                        className={
+                                            isActive
+                                                ? 'text-white'
+                                                : 'text-gray-400'
+                                        }
+                                    >
                                         {section.icon}
                                     </span>
-                                    <span className="hidden sm:inline md:inline">{section.title}</span>
+                                    <span className="hidden sm:inline md:inline">
+                                        {section.title}
+                                    </span>
                                 </div>
                                 {section.count !== undefined && (
                                     <span

@@ -45,22 +45,21 @@ class WazuhApiService
     /**
      * Récupère la RAM d’un agent spécifique
      */
- public function getAgentHardware(string $agentId): ?array
-{
-    try {
-        /** @var Response $response */
-        $response = Http::withToken($this->token)
-            ->withoutVerifying()
-            ->timeout(5) // <--- max 5 secondes par agent
-            ->get($this->baseUrl . "/syscollector/{$agentId}/hardware");
+    public function getAgentHardware(string $agentId): ?array
+    {
+        try {
+            /** @var Response $response */
+            $response = Http::withToken($this->token)
+                ->withoutVerifying()
+                ->timeout(5) // <--- max 5 secondes par agent
+                ->get($this->baseUrl . "/syscollector/{$agentId}/hardware");
 
-        $items = $response->json()['data']['affected_items'] ?? [];
-        return $items[0] ?? null;
-
-    } catch (\Illuminate\Http\Client\ConnectionException $e) {
-        // On log et on continue
-        \Illuminate\Support\Facades\Log::warning("Impossible de récupérer le hardware pour l'agent {$agentId}: " . $e->getMessage());
-        return null;
+            $items = $response->json()['data']['affected_items'] ?? [];
+            return $items[0] ?? null;
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            // On log et on continue
+            \Illuminate\Support\Facades\Log::warning("Impossible de récupérer le hardware pour l'agent {$agentId}: " . $e->getMessage());
+            return null;
+        }
     }
-}
 }

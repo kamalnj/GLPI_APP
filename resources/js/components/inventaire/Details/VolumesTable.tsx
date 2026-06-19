@@ -1,4 +1,4 @@
-import { Progress } from "@/components/ui/progress"
+import { Progress } from '@/components/ui/progress';
 type Volume = {
     id: number;
     name: string | null;
@@ -39,8 +39,13 @@ export default function VolumesTable({ volumes }: { volumes: Volume[] }) {
                             <td className="px-3 py-2">{v.mountpoint ?? '—'}</td>
                             <td className="px-3 py-2">{v.name ?? '—'}</td>
                             <td className="px-3 py-2">
-                                <Progress value={v.free_percent ?? 0} className="w-full" />
-                                {v.free_percent !== null ? `${v.free_percent} %` : '—'}
+                                <Progress
+                                    value={v.free_percent ?? 0}
+                                    className="w-full"
+                                />
+                                {v.free_percent !== null
+                                    ? `${v.free_percent} %`
+                                    : '—'}
                             </td>
                             <td className="px-3 py-2">
                                 {v.free_size !== null

@@ -1,6 +1,11 @@
 // components/inventaire/details/KpiCards.tsx
 
-import { FiLayers, FiAlertOctagon, FiAlertTriangle, FiClock } from 'react-icons/fi';
+import {
+    FiLayers,
+    FiAlertOctagon,
+    FiAlertTriangle,
+    FiClock,
+} from 'react-icons/fi';
 
 type SecurityKpis = {
     total: number;
@@ -50,15 +55,15 @@ export default function KpiCards({ kpis }: { kpis: SecurityKpis }) {
             {cards.map((kpi) => (
                 <div
                     key={kpi.label}
-                    className="flex items-center gap-3 sm:gap-4 rounded-xl border border-gray-200 bg-white p-3 sm:p-4 shadow-sm"
+                    className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-3 shadow-sm sm:gap-4 sm:p-4"
                 >
                     <div
-                        className={`flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-lg ${kpi.iconBg} shrink-0`}
+                        className={`flex h-9 w-9 items-center justify-center rounded-lg sm:h-10 sm:w-10 ${kpi.iconBg} shrink-0`}
                     >
                         {kpi.icon}
                     </div>
                     <div className="min-w-0">
-                        <div className="text-[10px] sm:text-xs font-medium tracking-wide text-gray-400 uppercase truncate">
+                        <div className="truncate text-[10px] font-medium tracking-wide text-gray-400 uppercase sm:text-xs">
                             {kpi.label}
                         </div>
                         <div

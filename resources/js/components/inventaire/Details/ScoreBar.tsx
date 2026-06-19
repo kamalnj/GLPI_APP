@@ -1,4 +1,3 @@
-
 export default function ScoreBar({ score }: { score: number | null }) {
     if (score === null) return <span className="text-xs text-gray-400">—</span>;
     const numScore = typeof score === 'string' ? parseFloat(score) : score;

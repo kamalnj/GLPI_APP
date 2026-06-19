@@ -42,7 +42,8 @@ export default function Index({ users, filters }: Props) {
                         Collaborateurs
                     </h1>
                     <p className="text-sm text-muted-foreground">
-                        Consultez l'activité et les statistiques des collaborateurs.
+                        Consultez l'activité et les statistiques des
+                        collaborateurs.
                     </p>
                 </div>
 

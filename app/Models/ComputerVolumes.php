@@ -10,8 +10,8 @@ class ComputerVolumes extends Model
 {
     protected $table = 'computer_volumes';
     protected $casts = [
-    'synced_at' => 'datetime',
-];
+        'synced_at' => 'datetime',
+    ];
     protected $fillable = [
         'glpi_id',
         'computer_id',
@@ -26,7 +26,7 @@ class ComputerVolumes extends Model
         'alert_level',
     ];
 
-           public function computer(): BelongsTo
+    public function computer(): BelongsTo
     {
         return $this->belongsTo(Computer::class, 'computer_id');
     }

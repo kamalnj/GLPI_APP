@@ -11,162 +11,329 @@ use Carbon\Carbon;
 
 class WazuhSyncVulnerabilities extends Command
 {
-    protected $signature   = 'wazuh:sync-vulns';
-    protected $description = 'Incrementally sync vulnerabilities from Wazuh Indexer';
+    // Commande artisan
+    protected $signature = 'wazuh:sync-vulns';
+
+    // Description affichée dans php artisan list
+    protected $description =
+    'Synchronise les vulnérabilités depuis Wazuh';
+
+    /**
+     * Date de début du cycle de synchronisation.
+     *
+     * Sert à identifier quelles vulnérabilités
+     * ont été vues pendant CE scan.
+     */
+    private Carbon $syncStartedAt;
 
     public function handle(WazuhIndexerService $service)
     {
-        $this->info('=== Testing Wazuh Connection ===' );
-        $this->line('Fetching sample document to inspect structure...');
-        
+        /**
+         * On sauvegarde l'heure exacte du lancement.
+         *
+         * Toutes les vulnérabilités rencontrées
+         * recevront ce timestamp dans last_seen_at.
+         *
+         * À la fin :
+         * - si last_seen_at == syncStartedAt → toujours active
+         * - sinon → considérée résolue
+         */
+        $this->syncStartedAt = now();
+
+        $this->info('=== Sync Wazuh Vulnerabilities ===');
+
+        /**
+         * Récupérer la dernière date connue
+         * pour éviter de rescanner toute l'historique.
+         */
         $lastSync = $this->getLastSyncDate();
-        
-        // Test: récupérer 1 document pour voir la structure
-        $testResult = $service->testSample($lastSync);
-        
-        if (!empty($testResult['hits']['hits'])) {
-            $doc = $testResult['hits']['hits'][0]['_source'];
-            $this->info('✓ Sample document found!');
-            $this->line('Fields: ' . implode(', ', array_keys($doc)));
-            $this->line('vulnerability.detected_at: ' . ($doc['vulnerability']['detected_at'] ?? 'NOT FOUND'));
-            if (isset($doc['vulnerability']['detected_at'])) {
-                $this->line('Format sample: ' . $doc['vulnerability']['detected_at']);
-            }
-        } else {
-            $this->error('✗ No documents found in Wazuh index!');
-            return self::FAILURE;
-        }
-        
-        $this->line('');
-        $this->info("Syncing since: {$lastSync}");
 
-        $scrollId = null;
-        $pageNum = 0;
-        $totalSynced = 0;
-        $totalSkipped = 0;
+        $this->line("Sync since: {$lastSync}");
 
-        // Première requête avec scroll
+        /**
+         * Appel initial vers Wazuh.
+         * Retourne :
+         * - première page
+         * - scroll_id pour récupérer le reste
+         */
         $response = $service->incremental($lastSync);
-        
-        // Vérifier les erreurs
-        if (isset($response['error'])) {
-            $this->error('Wazuh API Error:');
-            $this->error(json_encode($response['error'], JSON_PRETTY_PRINT));
+
+        /**
+         * Validation de la réponse.
+         */
+        if (
+            isset($response['error']) ||
+            !isset($response['hits'])
+        ) {
+            $this->error(
+                'Erreur récupération Wazuh'
+            );
+
             return self::FAILURE;
-        }
-        
-        if (!isset($response['hits'])) {
-            $this->error('Unexpected response format.');
-            return self::FAILURE;
-        }
-        
-        $totalHits = $response['hits']['total']['value'] ?? 0;
-        $this->line("Total vulnerabilities to sync: {$totalHits}");
-        
-        $hits = $response['hits']['hits'] ?? [];
-        $scrollId = $response['_scroll_id'] ?? null;
-        $pageNum++;
-        
-        // Traiter la première page
-        if (!empty($hits)) {
-            [$synced, $skipped] = $this->processHits($hits);
-            $totalSynced += $synced;
-            $totalSkipped += $skipped;
-            $this->line("Page {$pageNum}: Processed " . count($hits) . " hits (synced: {$totalSynced}, skipped: {$totalSkipped})");
         }
 
-        // Continuer le scroll si nécessaire
-        while ($scrollId && count($hits) > 0) {
-            // Délai plus long pour laisser Elasticsearch se remettre
-            usleep(500000); // 500ms
-            
-            $scrollResponse = $service->scroll($scrollId);
-            
-            if (isset($scrollResponse['error'])) {
-                // Circuit breaker: on sauvegarde le progrès et on quitte gracieusement
-                $this->warn('Elasticsearch circuit breaker triggered. Stopping here.');
-                $this->warn('Already synced: ' . $totalSynced . ' vulnerabilities');
+        $scrollId =
+            $response['_scroll_id']
+            ?? null;
+
+        $hits =
+            $response['hits']['hits']
+            ?? [];
+
+        $synced = 0;
+        $skipped = 0;
+        $page = 1;
+
+        /**
+         * Boucle de pagination Elasticsearch.
+         *
+         * Continue tant qu'il existe
+         * encore des pages à lire.
+         */
+        while (true) {
+
+            if (!empty($hits)) {
+
+                foreach ($hits as $hit) {
+
+                    /**
+                     * Synchroniser une vulnérabilité.
+                     */
+                    if (
+                        $this->processHit(
+                            $hit['_source']
+                        )
+                    ) {
+                        $synced++;
+                    } else {
+                        $skipped++;
+                    }
+                }
+
+                $this->line(
+                    "Page {$page} → {$synced}"
+                );
+            }
+
+            /**
+             * Fin de pagination.
+             */
+            if (
+                !$scrollId ||
+                empty($hits)
+            ) {
                 break;
             }
-            
-            $hits = $scrollResponse['hits']['hits'] ?? [];
-            $scrollId = $scrollResponse['_scroll_id'] ?? null;
-            $pageNum++;
-            
-            if (!empty($hits)) {
-                [$synced, $skipped] = $this->processHits($hits);
-                $totalSynced += $synced;
-                $totalSkipped += $skipped;
-                $this->line("Page {$pageNum}: Processed " . count($hits) . " hits (synced: {$totalSynced}, skipped: {$totalSkipped})");
+
+            /**
+             * Pause pour éviter surcharge
+             * Elasticsearch / circuit breaker.
+             */
+            usleep(500000);
+
+            $next =
+                $service->scroll(
+                    $scrollId
+                );
+
+            /**
+             * Si erreur scroll :
+             * arrêter proprement.
+             */
+            if (
+                isset(
+                    $next['error']
+                )
+            ) {
+
+                $this->warn(
+                    'Scroll interrompu'
+                );
+
+                break;
             }
+
+            $hits =
+                $next['hits']['hits']
+                ?? [];
+
+            $scrollId =
+                $next['_scroll_id']
+                ?? null;
+
+            $page++;
         }
 
-        $this->info("Done — Synced: {$totalSynced} | Skipped: {$totalSkipped}");
+        /**
+         * Étape importante :
+         *
+         * Toute vulnérabilité ACTIVE
+         * qui n'a PAS été revue
+         * pendant ce scan devient :
+         *
+         * active = false
+         * resolved_at = maintenant
+         *
+         * Exemple :
+         *
+         * Scan précédent :
+         * PC1 → CVE-001
+         *
+         * Scan actuel :
+         * PC1 → (plus rien)
+         *
+         * => CVE-001 résolue
+         */
+        $resolved =
+            AgentVulne::query()
+            ->where(
+                'active',
+                true
+            )
+            ->where(function ($q) {
+
+                $q->whereNull(
+                    'last_seen_at'
+                )
+                    ->orWhere(
+                        'last_seen_at',
+                        '<',
+                        $this->syncStartedAt
+                    );
+            })
+            ->update([
+                'active' => false,
+
+                'resolved_at' =>
+                now(),
+            ]);
+
+        $this->info(
+            "Done → Synced={$synced}, Resolved={$resolved}"
+        );
 
         return self::SUCCESS;
     }
 
-    // -------------------------------------------------------------------------
-
+    /**
+     * Retourne la dernière date de détection.
+     *
+     * Permet de faire
+     * une synchronisation incrémentale.
+     */
     private function getLastSyncDate(): string
     {
-        $last = AgentVulne::max('detected_at');
+        $last =
+            AgentVulne::max(
+                'detected_at'
+            );
 
         if ($last) {
-            // Format: Y-m-d H:i:s, convert to ISO 8601 Zulu (Z = UTC)
-            $carbon = Carbon::createFromFormat('Y-m-d H:i:s', $last, 'UTC');
-            $zulu = $carbon->toIso8601ZuluString();
-            $this->line('Last sync found: ' . $last . ' => ' . $zulu);
-            return $zulu;
-        }
-        
-        // Default to 30 days ago to catch all vulnerabilities
-        $default = Carbon::now('UTC')->subDays(30)->toIso8601ZuluString();
-        $this->line('No last sync found, using default: ' . $default);
-        return $default;
-    }
 
-    private function processHits(array $hits): array
-    {
-        $synced  = 0;
-        $skipped = 0;
-
-        foreach ($hits as $hit) {
-            $this->processHit($hit['_source'])
-                ? $synced++
-                : $skipped++;
+            return Carbon::parse(
+                $last
+            )
+                ->utc()
+                ->toIso8601ZuluString();
         }
 
-        return [$synced, $skipped];
+        /**
+         * Premier lancement :
+         * prendre les 30 derniers jours.
+         */
+        return now()
+            ->subDays(30)
+            ->utc()
+            ->toIso8601ZuluString();
     }
 
-    private function processHit(array $data): bool
-    {
-        $agent = Agents::where('wazuh_agent_id', $data['agent']['id'])->first();
+    /**
+     * Synchronise UNE vulnérabilité.
+     */
+    private function processHit(
+        array $data
+    ): bool {
+
+        /**
+         * Trouver l'agent local.
+         */
+        $agent =
+            Agents::where(
+                'wazuh_agent_id',
+                $data['agent']['id']
+            )->first();
 
         if (!$agent) {
-            $this->warn("Agent not found: {$data['agent']['id']}");
+
+            $this->warn(
+                "Agent absent"
+            );
+
             return false;
         }
 
-        $vuln = Vulnerabilite::updateOrCreate(
-            ['cve' => $data['vulnerability']['id']],
-            [
-                'severity'    => $data['vulnerability']['severity']      ?? null,
-                'score'       => $data['vulnerability']['score']['base'] ?? null,
-                'description' => $data['vulnerability']['description']   ?? null,
-            ]
-        );
+        /**
+         * Créer ou mettre à jour
+         * le catalogue CVE.
+         */
+        $vuln =
+            Vulnerabilite::updateOrCreate(
+                [
+                    'cve' =>
+                    $data['vulnerability']['id']
+                ],
+                [
+                    'severity' =>
+                    $data['vulnerability']['severity']
+                        ?? null,
 
+                    'score' =>
+                    $data['vulnerability']['score']['base']
+                        ?? null,
+
+                    'description' =>
+                    $data['vulnerability']['description']
+                        ?? null,
+                ]
+            );
+
+        /**
+         * Associer l'agent
+         * à la vulnérabilité.
+         *
+         * Si elle existait :
+         * réactivation automatique.
+         */
         AgentVulne::updateOrCreate(
             [
-                'agent_id'         => $agent->id,
-                'vulnerability_id' => $vuln->id,
+                'agent_id' =>
+                $agent->id,
+
+                'vulnerability_id' =>
+                $vuln->id,
             ],
             [
-                'package'         => $data['package']['name']    ?? null,
-                'package_version' => $data['package']['version'] ?? null,
-                'detected_at'     => Carbon::parse($data['vulnerability']['detected_at'])->format('Y-m-d H:i:s'),
+                'package' =>
+                $data['package']['name']
+                    ?? null,
+
+                'package_version' =>
+                $data['package']['version']
+                    ?? null,
+
+                'detected_at' =>
+                Carbon::parse(
+                    $data['vulnerability']['detected_at']
+                ),
+
+                'last_seen_at' =>
+                $this->syncStartedAt,
+
+                'active' =>
+                true,
+
+                'resolved_at' =>
+                null,
             ]
         );
 

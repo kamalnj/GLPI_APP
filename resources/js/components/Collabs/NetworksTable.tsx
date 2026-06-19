@@ -37,13 +37,9 @@ export default function NetworksTable({ networks }: Props) {
                     <TableBody>
                         {networks.map((network) => (
                             <TableRow key={network.ssid}>
-                                <TableCell>
-                                    {network.ssid}
-                                </TableCell>
+                                <TableCell>{network.ssid}</TableCell>
 
-                                <TableCell>
-                                    {network.occurrences}
-                                </TableCell>
+                                <TableCell>{network.occurrences}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

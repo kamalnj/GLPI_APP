@@ -6,9 +6,7 @@ interface CollabHeaderProps {
     lastActivity: string;
 }
 
-export default function CollabHeader({
-    userName,
-}: CollabHeaderProps) {
+export default function CollabHeader({ userName }: CollabHeaderProps) {
     return (
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>

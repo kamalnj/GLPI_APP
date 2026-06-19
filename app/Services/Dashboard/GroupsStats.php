@@ -14,7 +14,10 @@ class GroupsStats
      */
     public function lowDiskDevicesByGroupe($diskSpaceThreshold = 20)
     {
-        return Cache::remember('dashboard.low_disk_devices_by_groupe', self::CACHE_TTL, fn() =>
+        return Cache::remember(
+            'dashboard.low_disk_devices_by_groupe',
+            self::CACHE_TTL,
+            fn() =>
             DB::table('computers')
                 ->select('computers.groupe')
                 ->selectRaw('COUNT(DISTINCT computers.id) as low_disk_devices')
@@ -43,7 +46,10 @@ class GroupsStats
      */
     public function topGroupsWithVulnerabilities($limit = 10)
     {
-        return Cache::remember('dashboard.top_groups_vulnerabilities', self::CACHE_TTL, fn() =>
+        return Cache::remember(
+            'dashboard.top_groups_vulnerabilities',
+            self::CACHE_TTL,
+            fn() =>
             DB::table('computers')
                 ->select('computers.groupe')
                 ->selectRaw('COUNT(DISTINCT av.vulnerability_id) as vulnerability_count')
@@ -70,7 +76,10 @@ class GroupsStats
      */
     public function topGroupsWithMostSoftwares($limit = 10)
     {
-        return Cache::remember('dashboard.top_groups_softwares', self::CACHE_TTL, fn() =>
+        return Cache::remember(
+            'dashboard.top_groups_softwares',
+            self::CACHE_TTL,
+            fn() =>
             DB::table('computers')
                 ->select('computers.groupe')
                 ->selectRaw('COUNT(DISTINCT csa.id) as software_count')
