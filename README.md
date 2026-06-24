@@ -319,14 +319,4 @@ Configurer au minimum dans `.env` :
 
 Ne jamais commiter les secrets, tokens, mots de passe ou cles API.
 
-## Conseils pour les futurs developpeurs
-
-- Garder la logique metier dans `app/Services/` plutot que dans les controleurs.
-- Garder les controleurs simples : validation, appel au service, retour Inertia ou export.
-- Utiliser les `FormRequest` dans `app/Http/Requests/` pour les filtres et validations.
-- Creer des composants React reutilisables lorsque plusieurs pages utilisent la meme interface.
-- Ajouter une migration pour toute modification de base de donnees.
-- Tester au minimum les routes ou services critiques apres une modification.
-- Apres modification frontend, lancer `npm run types` et `npm run build`.
-- Apres modification backend, lancer `php artisan test` ou `composer run test`.
 
