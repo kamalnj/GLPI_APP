@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ComputerCPU extends Model
 {
-
     protected $table = 'computer_cpus';
 
     protected $fillable = [

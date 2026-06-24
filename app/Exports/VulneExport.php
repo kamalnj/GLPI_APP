@@ -2,27 +2,23 @@
 
 namespace App\Exports;
 
+use App\Models\AgentVulne;
+use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithTitle;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use App\Models\AgentVulne;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class VulneExport implements
-    FromQuery,
-    WithHeadings,
-    WithMapping,
-    WithStyles,
-    WithColumnWidths,
-    WithTitle
+class VulneExport implements FromQuery, WithColumnWidths, WithHeadings, WithMapping, WithStyles, WithTitle
 {
     protected $wazuhAgentId;
+
     protected $computerName;
 
     public function __construct($wazuhAgentId, $computerName = null)
@@ -61,10 +57,8 @@ class VulneExport implements
         $vulnerability = $agentVulne->vulnerability;
 
         $detectedAt = $agentVulne->detected_at
-            ? \Carbon\Carbon::parse($agentVulne->detected_at)
+            ? Carbon::parse($agentVulne->detected_at)
             : null;
-
-
 
         return [
             $vulnerability->id ?? '—',
@@ -151,8 +145,6 @@ class VulneExport implements
                 ]);
             }
 
-
-
             // Zebra striping
             if ($row % 2 == 0) {
                 $sheet->getStyle("A{$row}:I{$row}")->applyFromArray([
@@ -187,7 +179,7 @@ class VulneExport implements
     public function title(): string
     {
         return $this->computerName
-            ? 'Vulnérabilités - ' . substr($this->computerName, 0, 20)
+            ? 'Vulnérabilités - '.substr($this->computerName, 0, 20)
             : 'Vulnérabilités';
     }
 }

@@ -16,10 +16,10 @@ return new class extends Migration
             $table->unsignedBigInteger('glpi_id')->unique();          // id Item_Disk
             $table->unsignedBigInteger('computer_id')->index();
             $table->string('cpu_name');
-            $table->string('frequence');  
+            $table->string('frequence');
             $table->unsignedInteger('nbr_cores');
             $table->unsignedInteger('nbr_threads');
-             $table->dateTime('date_mod')->nullable();
+            $table->dateTime('date_mod')->nullable();
             $table->dateTime('synced_at')->nullable();
 
             $table->timestamps();

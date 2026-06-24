@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class DailySummary extends Model
 {
     protected $table = 'daily_summary_central';
+
     protected $connection = 'sqlsrv';
+
     protected $primaryKey = 'id';
+
     protected $fillable = [
         'date',
         'machine_name',
@@ -17,7 +20,7 @@ class DailySummary extends Model
         'active_secondes',
         'unlock_count',
         'primary_ssid',
-        'primary_ip'
+        'primary_ip',
 
     ];
 }

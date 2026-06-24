@@ -2,30 +2,24 @@
 
 namespace App\Exports;
 
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithTitle;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class CollaborateursExportWithPeriod implements
-    FromQuery,
-    WithHeadings,
-    WithMapping,
-    WithStyles,
-    WithColumnWidths,
-    WithTitle
+class CollaborateursExportWithPeriod implements FromQuery, WithColumnWidths, WithHeadings, WithMapping, WithStyles, WithTitle
 {
     protected ?string $fromDate;
-    protected ?string $toDate;
-    protected ?string $search;
 
+    protected ?string $toDate;
+
+    protected ?string $search;
 
     public function __construct(?string $fromDate = null, ?string $toDate = null, ?string $search = null)
     {
@@ -48,10 +42,8 @@ class CollaborateursExportWithPeriod implements
             ->groupBy('user_name');
 
         if ($this->search) {
-            $query->where('user_name', 'like', '%' . $this->search . '%');
+            $query->where('user_name', 'like', '%'.$this->search.'%');
         }
-
-
 
         if ($this->fromDate && $this->toDate) {
             $query->whereBetween('date', [

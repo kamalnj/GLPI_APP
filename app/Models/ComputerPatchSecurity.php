@@ -6,12 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class ComputerPatchSecurity extends Model
 {
-
     protected $table = 'computer_patch_securite';
+
     protected $casts = [
         'synced_at' => 'datetime',
         'date_install' => 'datetime',
     ];
+
     protected $fillable = [
         'glpi_item_softwareversion_id',
         'glpi_softwareversion_id',
@@ -22,6 +23,7 @@ class ComputerPatchSecurity extends Model
         'date_mod',
         'synced_at',
     ];
+
     public function computer()
     {
         return $this->belongsTo(Computer::class);

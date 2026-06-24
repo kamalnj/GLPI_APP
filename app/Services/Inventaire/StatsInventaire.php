@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\DB;
 
 class StatsInventaire
 {
-
     public function getCountComputers()
     {
         return Computer::count();

@@ -2,8 +2,8 @@
 
 namespace App\Services\Dashboard;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class GroupsStats
 {
@@ -17,8 +17,7 @@ class GroupsStats
         return Cache::remember(
             'dashboard.low_disk_devices_by_groupe',
             self::CACHE_TTL,
-            fn() =>
-            DB::table('computers')
+            fn () => DB::table('computers')
                 ->select('computers.groupe')
                 ->selectRaw('COUNT(DISTINCT computers.id) as low_disk_devices')
                 ->leftJoin('computer_volumes as cv', 'computers.id', '=', 'cv.computer_id')
@@ -34,7 +33,7 @@ class GroupsStats
                 ->map(function ($item) {
                     return [
                         'groupe' => $item->groupe ?? 'Non assigné',
-                        'low_disk_devices' => (int)$item->low_disk_devices
+                        'low_disk_devices' => (int) $item->low_disk_devices,
                     ];
                 })
                 ->toArray()
@@ -49,8 +48,7 @@ class GroupsStats
         return Cache::remember(
             'dashboard.top_groups_vulnerabilities',
             self::CACHE_TTL,
-            fn() =>
-            DB::table('computers')
+            fn () => DB::table('computers')
                 ->select('computers.groupe')
                 ->selectRaw('COUNT(DISTINCT av.vulnerability_id) as vulnerability_count')
                 ->leftJoin('agents', 'computers.wazuh_agent_id', '=', 'agents.wazuh_agent_id')
@@ -64,7 +62,7 @@ class GroupsStats
                 ->map(function ($item) {
                     return [
                         'groupe' => $item->groupe ?? 'Non assigné',
-                        'vulnerability_count' => (int)$item->vulnerability_count
+                        'vulnerability_count' => (int) $item->vulnerability_count,
                     ];
                 })
                 ->toArray()
@@ -79,8 +77,7 @@ class GroupsStats
         return Cache::remember(
             'dashboard.top_groups_softwares',
             self::CACHE_TTL,
-            fn() =>
-            DB::table('computers')
+            fn () => DB::table('computers')
                 ->select('computers.groupe')
                 ->selectRaw('COUNT(DISTINCT csa.id) as software_count')
                 ->selectRaw('COUNT(DISTINCT computers.id) as device_count')
@@ -95,9 +92,9 @@ class GroupsStats
                 ->map(function ($item) {
                     return [
                         'groupe' => $item->groupe ?? 'Non assigné',
-                        'software_count' => (int)$item->software_count,
-                        'device_count' => (int)$item->device_count,
-                        'avg_software_per_device' => (float)$item->avg_software_per_device
+                        'software_count' => (int) $item->software_count,
+                        'device_count' => (int) $item->device_count,
+                        'avg_software_per_device' => (float) $item->avg_software_per_device,
                     ];
                 })
                 ->toArray()
@@ -109,7 +106,7 @@ class GroupsStats
      */
     public function getGroupsStatsAll()
     {
-        return Cache::remember('dashboard.groups_stats_all', self::CACHE_TTL, fn() => [
+        return Cache::remember('dashboard.groups_stats_all', self::CACHE_TTL, fn () => [
             'low_disk_by_groupe' => $this->lowDiskDevicesByGroupe(),
             'top_groups_vulnerabilities' => $this->topGroupsWithVulnerabilities(),
             'top_groups_softwares' => $this->topGroupsWithMostSoftwares(),

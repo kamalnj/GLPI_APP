@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Inventaire;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ListComputersRequest extends FormRequest
@@ -17,19 +18,20 @@ class ListComputersRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'search'  => ['nullable', 'string', 'max:100'],
+            'search' => ['nullable', 'string', 'max:100'],
             'perPage' => ['nullable', 'integer', 'min:10', 'max:200'],
-            'cpu_tier'       => ['nullable', 'string', 'max:20'],
+            'cpu_tier' => ['nullable', 'string', 'max:20'],
             'missing_sophos' => ['nullable', 'boolean'],
             'group' => ['nullable', 'string', 'max:20'],
 
         ];
     }
+
     public function perPage(): int
     {
         return (int) ($this->validated('perPage') ?? 10);
@@ -39,7 +41,7 @@ class ListComputersRequest extends FormRequest
     {
         $search = $this->validated('search');
 
-        if (!is_string($search)) {
+        if (! is_string($search)) {
             return null;
         }
 
@@ -47,6 +49,7 @@ class ListComputersRequest extends FormRequest
 
         return $search === '' ? null : $search;
     }
+
     public function missingSophos(): bool
     {
         return (bool) ($this->validated('missing_sophos') ?? false);
@@ -55,17 +58,24 @@ class ListComputersRequest extends FormRequest
     public function group(): ?string
     {
         $v = $this->validated('group');
-        if (!is_string($v)) return null;
+        if (! is_string($v)) {
+            return null;
+        }
 
         $v = trim($v);
+
         return $v === '' ? null : strtolower($v);
     }
+
     public function cpuTier(): ?string
     {
         $v = $this->validated('cpu_tier');
-        if (!is_string($v)) return null;
+        if (! is_string($v)) {
+            return null;
+        }
 
         $v = trim($v);
+
         return $v === '' ? null : strtolower($v);
     }
 }

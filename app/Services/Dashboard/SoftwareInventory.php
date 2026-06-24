@@ -2,8 +2,8 @@
 
 namespace App\Services\Dashboard;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class SoftwareInventory
 {
@@ -26,13 +26,13 @@ class SoftwareInventory
             function () {
 
                 $average = DB::table('computer_software_application')
-                    ->select(DB::raw("
+                    ->select(DB::raw('
                         CASE
                             WHEN COUNT(DISTINCT computer_id) = 0
                             THEN 0
                             ELSE CAST(COUNT(*) AS DECIMAL(10,2)) / COUNT(DISTINCT computer_id)
                         END as average
-                    "))
+                    '))
                     ->value('average');
 
                 return (float) ($average ?? 0);
@@ -63,7 +63,7 @@ class SoftwareInventory
                     ->get()
                     ->map(function ($item) {
                         return [
-                            'name'  => $item->software_name,
+                            'name' => $item->software_name,
                             'count' => (int) $item->installation_count,
                         ];
                     })
@@ -152,10 +152,10 @@ class SoftwareInventory
                     ->map(function ($item) {
 
                         return [
-                            'id'               => (int) $item->id,
-                            'name'             => $item->name,
-                            'model'            => $item->computer_model,
-                            'software_count'   => (int) $item->software_count,
+                            'id' => (int) $item->id,
+                            'name' => $item->name,
+                            'model' => $item->computer_model,
+                            'software_count' => (int) $item->software_count,
                             'avg_free_percent' => round(
                                 (float) $item->avg_free_percent,
                                 2
@@ -212,20 +212,15 @@ class SoftwareInventory
             function () {
 
                 return [
-                    'average_softwares_per_device' =>
-                    round($this->averageSoftwaresPerDevice(), 2),
+                    'average_softwares_per_device' => round($this->averageSoftwaresPerDevice(), 2),
 
-                    'devices_above_average' =>
-                    $this->countDevicesAboveAverage(),
+                    'devices_above_average' => $this->countDevicesAboveAverage(),
 
-                    'top_installed_softwares' =>
-                    $this->topInstalledSoftwares(),
+                    'top_installed_softwares' => $this->topInstalledSoftwares(),
 
-                    'devices_above_average_with_low_disk' =>
-                    $this->devicesAboveAverageWithLowDiskSpace(),
+                    'devices_above_average_with_low_disk' => $this->devicesAboveAverageWithLowDiskSpace(),
 
-                    'top_device_by_software_count' =>
-                    $this->topDeviceByNumberOfSoftwares(),
+                    'top_device_by_software_count' => $this->topDeviceByNumberOfSoftwares(),
                 ];
             }
         );

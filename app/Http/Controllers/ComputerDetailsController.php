@@ -3,21 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Exports\VulneExport;
-use App\Http\Controllers\Controller;
 use App\Models\Computer;
 use App\Services\Inventaire\ComputerDetailsService;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 use Maatwebsite\Excel\Facades\Excel;
 
-
-
 class ComputerDetailsController extends Controller
 {
-
-
     public function export(Computer $computer)
     {
 
@@ -32,6 +25,7 @@ class ComputerDetailsController extends Controller
             $filename
         );
     }
+
     public function show(
         Computer $computer,
         ComputerDetailsService $service
@@ -42,25 +36,25 @@ class ComputerDetailsController extends Controller
 
             // ── Données légères : chargées immédiatement ──────────────────────
             'computer' => [
-                'id'                      => $computer->id,
-                'name'                    => $computer->name,
-                'computer_model'          => $computer->computer_model,
-                'contact'                 => $computer->contact,
-                'last_inventory_update'   => $computer->last_inventory_update,
-                'cpu'                     => $computer->cpu,
-                'ram'                     => $computer->ram,
-                'os'                      => $computer->os,
-                'antiviruses'             => $computer->antiviruses,
-                'volumes'                 => $computer->volumes,
-                'security_kpis'           => $computer->security_kpis,
-                'severity_chart_current'  => $computer->severity_chart_current,
+                'id' => $computer->id,
+                'name' => $computer->name,
+                'computer_model' => $computer->computer_model,
+                'contact' => $computer->contact,
+                'last_inventory_update' => $computer->last_inventory_update,
+                'cpu' => $computer->cpu,
+                'ram' => $computer->ram,
+                'os' => $computer->os,
+                'antiviruses' => $computer->antiviruses,
+                'volumes' => $computer->volumes,
+                'security_kpis' => $computer->security_kpis,
+                'severity_chart_current' => $computer->severity_chart_current,
                 'severity_chart_previous' => $computer->severity_chart_previous,
 
                 // ── Données lourdes : chargées uniquement si demandées ────────
 
                 // ✅ Lazy + non paginé : les vulnérabilités sont au format JSON mais ne sont pas chargées tant que l'utilisateur ne clique pas sur l'onglet
                 'vulnerabilities' => Inertia::lazy(
-                    fn() => $computer->vulnerabilities()
+                    fn () => $computer->vulnerabilities()
                         ->select([
                             'vulnerabilities.id',
                             'cve',
@@ -75,7 +69,7 @@ class ComputerDetailsController extends Controller
 
                 // ✅ Lazy + non paginé : les logiciels sont au format JSON mais ne sont pas chargés tant que l'utilisateur ne clique pas sur l'onglet
                 'softwares' => Inertia::lazy(
-                    fn() => $computer->softwares()
+                    fn () => $computer->softwares()
                         ->select(['id', 'computer_id', 'software_name', 'version', 'date_install'])
                         ->orderBy('software_name')
                         ->get()

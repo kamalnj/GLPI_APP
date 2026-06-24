@@ -11,23 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-    Schema::create('computer_antiviruses', function (Blueprint $table) {
-    $table->id();
+        Schema::create('computer_antiviruses', function (Blueprint $table) {
+            $table->id();
 
-    $table->unsignedBigInteger('glpi_id')->unique();
-    $table->unsignedBigInteger('computer_id')->index();
+            $table->unsignedBigInteger('glpi_id')->unique();
+            $table->unsignedBigInteger('computer_id')->index();
 
-    $table->string('name')->nullable();
+            $table->string('name')->nullable();
 
-    $table->string('antivirus_version')->nullable();
+            $table->string('antivirus_version')->nullable();
 
-    $table->timestamp('date_mod')->nullable();
-     $table->dateTime('synced_at')->nullable();
+            $table->timestamp('date_mod')->nullable();
+            $table->dateTime('synced_at')->nullable();
 
-
-
-    $table->timestamps();
-});
+            $table->timestamps();
+        });
 
     }
 

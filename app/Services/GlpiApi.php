@@ -3,22 +3,21 @@
 namespace App\Services;
 
 use Illuminate\Http\Client\PendingRequest;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\Response;
-use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Http;
 use RuntimeException;
-
-
 
 class GlpiApi
 {
     /**
      * Create a new class instance.
      */
-
     private string $baseUrl;
+
     private string $appToken;
+
     private string $userToken;
+
     public function __construct()
     {
         $this->baseUrl = config('services.glpi.url');
@@ -44,15 +43,15 @@ class GlpiApi
         /** @var Response $res */
         $res = $this->http()
             ->withHeaders([
-                'Authorization' => 'user_token ' . $this->userToken,
+                'Authorization' => 'user_token '.$this->userToken,
             ])
-            ->get($this->baseUrl . '/apirest.php/initSession');
+            ->get($this->baseUrl.'/apirest.php/initSession');
 
         $res->throw();
 
         $token = $res->json('session_token');
 
-        if (!is_string($token) || $token === '') {
+        if (! is_string($token) || $token === '') {
             throw new RuntimeException('GLPI initSession failed: session_token not found in response');
         }
 
@@ -67,7 +66,7 @@ class GlpiApi
         /** @var Response $res */
         $res = $this->http()
             ->withHeaders(['Session-Token' => $sessionToken])
-            ->get($this->baseUrl . '/apirest.php/killSession');
+            ->get($this->baseUrl.'/apirest.php/killSession');
 
         $res->throw();
     }
@@ -81,7 +80,7 @@ class GlpiApi
         /** @var Response $res */
         $res = $this->http()
             ->withHeaders(['Session-Token' => $sessionToken])
-            ->get($this->baseUrl . '/apirest.php/' . trim($itemtype, '/') . '/', $query);
+            ->get($this->baseUrl.'/apirest.php/'.trim($itemtype, '/').'/', $query);
 
         $res->throw();
 
@@ -98,7 +97,7 @@ class GlpiApi
         /** @var Response $res */
         $res = $this->http()
             ->withHeaders(['Session-Token' => $sessionToken])
-            ->get($this->baseUrl . '/apirest.php/' . trim($itemtype, '/') . '/' . $id, $query);
+            ->get($this->baseUrl.'/apirest.php/'.trim($itemtype, '/').'/'.$id, $query);
 
         $res->throw();
 
@@ -117,10 +116,10 @@ class GlpiApi
         $res = $this->http()
             ->withHeaders(['Session-Token' => $sessionToken])
             ->get(
-                $this->baseUrl . '/apirest.php/'
-                    . trim($parentType, '/') . '/'
-                    . $parentId . '/'
-                    . trim($childType, '/'),
+                $this->baseUrl.'/apirest.php/'
+                    .trim($parentType, '/').'/'
+                    .$parentId.'/'
+                    .trim($childType, '/'),
                 $query
             );
 
@@ -133,9 +132,9 @@ class GlpiApi
 
     public function getMultipleItems(
         string $itemtype,
-        array  $ids,
+        array $ids,
         string $sessionToken,
-        array  $query = []
+        array $query = []
     ): array {
         if (empty($ids)) {
             return [];
@@ -145,14 +144,14 @@ class GlpiApi
         $params = $query;
 
         foreach (array_values($ids) as $index => $id) {
-            $params["items[{$index}][itemtype]"]  = $itemtype;
-            $params["items[{$index}][items_id]"]  = $id;
+            $params["items[{$index}][itemtype]"] = $itemtype;
+            $params["items[{$index}][items_id]"] = $id;
         }
 
         /** @var Response $res */
         $res = $this->http()
             ->withHeaders(['Session-Token' => $sessionToken])
-            ->get($this->baseUrl . '/apirest.php/getMultipleItems', $params);
+            ->get($this->baseUrl.'/apirest.php/getMultipleItems', $params);
 
         $res->throw();
 
@@ -166,7 +165,7 @@ class GlpiApi
         /** @var Response $res */
         $res = $this->http()
             ->withHeaders(['Session-Token' => $sessionToken])
-            ->get($this->baseUrl . '/apirest.php/search/' . trim($itemType, '/'), $params);
+            ->get($this->baseUrl.'/apirest.php/search/'.trim($itemType, '/'), $params);
 
         $res->throw();
 

@@ -3,10 +3,8 @@
 namespace App\Services\Inventaire;
 
 use App\Models\Computer;
-use App\Models\ComputerAntivirus;
 use App\Models\ComputerCPU;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 
 class ComputerInventoryService
 {
@@ -18,6 +16,7 @@ class ComputerInventoryService
         int $perPage = 15
     ): LengthAwarePaginator {
         $sophosName = 'Sophos Intercept X';
+
         return Computer::query()
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
@@ -55,6 +54,7 @@ class ComputerInventoryService
             ->pluck('groupe')
             ->toArray();
     }
+
     public function cpuTierOptions(): array
     {
         $names = ComputerCPU::query()
@@ -85,12 +85,12 @@ class ComputerInventoryService
 
         // Intel i3/i5/i7/i9
         if (preg_match('/\bi\s*(3|5|7|9)\b/', $s, $m)) {
-            return 'i' . $m[1];
+            return 'i'.$m[1];
         }
 
         // Ryzen 3/5/7/9
         if (preg_match('/\bryzen\s*(3|5|7|9)\b/', $s, $m)) {
-            return 'ryzen' . $m[1];
+            return 'ryzen'.$m[1];
         }
 
         return null;

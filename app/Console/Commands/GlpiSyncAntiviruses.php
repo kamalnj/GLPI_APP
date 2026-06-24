@@ -8,7 +8,6 @@ use App\Services\GlpiApi;
 use Illuminate\Console\Command;
 use Throwable;
 
-
 class GlpiSyncAntiviruses extends Command
 {
     /**
@@ -30,7 +29,7 @@ class GlpiSyncAntiviruses extends Command
      */
     public function handle()
     {
-        $client = new GlpiApi();
+        $client = new GlpiApi;
 
         try {
             $session = $client->initSession();
@@ -45,7 +44,7 @@ class GlpiSyncAntiviruses extends Command
                     'range' => "{$start}-{$end}",
                 ]);
                 if (empty($items)) {
-                    $this->info("No more items. Finished.");
+                    $this->info('No more items. Finished.');
                     break;
                 }
                 $computerMap = Computer::query()->pluck('id', 'glpi_id');
@@ -57,7 +56,7 @@ class GlpiSyncAntiviruses extends Command
                         continue;
                     }
                     $localComputerId = $computerMap[$glpiComputerId] ?? null;
-                    if (!$localComputerId) {
+                    if (! $localComputerId) {
 
                         continue;
                     }
@@ -73,9 +72,9 @@ class GlpiSyncAntiviruses extends Command
                     );
                 }
 
-                $this->info("Synced Computer range {$start}-{$end} (count=" . count($items) . ")");
+                $this->info("Synced Computer range {$start}-{$end} (count=".count($items).')');
                 if (count($items) < $batch) {
-                    $this->info("Last batch received (" . count($items) . " < {$batch}). Finished.");
+                    $this->info('Last batch received ('.count($items)." < {$batch}). Finished.");
                     break;
                 }
                 $start += $batch;
@@ -85,7 +84,8 @@ class GlpiSyncAntiviruses extends Command
 
             return self::SUCCESS;
         } catch (Throwable $e) {
-            $this->error('❌ Sync failed: ' . $e->getMessage());
+            $this->error('❌ Sync failed: '.$e->getMessage());
+
             return self::FAILURE;
         }
     }

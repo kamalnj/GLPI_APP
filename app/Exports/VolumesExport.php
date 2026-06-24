@@ -4,23 +4,17 @@ namespace App\Exports;
 
 use App\Models\ComputerVolumes;
 use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use Maatwebsite\Excel\Concerns\WithTitle;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class VolumesExport implements
-    FromQuery,
-    WithHeadings,
-    WithMapping,
-    WithStyles,
-    WithColumnWidths,
-    WithTitle
+class VolumesExport implements FromQuery, WithColumnWidths, WithHeadings, WithMapping, WithStyles, WithTitle
 {
     public function __construct() {}
 
@@ -47,7 +41,7 @@ class VolumesExport implements
     public function map($computerVolume): array
     {
         $total = (float) $computerVolume->total_size;
-        $free  = (float) $computerVolume->free_size;
+        $free = (float) $computerVolume->free_size;
 
         return [
             $computerVolume->computer?->name ?? 'N/A',
@@ -56,7 +50,7 @@ class VolumesExport implements
             $total > 0 ? round($total / 1024, 2) : 0,
             $free > 0 ? round($free / 1024, 2) : 0,
 
-            ($computerVolume->free_percent ?? 0) . '%',
+            ($computerVolume->free_percent ?? 0).'%',
             strtoupper($computerVolume->alert_level ?? 'N/A'),
 
             $computerVolume->synced_at?->format('Y-m-d H:i:s') ?? 'N/A',
@@ -102,10 +96,10 @@ class VolumesExport implements
 
             $colors = [
                 'CRITICAL' => ['bg' => 'FEE2E2', 'text' => '991B1B'],
-                'ALERT'    => ['bg' => 'FED7AA', 'text' => '9A3412'],
-                'HIGH'     => ['bg' => 'FED7AA', 'text' => '9A3412'],
-                'MEDIUM'   => ['bg' => 'FEF3C7', 'text' => '92400E'],
-                'LOW'      => ['bg' => 'DBEAFE', 'text' => '1E40AF'],
+                'ALERT' => ['bg' => 'FED7AA', 'text' => '9A3412'],
+                'HIGH' => ['bg' => 'FED7AA', 'text' => '9A3412'],
+                'MEDIUM' => ['bg' => 'FEF3C7', 'text' => '92400E'],
+                'LOW' => ['bg' => 'DBEAFE', 'text' => '1E40AF'],
             ];
 
             if (isset($colors[$severity])) {

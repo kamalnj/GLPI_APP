@@ -11,11 +11,13 @@ use Throwable;
 
 class GlpiSyncSoftwares extends Command
 {
-    protected $signature   = 'glpi:sync-softwares {--batch=100}';
+    protected $signature = 'glpi:sync-softwares {--batch=100}';
+
     protected $description = 'Sync GLPI Softwares (application & security_update) per Computer into app DB';
 
     // Cache inter-machines : évite de rappeler l'API pour les mêmes logiciels
     private array $svCache = []; // svId  → ['software_id', 'version']
+
     private array $swCache = []; // swId  → ['category', 'name']
 
     // Taille max du batch pour getMultipleItems
@@ -23,7 +25,7 @@ class GlpiSyncSoftwares extends Command
 
     public function handle(): int
     {
-        $client = new GlpiApi();
+        $client = new GlpiApi;
 
         try {
             $session = $client->initSession();
@@ -39,16 +41,17 @@ class GlpiSyncSoftwares extends Command
             if ($computers->isEmpty()) {
                 $this->warn('No computers found in local DB.');
                 $client->killSession($session);
+
                 return self::FAILURE;
             }
 
-            $totalApp   = 0;
+            $totalApp = 0;
             $totalPatch = 0;
 
             foreach ($computers as $computer) {
 
-                $start      = 0;
-                $allItems   = [];
+                $start = 0;
+                $allItems = [];
 
                 // ---------------------------------------------------------
                 // Étape 1 : collecter TOUS les Item_SoftwareVersion
@@ -66,7 +69,7 @@ class GlpiSyncSoftwares extends Command
                             ['range' => "{$start}-{$end}"]
                         );
                     } catch (Throwable $e) {
-                        $this->warn("⚠️  SubCollection failed for [{$computer->name}] : " . $e->getMessage());
+                        $this->warn("⚠️  SubCollection failed for [{$computer->name}] : ".$e->getMessage());
                         break;
                     }
 
@@ -85,6 +88,7 @@ class GlpiSyncSoftwares extends Command
 
                 if (empty($allItems)) {
                     $this->info("Computer [{$computer->name}] — app: 0 | patch: 0");
+
                     continue;
                 }
 
@@ -93,15 +97,15 @@ class GlpiSyncSoftwares extends Command
                 //           en batch (getMultipleItems)
                 // ---------------------------------------------------------
                 $svIds = array_values(array_unique(array_filter(
-                    array_map(fn($item) => (int) ($item['softwareversions_id'] ?? 0), $allItems)
+                    array_map(fn ($item) => (int) ($item['softwareversions_id'] ?? 0), $allItems)
                 )));
 
                 $uncachedSvIds = array_values(array_filter(
                     $svIds,
-                    fn($id) => !isset($this->svCache[$id])
+                    fn ($id) => ! isset($this->svCache[$id])
                 ));
 
-                if (!empty($uncachedSvIds)) {
+                if (! empty($uncachedSvIds)) {
                     $this->fetchMultipleSoftwareVersions($client, $session, $uncachedSvIds);
                 }
 
@@ -109,56 +113,56 @@ class GlpiSyncSoftwares extends Command
                 // Étape 3 : résoudre les Softwares manquants en batch
                 // ---------------------------------------------------------
                 $swIds = array_values(array_unique(array_filter(
-                    array_map(fn($svId) => $this->svCache[$svId]['software_id'] ?? 0, $svIds)
+                    array_map(fn ($svId) => $this->svCache[$svId]['software_id'] ?? 0, $svIds)
                 )));
 
                 $uncachedSwIds = array_values(array_filter(
                     $swIds,
-                    fn($id) => !isset($this->swCache[$id])
+                    fn ($id) => ! isset($this->swCache[$id])
                 ));
 
-                if (!empty($uncachedSwIds)) {
+                if (! empty($uncachedSwIds)) {
                     $this->fetchMultipleSoftwares($client, $session, $uncachedSwIds);
                 }
 
                 // ---------------------------------------------------------
                 // Étape 4 : insérer en DB
                 // ---------------------------------------------------------
-                $countApp   = 0;
+                $countApp = 0;
                 $countPatch = 0;
 
                 foreach ($allItems as $item) {
                     $svId = (int) ($item['softwareversions_id'] ?? 0);
 
-                    if (!$svId || !isset($this->svCache[$svId])) {
+                    if (! $svId || ! isset($this->svCache[$svId])) {
                         continue;
                     }
 
-                    $sv       = $this->svCache[$svId];
-                    $swId     = $sv['software_id'] ?? 0;
+                    $sv = $this->svCache[$svId];
+                    $swId = $sv['software_id'] ?? 0;
 
-                    if (!$swId || !isset($this->swCache[$swId])) {
+                    if (! $swId || ! isset($this->swCache[$swId])) {
                         continue;
                     }
 
-                    $sw           = $this->swCache[$swId];
-                    $category     = $sw['category'];
-                    $itemSvId     = (int) ($item['id'] ?? $svId);
-                    $dateInstall  = $item['date_install'] ?? null;
-                    $dateMod      = $item['date_mod']     ?? null;
+                    $sw = $this->swCache[$swId];
+                    $category = $sw['category'];
+                    $itemSvId = (int) ($item['id'] ?? $svId);
+                    $dateInstall = $item['date_install'] ?? null;
+                    $dateMod = $item['date_mod'] ?? null;
 
                     if ($category === 'application') {
                         SoftwareApplication::updateOrCreate(
                             ['glpi_item_softwareversion_id' => $itemSvId],
                             [
                                 'glpi_softwareversion_id' => $svId,
-                                'glpi_software_id'        => $swId,
-                                'computer_id'             => $computer->id,
-                                'software_name'           => $sw['name'],
-                                'version'                 => $sv['version'],
-                                'date_install'            => $dateInstall,
-                                'date_mod'                => $dateMod,
-                                'synced_at'               => now(),
+                                'glpi_software_id' => $swId,
+                                'computer_id' => $computer->id,
+                                'software_name' => $sw['name'],
+                                'version' => $sv['version'],
+                                'date_install' => $dateInstall,
+                                'date_mod' => $dateMod,
+                                'synced_at' => now(),
                             ]
                         );
                         $countApp++;
@@ -170,13 +174,13 @@ class GlpiSyncSoftwares extends Command
                             ['glpi_item_softwareversion_id' => $itemSvId],
                             [
                                 'glpi_softwareversion_id' => $svId,
-                                'glpi_software_id'        => $swId,
-                                'computer_id'             => $computer->id,
-                                'patch_name'              => $sw['name'],
-                                'version'                 => $sv['version'],
-                                'date_install'            => $dateInstall,
-                                'date_mod'                => $dateMod,
-                                'synced_at'               => now(),
+                                'glpi_software_id' => $swId,
+                                'computer_id' => $computer->id,
+                                'patch_name' => $sw['name'],
+                                'version' => $sv['version'],
+                                'date_install' => $dateInstall,
+                                'date_mod' => $dateMod,
+                                'synced_at' => now(),
                             ]
                         );
                         $countPatch++;
@@ -190,11 +194,12 @@ class GlpiSyncSoftwares extends Command
             $client->killSession($session);
 
             $this->info("✅ Done. Applications: {$totalApp} | Security patches: {$totalPatch}");
-            $this->info("   Cache — SoftwareVersion: " . count($this->svCache) . " | Software: " . count($this->swCache));
+            $this->info('   Cache — SoftwareVersion: '.count($this->svCache).' | Software: '.count($this->swCache));
 
             return self::SUCCESS;
         } catch (Throwable $e) {
-            $this->error('❌ Sync failed: ' . $e->getMessage());
+            $this->error('❌ Sync failed: '.$e->getMessage());
+
             return self::FAILURE;
         }
     }
@@ -210,18 +215,18 @@ class GlpiSyncSoftwares extends Command
 
                 foreach ($items as $sv) {
                     $svId = (int) ($sv['id'] ?? 0);
-                    if (!$svId) {
+                    if (! $svId) {
                         continue;
                     }
 
                     $softwareId = (int) ($sv['softwares_id'] ?? 0);
-                    if (!$softwareId) {
+                    if (! $softwareId) {
                         $softwareId = $this->extractIdFromLinks($sv['links'] ?? [], 'Software');
                     }
 
                     $this->svCache[$svId] = [
                         'software_id' => $softwareId,
-                        'version'     => $sv['name'] ?? null,
+                        'version' => $sv['name'] ?? null,
                     ];
                 }
             } catch (Throwable $e) {
@@ -233,12 +238,12 @@ class GlpiSyncSoftwares extends Command
                             continue;
                         }
                         $softwareId = (int) ($sv['softwares_id'] ?? 0);
-                        if (!$softwareId) {
+                        if (! $softwareId) {
                             $softwareId = $this->extractIdFromLinks($sv['links'] ?? [], 'Software');
                         }
                         $this->svCache[$svId] = [
                             'software_id' => $softwareId,
-                            'version'     => $sv['name'] ?? null,
+                            'version' => $sv['name'] ?? null,
                         ];
                     } catch (Throwable) {
                         // ne pas skiper
@@ -262,13 +267,13 @@ class GlpiSyncSoftwares extends Command
 
                 foreach ($items as $sw) {
                     $swId = (int) ($sw['id'] ?? 0);
-                    if (!$swId) {
+                    if (! $swId) {
                         continue;
                     }
 
                     $this->swCache[$swId] = [
                         'category' => strtolower((string) ($sw['softwarecategories_id'] ?? '')),
-                        'name'     => $sw['name'] ?? null,
+                        'name' => $sw['name'] ?? null,
                     ];
                 }
             } catch (Throwable $e) {
@@ -283,7 +288,7 @@ class GlpiSyncSoftwares extends Command
                         }
                         $this->swCache[$swId] = [
                             'category' => strtolower((string) ($sw['softwarecategories_id'] ?? '')),
-                            'name'     => $sw['name'] ?? null,
+                            'name' => $sw['name'] ?? null,
                         ];
                     } catch (Throwable) {
                         // skip
@@ -298,10 +303,12 @@ class GlpiSyncSoftwares extends Command
         foreach ($links as $link) {
             if (($link['rel'] ?? '') === $rel) {
                 $parts = explode('/', rtrim($link['href'], '/'));
-                $id    = (int) end($parts);
+                $id = (int) end($parts);
+
                 return $id > 0 ? $id : null;
             }
         }
+
         return null;
     }
 }

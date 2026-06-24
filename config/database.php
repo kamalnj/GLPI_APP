@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Str;
-
+use Pdo\Mysql;
 
 return [
 
@@ -17,7 +17,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'sqlite'),
+    'default' => env('DB_CONNECTION', 'mysql'),
 
     /*
     |--------------------------------------------------------------------------
@@ -32,17 +32,17 @@ return [
 
     'connections' => [
 
-        'sqlite' => [
-            'driver' => 'sqlite',
-            'url' => env('DB_URL'),
-            'database' => env('DB_DATABASE', database_path('database.sqlite')),
-            'prefix' => '',
-            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
-            'busy_timeout' => null,
-            'journal_mode' => null,
-            'synchronous' => null,
-            'transaction_mode' => 'DEFERRED',
-        ],
+        // 'sqlite' => [
+        //     'driver' => 'sqlite',
+        //     'url' => env('DB_URL'),
+        //     'database' => env('DB_DATABASE', database_path('database.sqlite')),
+        //     'prefix' => '',
+        //     'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
+        //     'busy_timeout' => null,
+        //     'journal_mode' => null,
+        //     'synchronous' => null,
+        //     'transaction_mode' => 'DEFERRED',
+        // ],
 
         'mysql' => [
             'driver' => 'mysql',
@@ -60,7 +60,7 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                (PHP_VERSION_ID >= 80500 ? \Pdo\Mysql::ATTR_SSL_CA : \PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
+                (PHP_VERSION_ID >= 80500 ? Mysql::ATTR_SSL_CA : PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
 
@@ -80,7 +80,7 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
-                (PHP_VERSION_ID >= 80500 ? \Pdo\Mysql::ATTR_SSL_CA : \PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
+                (PHP_VERSION_ID >= 80500 ? Mysql::ATTR_SSL_CA : PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
 
@@ -100,7 +100,7 @@ return [
         ],
         'sqlsrv' => [
             'driver' => 'sqlsrv',
-            'odbc_driver' => '{ODBC Driver 18 for SQL Server}', 
+            'odbc_driver' => '{ODBC Driver 18 for SQL Server}',
             'host' => env('SQLSRV_HOST', 'localhost'),
             'port' => env('SQLSRV_PORT', '1433'),
             'database' => env('SQLSRV_DATABASE', 'Test'),
@@ -112,23 +112,22 @@ return [
             'trust_server_certificate' => env('SQLSRV_TRUST_SERVER_CERTIFICATE', 'yes'),
             'encrypt' => env('SQLSRV_ENCRYPT', 'optional'),
         ],
-//         'sqlsrv' => [
-//     'driver' => 'sqlsrv',
-//     'odbc_driver' => '{ODBC Driver 18 for SQL Server}',
-//     'host' => '10.0.0.63',
-//     'port' => '1433',
-//     'database' => 'Test',
-//     'username' => env('SQLSRV_USERNAME'),
-//     'password' => env('SQLSRV_PASSWORD'),
-//     'charset' => 'utf8',
-//     'prefix' => '',
-//     'prefix_indexes' => true,
-//     'trust_server_certificate' => 'no',
-//     'encrypt' => 'yes', // ✅ Chiffrement obligatoire
-// ],
+        //         'sqlsrv' => [
+        //     'driver' => 'sqlsrv',
+        //     'odbc_driver' => '{ODBC Driver 18 for SQL Server}',
+        //     'host' => '10.0.0.63',
+        //     'port' => '1433',
+        //     'database' => 'Test',
+        //     'username' => env('SQLSRV_USERNAME'),
+        //     'password' => env('SQLSRV_PASSWORD'),
+        //     'charset' => 'utf8',
+        //     'prefix' => '',
+        //     'prefix_indexes' => true,
+        //     'trust_server_certificate' => 'no',
+        //     'encrypt' => 'yes', // ✅ Chiffrement obligatoire
+        // ],
 
     ],
-
 
     /*
     |--------------------------------------------------------------------------
@@ -163,7 +162,7 @@ return [
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
-            'prefix' => env('REDIS_PREFIX', Str::slug((string) env('APP_NAME', 'laravel')) . '-database-'),
+            'prefix' => env('REDIS_PREFIX', Str::slug((string) env('APP_NAME', 'laravel')).'-database-'),
             'persistent' => env('REDIS_PERSISTENT', false),
         ],
 

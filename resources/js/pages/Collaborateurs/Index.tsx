@@ -9,7 +9,7 @@ interface UserOverview {
     machines_count: number;
     total_active_seconds: number;
     formatted_active_time: string;
-    total_unlocks: number;
+    total_unlock_count: number;
     last_activity: string;
 }
 

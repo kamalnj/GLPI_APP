@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'glpi' =>[
+    'glpi' => [
         'url' => env('GLPI_URL'),
         'app_token' => env('GLPI_APP_TOKEN'),
         'user_token' => env('GLPI_USER_TOKEN'),
@@ -31,7 +31,6 @@ return [
         'user' => env('WAZUH_INDEXER_USER'),
         'password' => env('WAZUH_INDEXER_PASSWORD'),
     ],
-    
 
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),

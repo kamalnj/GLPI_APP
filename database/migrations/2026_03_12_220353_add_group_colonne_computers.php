@@ -9,11 +9,11 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-     public function up(): void
+    public function up(): void
     {
         Schema::table('computers', function (Blueprint $table) {
-    $table->string('groupe')->nullable();
-});
+            $table->string('groupe')->nullable();
+        });
     }
 
     /**

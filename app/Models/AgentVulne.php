@@ -20,6 +20,7 @@ class AgentVulne extends Model
     {
         return $this->belongsTo(Agents::class, 'agent_id', 'id');
     }
+
     public function vulnerability()
     {
         return $this->belongsTo(Vulnerabilite::class, 'vulnerability_id', 'id');

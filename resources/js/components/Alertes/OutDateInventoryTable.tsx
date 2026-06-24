@@ -84,7 +84,7 @@ export default function OutDateInventoryTable({
                             <th className="px-4 py-3 text-left">
                                 Dernière mise à jour de l'inventaire
                             </th>
-                            <th className="px-4 py-3 text-left">
+                            <th className="px-4 py-3 pr-8 text-left">
                                 Dernière sync
                             </th>
                         </tr>
@@ -128,7 +128,9 @@ export default function OutDateInventoryTable({
                                                 {r.name}
                                             </td>
                                             <td className="px-4 py-3 text-gray-500">
-                                                {r.last_inventory_update}
+                                                {formatDate(
+                                                    r.last_inventory_update,
+                                                )}
                                             </td>
                                             <td className="px-4 py-3 text-xs text-gray-400">
                                                 {formatDate(r.synced_at)}

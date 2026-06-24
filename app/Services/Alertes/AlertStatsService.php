@@ -29,8 +29,8 @@ class AlertStatsService
             ->first();
 
         $diskCritical = (int) ($disk?->critical ?? 0);
-        $diskAlert    = (int) ($disk?->alert    ?? 0);
-        $diskNormal   = (int) ($disk?->normal   ?? 0);
+        $diskAlert = (int) ($disk?->alert ?? 0);
+        $diskNormal = (int) ($disk?->normal ?? 0);
 
         // Query 3 — Patches: last patch date thresholds per PC
         $patch = DB::table(
@@ -46,7 +46,7 @@ class AlertStatsService
             ->first();
 
         $patchCritical = (int) ($patch?->critical ?? 0);
-        $patchAlert    = (int) ($patch?->alert    ?? 0);
+        $patchAlert = (int) ($patch?->alert ?? 0);
 
         // Query 4 — Outdated inventory (no update in 7+ days)
         $inventoryOutOfDate = Computer::where('last_inventory_update', '<=', now()->subDays(7))->count();
@@ -99,15 +99,15 @@ class AlertStatsService
             ) AS per_machine
         ");
 
-        $machinesCritical   = (int) ($severityResult?->machines_critical ?? 0);
-        $machinesAlert      = (int) ($severityResult?->machines_alert    ?? 0);
+        $machinesCritical = (int) ($severityResult?->machines_critical ?? 0);
+        $machinesAlert = (int) ($severityResult?->machines_alert ?? 0);
         $machinesWithAlerts = $machinesCritical + $machinesAlert;
 
         // --- KPI derivations (no extra queries) ---
 
         // totalCritical / totalAlert: alert counts summed across all sources (for Card 2)
         $totalCritical = $diskCritical + $patchCritical + $inventoryOutOfDate;
-        $totalAlert    = $diskAlert + $patchAlert;
+        $totalAlert = $diskAlert + $patchAlert;
 
         // machinesOk: machines with zero alerts across all sources
         $machinesOk = max(0, $total - $machinesWithAlerts);
@@ -119,37 +119,37 @@ class AlertStatsService
             // Pie charts
             'diskStats' => [
                 'critical' => $diskCritical,
-                'alert'    => $diskAlert,
-                'normal'   => $diskNormal,
-                'total'    => $total,
+                'alert' => $diskAlert,
+                'normal' => $diskNormal,
+                'total' => $total,
             ],
             'patchStats' => [
-                'critical'   => $patchCritical,
-                'alert'      => $patchAlert,
+                'critical' => $patchCritical,
+                'alert' => $patchAlert,
                 'up_to_date' => max(0, $total - $patchCritical - $patchAlert),
-                'total'      => $total,
+                'total' => $total,
             ],
             'outOfDateInventoryStats' => [
                 'out_of_date' => $inventoryOutOfDate,
-                'up_to_date'  => max(0, $total - $inventoryOutOfDate),
-                'total'       => $total,
+                'up_to_date' => max(0, $total - $inventoryOutOfDate),
+                'total' => $total,
             ],
 
             // KPI cards
             'kpiStats' => [
                 // Card 1 — global health
-                'healthPct'          => $healthPct,
-                'machinesOk'         => $machinesOk,
-                'machinesAlert'      => $machinesAlert,      // machines at warning level (not critical)
-                'machinesCritical'   => $machinesCritical,   // machines at critical level
-                'totalMachines'      => $total,
+                'healthPct' => $healthPct,
+                'machinesOk' => $machinesOk,
+                'machinesAlert' => $machinesAlert,      // machines at warning level (not critical)
+                'machinesCritical' => $machinesCritical,   // machines at critical level
+                'totalMachines' => $total,
 
                 // Card 2 — active alerts (summed across all sources, not deduplicated)
-                'totalCritical'      => $totalCritical,
-                'totalAlert'         => $totalAlert,
-                'countDisk'          => $diskCritical,
-                'countPatch'         => $patchCritical,
-                'countInventory'     => $inventoryOutOfDate,
+                'totalCritical' => $totalCritical,
+                'totalAlert' => $totalAlert,
+                'countDisk' => $diskCritical,
+                'countPatch' => $patchCritical,
+                'countInventory' => $inventoryOutOfDate,
 
                 // Card 3 — affected machines (deduplicated, each machine counted once)
                 'machinesWithAlerts' => $machinesWithAlerts,

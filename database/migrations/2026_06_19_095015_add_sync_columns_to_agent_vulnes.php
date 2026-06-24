@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('agent_vulnerabilities', function (Blueprint $table) {
-        $table->boolean('active')->default(true);
+            $table->boolean('active')->default(true);
 
-        $table->timestamp('last_seen_at')->nullable();
+            $table->timestamp('last_seen_at')->nullable();
 
-        $table->timestamp('resolved_at')->nullable();
-    });
+            $table->timestamp('resolved_at')->nullable();
+        });
     }
 
     /**

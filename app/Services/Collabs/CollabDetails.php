@@ -2,13 +2,15 @@
 
 namespace App\Services\Collabs;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class CollabDetails
 {
     private const CACHE_TTL = 600;
+
     private const MAX_DAYS = 90;
+
     /* =========================
      | USER DETAILS
      ========================= */
@@ -32,7 +34,7 @@ class CollabDetails
     private function getOverview(string $userName)
     {
         $month = now()->month;
-        $year  = now()->year;
+        $year = now()->year;
 
         return Cache::remember("user_overview_{$userName}_{$year}_{$month}", self::CACHE_TTL, function () use ($userName, $month, $year) {
             return DB::connection('sqlsrv')
@@ -127,7 +129,7 @@ class CollabDetails
             ->get();
     }
 
-    //Remote vs Onsite
+    // Remote vs Onsite
     public function getWorkModeComparison(string $userName, string $mode = 'current')
     {
         if ($mode === 'previous') {
@@ -143,7 +145,7 @@ class CollabDetails
             ->leftJoinSub(
                 DB::connection('sqlsrv')
                     ->table('network_changes_central')
-                    ->selectRaw("
+                    ->selectRaw('
                     user_name,
                     machine_name,
                     CAST(date AS DATE) as day,
@@ -153,7 +155,7 @@ class CollabDetails
                         PARTITION BY user_name, machine_name, CAST(date AS DATE)
                         ORDER BY date DESC
                     ) as rn
-                "),
+                '),
                 'n',
                 function ($join) {
                     $join->on('d.user_name', '=', 'n.user_name')

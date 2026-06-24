@@ -3,8 +3,8 @@
 namespace App\Services\Dashboard;
 
 use App\Models\Computer;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class MaterialInventory
 {
@@ -12,7 +12,7 @@ class MaterialInventory
 
     public function totalMachine()
     {
-        return Cache::remember('dashboard.total_machines', self::CACHE_TTL, fn() => Computer::count());
+        return Cache::remember('dashboard.total_machines', self::CACHE_TTL, fn () => Computer::count());
     }
 
     /**
@@ -23,8 +23,7 @@ class MaterialInventory
         return Cache::remember(
             'dashboard.different_models_count',
             self::CACHE_TTL,
-            fn() =>
-            Computer::distinct('computer_model')->count('computer_model')
+            fn () => Computer::distinct('computer_model')->count('computer_model')
         );
     }
 
@@ -36,8 +35,7 @@ class MaterialInventory
         return Cache::remember(
             'dashboard.top_model',
             self::CACHE_TTL,
-            fn() =>
-            Computer::select('computer_model')
+            fn () => Computer::select('computer_model')
                 ->selectRaw('COUNT(*) as count')
                 ->groupBy('computer_model')
                 ->orderByDesc('count')
@@ -53,8 +51,7 @@ class MaterialInventory
         return Cache::remember(
             'dashboard.model_repartition_top10',
             self::CACHE_TTL,
-            fn() =>
-            Computer::select('computer_model')
+            fn () => Computer::select('computer_model')
                 ->selectRaw('COUNT(*) as count')
                 ->groupBy('computer_model')
                 ->orderByDesc('count')
@@ -63,7 +60,7 @@ class MaterialInventory
                 ->map(function ($item) {
                     return [
                         'name' => $item->computer_model ?? 'Unknown',
-                        'value' => $item->count
+                        'value' => $item->count,
                     ];
                 })
                 ->toArray()
@@ -78,8 +75,7 @@ class MaterialInventory
         return Cache::remember(
             'dashboard.ram_distribution',
             self::CACHE_TTL,
-            fn() =>
-            DB::table('computer_rams')
+            fn () => DB::table('computer_rams')
                 ->select(
                     DB::raw('CASE 
                         WHEN size / 1024 <= 2 THEN 2
@@ -97,8 +93,8 @@ class MaterialInventory
                 ->get()
                 ->map(function ($item) {
                     return [
-                        'ram_gb' => (int)$item->ram_gb,
-                        'device_count' => (int)$item->device_count
+                        'ram_gb' => (int) $item->ram_gb,
+                        'device_count' => (int) $item->device_count,
                     ];
                 })
                 ->toArray()

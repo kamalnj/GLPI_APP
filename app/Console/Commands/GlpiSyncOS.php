@@ -11,11 +11,12 @@ use Throwable;
 class GlpiSyncOS extends Command
 {
     protected $signature = 'glpi:sync-os {--batch=50}';
+
     protected $description = 'Sync GLPI OS (Item_OperatingSystem) into app DB';
 
     public function handle(): int
     {
-        $client = new GlpiApi();
+        $client = new GlpiApi;
         $session = null;
 
         $batch = max(1, (int) $this->option('batch'));
@@ -63,27 +64,27 @@ class GlpiSyncOS extends Command
                             continue;
                         }
 
-                        $osRaw   = $item['operatingsystems_id'] ?? null;
-                        $verRaw  = $item['operatingsystemversions_id'] ?? null;
+                        $osRaw = $item['operatingsystems_id'] ?? null;
+                        $verRaw = $item['operatingsystemversions_id'] ?? null;
                         $archRaw = $item['operatingsystemarchitectures_id'] ?? null;
 
-                        $osName      = $this->resolveDropdownName($client, $session, 'OperatingSystem', $osRaw);
+                        $osName = $this->resolveDropdownName($client, $session, 'OperatingSystem', $osRaw);
                         $versionName = $this->resolveDropdownName($client, $session, 'OperatingSystemVersion', $verRaw);
-                        $archName    = $this->resolveDropdownName($client, $session, 'OperatingSystemArchitecture', $archRaw);
+                        $archName = $this->resolveDropdownName($client, $session, 'OperatingSystemArchitecture', $archRaw);
 
                         $installDate = $this->stringOrNull($item['install_date'] ?? null);
-                        $dateMod     = $this->stringOrNull($item['date_mod'] ?? null);
+                        $dateMod = $this->stringOrNull($item['date_mod'] ?? null);
 
                         ComputerOS::updateOrCreate(
                             ['glpi_id' => $glpiOsItemId],
                             [
-                                'computer_id'     => (int) $computer->id,
-                                'os_name'         => $osName,
+                                'computer_id' => (int) $computer->id,
+                                'os_name' => $osName,
                                 'os_version_name' => $versionName,
-                                'os_arch_name'    => $archName,
-                                'install_date'    => $installDate,
-                                'date_mod'        => $dateMod,
-                                'synced_at'       => now(),
+                                'os_arch_name' => $archName,
+                                'install_date' => $installDate,
+                                'date_mod' => $dateMod,
+                                'synced_at' => now(),
                             ]
                         );
                     }
@@ -99,6 +100,7 @@ class GlpiSyncOS extends Command
             return self::SUCCESS;
         } catch (Throwable $e) {
             report($e);
+
             return self::FAILURE;
         } finally {
             if (is_string($session) && $session !== '') {
@@ -115,6 +117,7 @@ class GlpiSyncOS extends Command
     {
         if (is_string($value)) {
             $value = trim($value);
+
             return $value === '' ? null : $value;
         }
 
@@ -131,16 +134,26 @@ class GlpiSyncOS extends Command
 
     private function stringOrNull(mixed $v): ?string
     {
-        if (!is_string($v)) return null;
+        if (! is_string($v)) {
+            return null;
+        }
         $v = trim($v);
+
         return $v === '' ? null : $v;
     }
 
     private function toIntOrZero(mixed $v): int
     {
-        if (is_int($v)) return $v;
-        if (is_string($v) && ctype_digit($v)) return (int) $v;
-        if (is_numeric($v)) return (int) $v;
+        if (is_int($v)) {
+            return $v;
+        }
+        if (is_string($v) && ctype_digit($v)) {
+            return (int) $v;
+        }
+        if (is_numeric($v)) {
+            return (int) $v;
+        }
+
         return 0;
     }
 }

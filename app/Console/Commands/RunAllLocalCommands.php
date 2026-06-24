@@ -3,17 +3,18 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
 
 class RunAllLocalCommands extends Command
 {
     protected $signature = 'prod:run-all';
+
     protected $description = 'Exécute toutes les commandes nécessaires en production';
 
     public function handle()
     {
-        if (!app()->environment('production')) {
+        if (! app()->environment('production')) {
             $this->error('Cette commande ne peut être exécutée qu\'en production.');
+
             return 1;
         }
 
@@ -51,7 +52,7 @@ class RunAllLocalCommands extends Command
         $executionTime = round($endTime - $startTime, 2);
 
         $this->newLine();
-        $this->info("✅ Toutes les commandes exécutées avec succès !");
+        $this->info('✅ Toutes les commandes exécutées avec succès !');
         $this->info("⏱️  Temps total : {$executionTime} secondes");
 
         return 0;

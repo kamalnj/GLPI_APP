@@ -11,11 +11,12 @@ use Throwable;
 class GlpiSyncCPU extends Command
 {
     protected $signature = 'glpi:sync-cpu {--batch=50}';
+
     protected $description = 'Sync GLPI CPU (Item_DeviceProcessor) into app DB';
 
     public function handle(): int
     {
-        $client = new GlpiApi();
+        $client = new GlpiApi;
         $session = null;
 
         $batch = max(1, (int) $this->option('batch'));
@@ -63,30 +64,29 @@ class GlpiSyncCPU extends Command
                             continue;
                         }
 
-                        $cpuRaw  = $item['deviceprocessors_id'] ?? null;
+                        $cpuRaw = $item['deviceprocessors_id'] ?? null;
                         $cpuName = $this->resolveDropdownName($client, $session, 'DeviceProcessor', $cpuRaw);
                         $cpuTier = $this->detectCpuTier($cpuName);
 
-
-                        if (!$cpuName) {
+                        if (! $cpuName) {
                             continue;
                         }
 
-                        $frequence  = $this->toIntOrZero($item['frequency'] ?? null);
-                        $nbrCores   = $this->toIntOrZero($item['nbcores'] ?? null);
+                        $frequence = $this->toIntOrZero($item['frequency'] ?? null);
+                        $nbrCores = $this->toIntOrZero($item['nbcores'] ?? null);
                         $nbrThreads = $this->toIntOrZero($item['nbthreads'] ?? null);
-                        $dateMod    = $this->stringOrNull($item['date_mod'] ?? null);
+                        $dateMod = $this->stringOrNull($item['date_mod'] ?? null);
 
                         ComputerCPU::updateOrCreate(
                             ['glpi_id' => $glpiCpuItemId],
                             [
                                 'computer_id' => (int) $computer->id,
-                                'cpu_name'    => $cpuName,
-                                'frequence'   => $frequence,
-                                'nbr_cores'   => $nbrCores,
+                                'cpu_name' => $cpuName,
+                                'frequence' => $frequence,
+                                'nbr_cores' => $nbrCores,
                                 'nbr_threads' => $nbrThreads,
-                                'date_mod'    => $dateMod,
-                                'synced_at'   => now(),
+                                'date_mod' => $dateMod,
+                                'synced_at' => now(),
                                 'cpu_tier' => $cpuTier,
 
                             ]
@@ -104,6 +104,7 @@ class GlpiSyncCPU extends Command
             return self::SUCCESS;
         } catch (Throwable $e) {
             report($e);
+
             return self::FAILURE;
         } finally {
             if (is_string($session) && $session !== '') {
@@ -120,6 +121,7 @@ class GlpiSyncCPU extends Command
     {
         if (is_string($value)) {
             $value = trim($value);
+
             return $value === '' ? null : $value;
         }
 
@@ -136,36 +138,51 @@ class GlpiSyncCPU extends Command
 
     private function stringOrNull(mixed $v): ?string
     {
-        if (!is_string($v)) return null;
+        if (! is_string($v)) {
+            return null;
+        }
         $v = trim($v);
+
         return $v === '' ? null : $v;
     }
 
     private function toIntOrZero(mixed $v): int
     {
-        if (is_int($v)) return $v;
-        if (is_string($v) && ctype_digit($v)) return (int) $v;
-        if (is_numeric($v)) return (int) $v;
+        if (is_int($v)) {
+            return $v;
+        }
+        if (is_string($v) && ctype_digit($v)) {
+            return (int) $v;
+        }
+        if (is_numeric($v)) {
+            return (int) $v;
+        }
+
         return 0;
     }
+
     private function detectCpuTier(?string $cpuName): ?string
     {
-        if (!is_string($cpuName) || trim($cpuName) === '') return null;
+        if (! is_string($cpuName) || trim($cpuName) === '') {
+            return null;
+        }
 
         $s = strtolower($cpuName);
 
         // Intel Core i3/i5/i7/i9
         if (preg_match('/\bi\s*(3|5|7|9)\b/', $s, $m)) {
-            return 'i' . $m[1];
+            return 'i'.$m[1];
         }
 
         // AMD Ryzen 3/5/7/9
         if (preg_match('/\bryzen\s*(3|5|7|9)\b/', $s, $m)) {
-            return 'ryzen' . $m[1];
+            return 'ryzen'.$m[1];
         }
 
         // Xeon (optionnel)
-        if (str_contains($s, 'xeon')) return 'xeon';
+        if (str_contains($s, 'xeon')) {
+            return 'xeon';
+        }
 
         return 'other';
     }

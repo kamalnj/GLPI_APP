@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('computer_cpus', function ($table) {
-    $table->string('cpu_tier', 10)->nullable()->index(); 
-});
+            $table->string('cpu_tier', 10)->nullable()->index();
+        });
 
     }
 

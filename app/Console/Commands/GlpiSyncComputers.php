@@ -4,18 +4,18 @@ namespace App\Console\Commands;
 
 use App\Models\Computer;
 use App\Services\GlpiApi;
-use App\Services\GlpiClient;
 use Illuminate\Console\Command;
 use Throwable;
 
 class GlpiSyncComputers extends Command
 {
     protected $signature = 'glpi:sync-computers {--batch=50}';
+
     protected $description = 'Sync GLPI Computers into app DB';
 
     public function handle(): int
     {
-        $client = new GlpiApi();
+        $client = new GlpiApi;
 
         try {
             $session = $client->initSession();
@@ -32,7 +32,7 @@ class GlpiSyncComputers extends Command
                 ]);
 
                 if (empty($items)) {
-                    $this->info("No more items. Finished.");
+                    $this->info('No more items. Finished.');
                     break;
                 }
 
@@ -43,7 +43,7 @@ class GlpiSyncComputers extends Command
                     try {
                         $groups = $client->getSubCollection('Computer', $pc['id'], 'group', $session);
 
-                        if (!empty($groups)) {
+                        if (! empty($groups)) {
                             $groupName = $groups[0]['name'] ?? null;
                         }
                     } catch (Throwable $e) {
@@ -53,7 +53,7 @@ class GlpiSyncComputers extends Command
                     try {
                         $computerModel = $client->getSubCollection('Computer', $pc['id'], 'ComputerModel', $session);
 
-                        if (!empty($computerModel)) {
+                        if (! empty($computerModel)) {
                             $computerModelName = $computerModel[0]['name'] ?? null;
                         }
                     } catch (Throwable $e) {
@@ -74,9 +74,9 @@ class GlpiSyncComputers extends Command
                     );
                 }
 
-                $this->info("Synced Computer range {$start}-{$end} (count=" . count($items) . ")");
+                $this->info("Synced Computer range {$start}-{$end} (count=".count($items).')');
                 if (count($items) < $batch) {
-                    $this->info("Last batch received (" . count($items) . " < {$batch}). Finished.");
+                    $this->info('Last batch received ('.count($items)." < {$batch}). Finished.");
                     break;
                 }
                 $start += $batch;
@@ -86,7 +86,8 @@ class GlpiSyncComputers extends Command
 
             return self::SUCCESS;
         } catch (Throwable $e) {
-            $this->error('❌ Sync failed: ' . $e->getMessage());
+            $this->error('❌ Sync failed: '.$e->getMessage());
+
             return self::FAILURE;
         }
     }

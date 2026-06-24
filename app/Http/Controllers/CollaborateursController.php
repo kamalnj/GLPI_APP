@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\Collabs\CollabsService;
-use App\Services\Collabs\CollabDetails;
-use App\Http\Requests\Collabs\ListCollaborateursRequest;
 use App\Exports\CollaborateursExportWithPeriod;
+use App\Http\Requests\Collabs\ListCollaborateursRequest;
+use App\Services\Collabs\CollabDetails;
+use App\Services\Collabs\CollabsService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
@@ -36,7 +36,7 @@ class CollaborateursController extends Controller
                 'machines_max' => $request->query('machines_max'),
                 'from_date' => $request->query('from_date'),
                 'to_date' => $request->query('to_date'),
-            ]
+            ],
         ]);
     }
 
@@ -47,7 +47,7 @@ class CollaborateursController extends Controller
         $search = $request->query('search', null);
 
         // Valider les dates
-        if (!$fromDate) {
+        if (! $fromDate) {
             return redirect()->back()->withErrors(['error' => 'Veuillez sélectionner une date']);
         }
 
@@ -55,7 +55,7 @@ class CollaborateursController extends Controller
             ? "Du {$fromDate} au {$toDate}"
             : $fromDate;
 
-        $fileName = "Collaborateurs_{$dateLabel}_" . now()->format('His') . '.xlsx';
+        $fileName = "Collaborateurs_{$dateLabel}_".now()->format('His').'.xlsx';
 
         return Excel::download(
             new CollaborateursExportWithPeriod($fromDate, $toDate, $search),
@@ -69,7 +69,7 @@ class CollaborateursController extends Controller
 
         return Inertia::render('Collaborateurs/Show', [
             ...$this->collabDetails->getUserDetails($user, $mode),
-            'mode' => $mode
+            'mode' => $mode,
         ]);
     }
 }

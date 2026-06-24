@@ -16,7 +16,7 @@ return new class extends Migration
 
             // Liens
             $table->unsignedBigInteger('glpi_id')->unique();          // id Item_Disk
-            $table->unsignedBigInteger('computer_id')->index();  //FK
+            $table->unsignedBigInteger('computer_id')->index();  // FK
 
             // Volume
             $table->string('mountpoint');        // C:, D:, …

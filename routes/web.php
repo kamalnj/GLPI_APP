@@ -1,12 +1,11 @@
 <?php
 
-use App\Http\Controllers\ComputerDetailsController;
-use App\Http\Controllers\InventaireController;
 use App\Http\Controllers\AlertesController;
 use App\Http\Controllers\CollaborateursController;
+use App\Http\Controllers\ComputerDetailsController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\InventaireController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,6 +66,4 @@ Route::middleware(['auth', 'verified', 'throttle:60,1'])->group(function () {
         ->name('collaborateurs.show');
 });
 
-
-
-require __DIR__ . '/settings.php';
+require __DIR__.'/settings.php';

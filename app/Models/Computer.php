@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-
 class Computer extends Model
 {
     protected $casts = [
         'last_inventory_update' => 'datetime',
         'synced_at' => 'datetime',
     ];
+
     protected $fillable = [
         'wazuh_agent_id',
         'glpi_id',
@@ -20,25 +20,29 @@ class Computer extends Model
         'contact',
         'last_inventory_update',
         'synced_at',
-        'groupe'
+        'groupe',
     ];
 
     public function antiviruses(): HasMany
     {
         return $this->hasMany(ComputerAntivirus::class, 'computer_id', 'id');
     }
+
     public function volumes(): HasMany
     {
         return $this->hasMany(ComputerVolumes::class, 'computer_id', 'id');
     }
+
     public function cpu(): HasMany
     {
         return $this->hasMany(ComputerCPU::class, 'computer_id', 'id');
     }
+
     public function ram(): HasMany
     {
         return $this->hasMany(ComputerRAM::class, 'computer_id', 'id');
     }
+
     public function os(): HasMany
     {
         return $this->hasMany(ComputerOS::class, 'computer_id', 'id');
@@ -52,6 +56,7 @@ class Computer extends Model
             'wazuh_agent_id'
         );
     }
+
     public function vulnerabilities()
     {
         return $this->hasManyThrough(
@@ -63,7 +68,6 @@ class Computer extends Model
             'vulnerability_id'         // Local key sur AgentVulne vers Vulnerabilite
         );
     }
-
 
     public function softwares(): HasMany
     {

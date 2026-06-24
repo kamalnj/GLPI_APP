@@ -14,10 +14,12 @@ class Vulnerabilite extends Model
         'score',
         'description',
     ];
+
     public function agentVulnerabilities()
     {
         return $this->hasMany(AgentVulne::class, 'vulnerability_id', 'id');
     }
+
     public function agents()
     {
         return $this->belongsToMany(

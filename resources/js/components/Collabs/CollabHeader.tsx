@@ -3,7 +3,6 @@ import { Link } from '@inertiajs/react';
 
 interface CollabHeaderProps {
     userName: string;
-    lastActivity: string;
 }
 
 export default function CollabHeader({ userName }: CollabHeaderProps) {

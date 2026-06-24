@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-    Schema::table('computer_rams', function (Blueprint $table) {
-    $table->bigInteger('ram_total')->nullable();
-    $table->bigInteger('ram_free')->nullable();
-    $table->integer('ram_usage')->nullable();
-    $table->timestamp('ram_synced_at')->nullable();
-});
+        Schema::table('computer_rams', function (Blueprint $table) {
+            $table->bigInteger('ram_total')->nullable();
+            $table->bigInteger('ram_free')->nullable();
+            $table->integer('ram_usage')->nullable();
+            $table->timestamp('ram_synced_at')->nullable();
+        });
     }
 
     /**

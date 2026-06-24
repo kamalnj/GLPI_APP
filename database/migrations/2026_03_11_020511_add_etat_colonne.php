@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('computer_volumes', function (Blueprint $table) {
-    $table->string('alert_level')->nullable()->index();
-});
+            $table->string('alert_level')->nullable()->index();
+        });
     }
 
     /**

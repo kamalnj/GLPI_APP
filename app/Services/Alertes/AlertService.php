@@ -4,30 +4,11 @@ namespace App\Services\Alertes;
 
 use App\Models\Computer;
 use App\Models\ComputerPatchSecurity;
-use App\Models\ComputerRAM;
 use App\Models\ComputerVolumes;
 use Illuminate\Support\Collection;
 
-
 class AlertService
 {
-    public function getRamAlerts(): Collection
-    {
-        return ComputerRAM::with('computer')
-            ->whereIn('ram_alert_level', ['alert', 'critical'])
-            ->orderBy('ram_synced_at', 'desc')
-            ->get()
-            ->map(fn($ram) => [
-                'id'           => $ram->id,
-                'computer_id'  => $ram->computer_id,
-                'computer_name' => $ram->computer?->name ?? 'N/A',
-                'ram_name'     => $ram->ram_name,
-                'ram_usage'    => $ram->ram_usage,
-                'alert_level'  => $ram->ram_alert_level,
-                'synced_at'    => $ram->ram_synced_at,
-            ]);
-    }
-
     public function getDiskAlerts(): Collection
     {
         $volumes = ComputerVolumes::with('computer')
@@ -43,20 +24,21 @@ class AlertService
                 $latestSync = $partitions->max('synced_at');
 
                 return [
-                    'computer_id'   => $partitions->first()->computer_id,
+                    'computer_id' => $partitions->first()->computer_id,
                     'computer_name' => $computer?->name ?? 'N/A',
-                    'alert_level'   => $worstLevel,
-                    'synced_at'     => $latestSync,
-                    'partitions'    => $partitions->map(fn($v) => [
-                        'id'           => $v->id,
-                        'mountpoint'   => $v->mountpoint,
+                    'alert_level' => $worstLevel,
+                    'synced_at' => $latestSync,
+                    'partitions' => $partitions->map(fn ($v) => [
+                        'id' => $v->id,
+                        'mountpoint' => $v->mountpoint,
                         'free_percent' => $v->free_percent,
-                        'alert_level'  => $v->alert_level,
+                        'alert_level' => $v->alert_level,
                     ])->values(),
                 ];
             })
             ->values();
     }
+
     public function getPatchWindowsAlerts(): Collection
     {
         $latestPatches = ComputerPatchSecurity::select('computer_id')
@@ -72,15 +54,16 @@ class AlertService
             ->get()
             ->unique('computer_id')
             ->values()
-            ->map(fn($patch) => [
-                'id'           => $patch->id,
-                'computer_id'  => $patch->computer_id,
+            ->map(fn ($patch) => [
+                'id' => $patch->id,
+                'computer_id' => $patch->computer_id,
                 'computer_name' => $patch->computer?->name ?? 'N/A',
-                'patch_name'   => $patch->patch_name,
+                'patch_name' => $patch->patch_name,
                 'date_install' => $patch->date_install,
-                'synced_at'    => $patch->synced_at,
+                'synced_at' => $patch->synced_at,
             ]);
     }
+
     public function getComputersWithoutInventoryUpdate()
     {
         return Computer::select('id', 'name', 'last_inventory_update', 'synced_at')

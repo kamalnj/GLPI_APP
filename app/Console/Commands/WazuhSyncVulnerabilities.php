@@ -2,12 +2,12 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use App\Services\WazuhIndexerService;
-use App\Models\AgentVulne;
 use App\Models\Agents;
+use App\Models\AgentVulne;
 use App\Models\Vulnerabilite;
+use App\Services\WazuhIndexerService;
 use Carbon\Carbon;
+use Illuminate\Console\Command;
 
 class WazuhSyncVulnerabilities extends Command
 {
@@ -16,7 +16,7 @@ class WazuhSyncVulnerabilities extends Command
 
     // Description affichée dans php artisan list
     protected $description =
-    'Synchronise les vulnérabilités depuis Wazuh';
+        'Synchronise les vulnérabilités depuis Wazuh';
 
     /**
      * Date de début du cycle de synchronisation.
@@ -63,7 +63,7 @@ class WazuhSyncVulnerabilities extends Command
          */
         if (
             isset($response['error']) ||
-            !isset($response['hits'])
+            ! isset($response['hits'])
         ) {
             $this->error(
                 'Erreur récupération Wazuh'
@@ -92,7 +92,7 @@ class WazuhSyncVulnerabilities extends Command
          */
         while (true) {
 
-            if (!empty($hits)) {
+            if (! empty($hits)) {
 
                 foreach ($hits as $hit) {
 
@@ -119,7 +119,7 @@ class WazuhSyncVulnerabilities extends Command
              * Fin de pagination.
              */
             if (
-                !$scrollId ||
+                ! $scrollId ||
                 empty($hits)
             ) {
                 break;
@@ -186,27 +186,26 @@ class WazuhSyncVulnerabilities extends Command
          */
         $resolved =
             AgentVulne::query()
-            ->where(
-                'active',
-                true
-            )
-            ->where(function ($q) {
-
-                $q->whereNull(
-                    'last_seen_at'
+                ->where(
+                    'active',
+                    true
                 )
-                    ->orWhere(
-                        'last_seen_at',
-                        '<',
-                        $this->syncStartedAt
-                    );
-            })
-            ->update([
-                'active' => false,
+                ->where(function ($q) {
 
-                'resolved_at' =>
-                now(),
-            ]);
+                    $q->whereNull(
+                        'last_seen_at'
+                    )
+                        ->orWhere(
+                            'last_seen_at',
+                            '<',
+                            $this->syncStartedAt
+                        );
+                })
+                ->update([
+                    'active' => false,
+
+                    'resolved_at' => now(),
+                ]);
 
         $this->info(
             "Done → Synced={$synced}, Resolved={$resolved}"
@@ -263,10 +262,10 @@ class WazuhSyncVulnerabilities extends Command
                 $data['agent']['id']
             )->first();
 
-        if (!$agent) {
+        if (! $agent) {
 
             $this->warn(
-                "Agent absent"
+                'Agent absent'
             );
 
             return false;
@@ -279,20 +278,16 @@ class WazuhSyncVulnerabilities extends Command
         $vuln =
             Vulnerabilite::updateOrCreate(
                 [
-                    'cve' =>
-                    $data['vulnerability']['id']
+                    'cve' => $data['vulnerability']['id'],
                 ],
                 [
-                    'severity' =>
-                    $data['vulnerability']['severity']
+                    'severity' => $data['vulnerability']['severity']
                         ?? null,
 
-                    'score' =>
-                    $data['vulnerability']['score']['base']
+                    'score' => $data['vulnerability']['score']['base']
                         ?? null,
 
-                    'description' =>
-                    $data['vulnerability']['description']
+                    'description' => $data['vulnerability']['description']
                         ?? null,
                 ]
             );
@@ -306,34 +301,26 @@ class WazuhSyncVulnerabilities extends Command
          */
         AgentVulne::updateOrCreate(
             [
-                'agent_id' =>
-                $agent->id,
+                'agent_id' => $agent->id,
 
-                'vulnerability_id' =>
-                $vuln->id,
+                'vulnerability_id' => $vuln->id,
             ],
             [
-                'package' =>
-                $data['package']['name']
+                'package' => $data['package']['name']
                     ?? null,
 
-                'package_version' =>
-                $data['package']['version']
+                'package_version' => $data['package']['version']
                     ?? null,
 
-                'detected_at' =>
-                Carbon::parse(
+                'detected_at' => Carbon::parse(
                     $data['vulnerability']['detected_at']
                 ),
 
-                'last_seen_at' =>
-                $this->syncStartedAt,
+                'last_seen_at' => $this->syncStartedAt,
 
-                'active' =>
-                true,
+                'active' => true,
 
-                'resolved_at' =>
-                null,
+                'resolved_at' => null,
             ]
         );
 

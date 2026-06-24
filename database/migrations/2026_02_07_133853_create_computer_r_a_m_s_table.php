@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('glpi_id')->unique();          // id Item_Disk
             $table->unsignedBigInteger('computer_id')->index();
             $table->string('ram_name');
-            $table->string('frequence');  
+            $table->string('frequence');
             $table->unsignedInteger('size');
             $table->string('serial')->nullable();
             $table->dateTime('date_mod')->nullable();

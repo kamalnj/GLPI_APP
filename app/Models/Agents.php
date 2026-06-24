@@ -20,6 +20,7 @@ class Agents extends Model
             ->withPivot('package', 'package_version', 'detected_at')
             ->withTimestamps();
     }
+
     public function computer()
     {
         return $this->hasOne(

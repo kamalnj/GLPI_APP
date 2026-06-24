@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 class WazuhSyncRAM extends Command
 {
     protected $signature = 'wazuh:sync-ram';
+
     protected $description = 'Sync RAM usage from Wazuh agent by agent (update only)';
 
     protected WazuhApiService $wazuh;
@@ -28,7 +29,8 @@ class WazuhSyncRAM extends Command
         try {
             $agents = $this->wazuh->getAgents();
         } catch (\Throwable $e) {
-            $this->error("Impossible de récupérer la liste des agents Wazuh : " . $e->getMessage());
+            $this->error('Impossible de récupérer la liste des agents Wazuh : '.$e->getMessage());
+
             return self::FAILURE;
         }
 
@@ -39,21 +41,24 @@ class WazuhSyncRAM extends Command
 
             $agentId = $agent['id'] ?? null;
 
-            if (!$agentId) {
+            if (! $agentId) {
                 $skipped++;
+
                 continue;
             }
 
             try {
                 $hardware = $this->wazuh->getAgentHardware($agentId);
             } catch (\Throwable $e) {
-                Log::warning("Impossible de récupérer le hardware pour l'agent {$agentId}: " . $e->getMessage());
+                Log::warning("Impossible de récupérer le hardware pour l'agent {$agentId}: ".$e->getMessage());
                 $skipped++;
+
                 continue;
             }
 
-            if (!$hardware || empty($hardware['ram'])) {
+            if (! $hardware || empty($hardware['ram'])) {
                 $skipped++;
+
                 continue;
             }
 
@@ -61,31 +66,33 @@ class WazuhSyncRAM extends Command
 
             $computer = Computer::where('wazuh_agent_id', $agentId)->first();
 
-            if (!$computer) {
+            if (! $computer) {
                 $skipped++;
+
                 continue;
             }
 
             $computerRam = ComputerRAM::where('glpi_id', $computer->glpi_id)->first();
 
-            if (!$computerRam) {
+            if (! $computerRam) {
                 Log::warning("Aucune ligne GLPI trouvée pour glpi_id {$computer->glpi_id}");
                 $skipped++;
+
                 continue;
             }
 
             $ramTotal = $ram['total'] ?? null;
-            $ramFree  = $ram['free'] ?? null;
+            $ramFree = $ram['free'] ?? null;
             $ramUsage = $ram['usage'] ?? null;
 
             $ramAlertLevel = $this->getRamAlertLevel($ramUsage);
 
             $computerRam->update([
-                'ram_total'       => $ramTotal,
-                'ram_free'        => $ramFree,
-                'ram_usage'       => $ramUsage,
+                'ram_total' => $ramTotal,
+                'ram_free' => $ramFree,
+                'ram_usage' => $ramUsage,
                 'ram_alert_level' => $ramAlertLevel,
-                'ram_synced_at'   => now(),
+                'ram_synced_at' => now(),
             ]);
 
             $updated++;

@@ -2,12 +2,13 @@
 
 namespace App\Services\Dashboard;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class CollaboratorsStats
 {
     private const CACHE_TTL = 600; // 10 min
+
     private const MAX_DAYS = 90;
 
     /**
@@ -38,7 +39,7 @@ class CollaboratorsStats
                 ->leftJoinSub(
                     DB::connection('sqlsrv')
                         ->table('network_changes_central')
-                        ->selectRaw("
+                        ->selectRaw('
                             user_name,
                             machine_name,
                             CAST(date AS DATE) as day,
@@ -48,7 +49,7 @@ class CollaboratorsStats
                                 PARTITION BY user_name, machine_name, CAST(date AS DATE)
                                 ORDER BY date DESC
                             ) as rn
-                        "),
+                        '),
                     'n',
                     function ($join) {
                         $join->on('d.user_name', '=', 'n.user_name')
@@ -98,7 +99,7 @@ class CollaboratorsStats
     private function getTopActiveUsers(int $limit = 10): array
     {
         $month = now()->month;
-        $year  = now()->year;
+        $year = now()->year;
 
         return Cache::remember("collabs_top_active_users_{$limit}_{$year}_{$month}", self::CACHE_TTL, function () use ($limit, $month, $year) {
             return DB::connection('sqlsrv')
@@ -119,9 +120,9 @@ class CollaboratorsStats
                     $minutes = floor(($user->active_seconds % 3600) / 60);
 
                     return [
-                        'user_name'      => $user->user_name,
+                        'user_name' => $user->user_name,
                         'active_seconds' => $user->active_seconds,
-                        'active_time'    => "{$hours}h {$minutes}m",
+                        'active_time' => "{$hours}h {$minutes}m",
                         'machines_count' => $user->machines_count ?? 0,
                     ];
                 })

@@ -11,11 +11,12 @@ use Throwable;
 class GlpiSyncVolumes extends Command
 {
     protected $signature = 'glpi:sync-volumes {--batch=100}';
+
     protected $description = 'Sync GLPI disks (Item_Disk) into app DB';
 
     public function handle(): int
     {
-        $client = new GlpiApi();
+        $client = new GlpiApi;
 
         try {
             $session = $client->initSession();
@@ -31,11 +32,12 @@ class GlpiSyncVolumes extends Command
             if ($computers->isEmpty()) {
                 $this->warn('No computers found.');
                 $client->killSession($session);
+
                 return self::FAILURE;
             }
 
             $syncStartedAt = now();
-            $totalUpserts  = 0;
+            $totalUpserts = 0;
 
             foreach ($computers as $computer) {
 
@@ -65,7 +67,7 @@ class GlpiSyncVolumes extends Command
                         }
 
                         $totalSize = $this->toIntOrNull($disk['totalsize'] ?? null);
-                        $freeSize  = $this->toIntOrNull($disk['freesize'] ?? null);
+                        $freeSize = $this->toIntOrNull($disk['freesize'] ?? null);
 
                         $freePercent = null;
 
@@ -78,16 +80,16 @@ class GlpiSyncVolumes extends Command
                         ComputerVolumes::updateOrCreate(
                             ['glpi_id' => (int) ($disk['id'] ?? 0)],
                             [
-                                'computer_id'     => (int) $computer->id,
-                                'mountpoint'      => $disk['mountpoint'] ?? null,
-                                'name'            => $disk['name'] ?? null,
-                                'total_size'      => $totalSize,
-                                'free_size'       => $freeSize,
-                                'free_percent'    => $freePercent,
-                                'alert_level'     => $alertLevel,
+                                'computer_id' => (int) $computer->id,
+                                'mountpoint' => $disk['mountpoint'] ?? null,
+                                'name' => $disk['name'] ?? null,
+                                'total_size' => $totalSize,
+                                'free_size' => $freeSize,
+                                'free_percent' => $freePercent,
+                                'alert_level' => $alertLevel,
                                 'encryption_tool' => $disk['encryption_tool'] ?? null,
-                                'date_mod'        => $disk['date_mod'] ?? null,
-                                'synced_at'       => now(),
+                                'date_mod' => $disk['date_mod'] ?? null,
+                                'synced_at' => now(),
                             ]
                         );
 
@@ -116,7 +118,7 @@ class GlpiSyncVolumes extends Command
             return self::SUCCESS;
         } catch (Throwable $e) {
 
-            $this->error('❌ Sync failed: ' . $e->getMessage());
+            $this->error('❌ Sync failed: '.$e->getMessage());
             report($e);
 
             return self::FAILURE;
@@ -144,7 +146,9 @@ class GlpiSyncVolumes extends Command
 
     private function toIntOrNull(mixed $value): ?int
     {
-        if (is_int($value)) return $value;
+        if (is_int($value)) {
+            return $value;
+        }
 
         if (is_string($value) && $value !== '' && ctype_digit($value)) {
             return (int) $value;

@@ -2,12 +2,12 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use App\Services\WazuhIndexerService;
 use App\Models\Agents;
-use App\Models\Vulnerabilite;
 use App\Models\AgentVulne;
+use App\Models\Vulnerabilite;
+use App\Services\WazuhIndexerService;
 use Carbon\Carbon;
+use Illuminate\Console\Command;
 
 class WazuhInitialImport extends Command
 {
@@ -17,7 +17,7 @@ class WazuhInitialImport extends Command
 
     public function handle()
     {
-        $service = new WazuhIndexerService();
+        $service = new WazuhIndexerService;
 
         $scrollId = null;
 
@@ -39,14 +39,15 @@ class WazuhInitialImport extends Command
 
                 $agent = Agents::where('wazuh_agent_id', $wazuhAgentId)->first();
 
-                if (!$agent) {
+                if (! $agent) {
                     $this->warn("Agent not found: {$wazuhAgentId}");
+
                     continue;
                 }
 
                 $cve = $data['vulnerability']['id'] ?? null;
 
-                if (!$cve) {
+                if (! $cve) {
                     continue;
                 }
 
@@ -84,10 +85,10 @@ class WazuhInitialImport extends Command
                 $total++;
             }
 
-            $this->info("Batch processed: " . count($hits));
-        } while (!empty($hits));
+            $this->info('Batch processed: '.count($hits));
+        } while (! empty($hits));
 
-        $this->info("Initial import finished");
+        $this->info('Initial import finished');
         $this->info("Total imported: {$total}");
     }
 }

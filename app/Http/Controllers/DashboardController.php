@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Services\Dashboard\CollaboratorsStats;
+use App\Services\Dashboard\GroupsStats;
 use App\Services\Dashboard\MaterialInventory;
 use App\Services\Dashboard\SoftwareInventory;
-use App\Services\Dashboard\GroupsStats;
-use App\Services\Dashboard\CollaboratorsStats;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -29,11 +28,11 @@ class DashboardController extends Controller
             'total_machines' => $this->materialInventory->totalMachine(),
             'different_models_count' => $this->materialInventory->numberOfDifferentModels(),
             'top_model' => $this->materialInventory->topModel(),
-            'models_distribution' => Inertia::defer(fn() => $this->materialInventory->modelRepartitionTop10()),
-            'ram_distribution' => Inertia::defer(fn() => $this->materialInventory->ramByNumberOfDevices()),
-            'software_stats' => Inertia::defer(fn() => $this->softwareInventory->getSoftwareStats()),
-            'groups_stats' => Inertia::defer(fn() => $this->groupsStats->getGroupsStatsAll()),
-            'collaborators_stats' => Inertia::defer(fn() => $this->collaboratorsStats->getCollaboratorsStatsAll()),
+            'models_distribution' => Inertia::defer(fn () => $this->materialInventory->modelRepartitionTop10()),
+            'ram_distribution' => Inertia::defer(fn () => $this->materialInventory->ramByNumberOfDevices()),
+            'software_stats' => Inertia::defer(fn () => $this->softwareInventory->getSoftwareStats()),
+            'groups_stats' => Inertia::defer(fn () => $this->groupsStats->getGroupsStatsAll()),
+            'collaborators_stats' => Inertia::defer(fn () => $this->collaboratorsStats->getCollaboratorsStatsAll()),
         ]);
     }
 
@@ -45,10 +44,11 @@ class DashboardController extends Controller
         $this->materialInventory->clearCache();
         $this->softwareInventory->clearCache();
         $this->groupsStats->clearCache();
+        $this->collaboratorsStats->clearCache();
 
         return response()->json([
             'message' => 'Dashboard cache cleared successfully',
-            'timestamp' => now()
+            'timestamp' => now(),
         ]);
     }
 }

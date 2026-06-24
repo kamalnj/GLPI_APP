@@ -2,14 +2,13 @@
 
 namespace App\Services\Collabs;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Validation\Rules\Date;
+use Illuminate\Support\Facades\DB;
 
 class CollabsService
 {
     private const CACHE_TTL = 600;
+
     private const MAX_DAYS = 90;
 
     /* =========================
@@ -25,7 +24,7 @@ class CollabsService
     ): LengthAwarePaginator {
 
         $month = now()->month;
-        $year  = now()->year;
+        $year = now()->year;
 
         $query = DB::connection('sqlsrv')
             ->table('vw_user_daily_activity')
@@ -63,9 +62,8 @@ class CollabsService
             ->orderByDesc('total_active_seconds')
             ->paginate($perPage)
             ->withQueryString()
-            ->through(fn($user) => $this->formatUser($user));
+            ->through(fn ($user) => $this->formatUser($user));
     }
-
 
     /* =========================
      | FORMAT USER
