@@ -8,8 +8,8 @@ import UsageBar from './UsageBar';
 
 const rowBg = (level: AlertLevel) =>
     level === 'critical'
-        ? 'bg-red-50/40 hover:bg-red-50'
-        : 'bg-amber-50/30 hover:bg-amber-50/60';
+        ? 'bg-red-50/40 hover:bg-red-50 dark:bg-red-950/20 dark:hover:bg-red-950/35'
+        : 'bg-amber-50/30 hover:bg-amber-50/60 dark:bg-amber-950/20 dark:hover:bg-amber-950/35';
 
 export const formatDate = (date: string) =>
     new Date(date).toLocaleString('fr-FR', {
@@ -57,7 +57,7 @@ export default function DiskAlertsTable({
                 <div className="relative w-full sm:max-w-md">
                     <FiSearch
                         size={14}
-                        className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
+                        className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground"
                     />
 
                     <input
@@ -65,7 +65,7 @@ export default function DiskAlertsTable({
                         placeholder="Rechercher une machine ou partition..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pr-3 pl-9 text-sm placeholder-gray-400 shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 focus:outline-none"
+                        className="w-full rounded-lg border border-input bg-background py-2.5 pr-3 pl-9 text-sm text-foreground placeholder:text-muted-foreground shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none"
                     />
                 </div>
 
@@ -78,9 +78,9 @@ export default function DiskAlertsTable({
                 </a>
             </div>
 
-            <div className="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
-                <table className="min-w-full text-sm text-gray-700">
-                    <thead className="bg-gray-50 text-xs tracking-wide text-gray-400 uppercase">
+            <div className="overflow-x-auto rounded-xl border border-border shadow-sm">
+                <table className="min-w-full text-sm text-foreground">
+                    <thead className="bg-muted/60 text-xs tracking-wide text-muted-foreground uppercase">
                         <tr>
                             <th className="w-8 px-4 py-3" />
                             <th className="px-4 py-3 text-left">Machine</th>
@@ -91,12 +91,12 @@ export default function DiskAlertsTable({
                             </th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100">
+                    <tbody className="divide-y divide-border">
                         {filtered.length === 0 ? (
                             <tr>
                                 <td
                                     colSpan={5}
-                                    className="py-8 text-center text-sm text-gray-400"
+                                    className="py-8 text-center text-sm text-muted-foreground"
                                 >
                                     Aucune alerte disque trouvée.
                                 </td>
@@ -109,23 +109,23 @@ export default function DiskAlertsTable({
                                         className={`cursor-pointer transition-colors ${rowBg(d.alert_level)}`}
                                         onClick={() => toggle(d.computer_id)}
                                     >
-                                        <td className="px-4 py-3 text-gray-400">
+                                        <td className="px-4 py-3 text-muted-foreground">
                                             {expanded.has(d.computer_id) ? (
                                                 <ChevronDown size={15} />
                                             ) : (
                                                 <ChevronRight size={15} />
                                             )}
                                         </td>
-                                        <td className="px-4 py-3 font-semibold text-gray-800">
+                                        <td className="px-4 py-3 font-semibold text-foreground">
                                             {d.computer_name}
                                         </td>
-                                        <td className="px-4 py-3 text-gray-500">
+                                        <td className="px-4 py-3 text-muted-foreground">
                                             {d.partitions.length} partition(s)
                                         </td>
                                         <td className="px-4 py-3">
                                             <LevelBadge level={d.alert_level} />
                                         </td>
-                                        <td className="px-4 py-3 text-xs text-gray-400">
+                                        <td className="px-4 py-3 text-xs text-muted-foreground">
                                             {formatDate(d.synced_at)}
                                         </td>
                                     </tr>
@@ -135,13 +135,13 @@ export default function DiskAlertsTable({
                                         d.partitions.map((p) => (
                                             <tr
                                                 key={p.id}
-                                                className="border-l-2 border-l-gray-200 bg-gray-50 text-xs"
+                                                className="border-l-2 border-l-border bg-muted/45 text-xs"
                                             >
                                                 <td className="px-4 py-2" />
-                                                <td className="px-4 py-2 pl-7 text-gray-400">
+                                                <td className="px-4 py-2 pl-7 text-muted-foreground">
                                                     └
                                                 </td>
-                                                <td className="px-4 py-2 font-mono text-gray-600">
+                                                <td className="px-4 py-2 font-mono text-foreground">
                                                     {p.mountpoint}
                                                 </td>
                                                 <td
@@ -163,7 +163,7 @@ export default function DiskAlertsTable({
                                                             }
                                                             inverted
                                                         />
-                                                        <span className="text-gray-400">
+                                                        <span className="text-muted-foreground">
                                                             libre
                                                         </span>
                                                     </div>
@@ -179,7 +179,7 @@ export default function DiskAlertsTable({
 
             {/* Compteur */}
             {filtered.length !== diskAlerts.length && (
-                <p className="text-right text-xs text-gray-400">
+                <p className="text-right text-xs text-muted-foreground">
                     {filtered.length} / {diskAlerts.length} machines
                 </p>
             )}

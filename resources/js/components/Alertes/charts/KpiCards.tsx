@@ -1,5 +1,5 @@
 import { KpiStats } from '@/types/types';
-import { HardDrive, MemoryStick, Download, Clock } from 'lucide-react';
+import { HardDrive, Download, Clock } from 'lucide-react';
 
 interface Props {
     stats: KpiStats;
@@ -41,17 +41,17 @@ function LegendRow({
 }) {
     return (
         <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5 text-xs text-gray-500">
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 {color && (
                     <span
                         className="inline-block h-1.5 w-1.5 shrink-0 rounded-full"
                         style={{ background: color }}
                     />
                 )}
-                {icon && <span className="text-gray-400">{icon}</span>}
+                {icon && <span className="text-muted-foreground">{icon}</span>}
                 {label}
             </div>
-            <span className="text-xs font-medium text-gray-800">{value}</span>
+            <span className="text-xs font-medium text-foreground">{value}</span>
         </div>
     );
 }
@@ -59,14 +59,14 @@ function LegendRow({
 // ── Pied de carte ────────────────────────────────────────────────────────────
 function CardFoot({ children }: { children: React.ReactNode }) {
     return (
-        <div className="flex items-center gap-1.5 text-[11px] text-gray-400">
+        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
             {children}
         </div>
     );
 }
 
 function Divider() {
-    return <div className="h-px bg-gray-100" />;
+    return <div className="h-px bg-border" />;
 }
 
 // ── Label de santé ───────────────────────────────────────────────────────────
@@ -83,8 +83,8 @@ export default function KpiCards({ stats }: Props) {
     return (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             {/* Card 1 — Santé globale */}
-            <div className="flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-5">
-                <p className="text-xs text-gray-500">Santé du parc</p>
+            <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-5 text-card-foreground">
+                <p className="text-xs text-muted-foreground">Santé du parc</p>
 
                 <div>
                     <span
@@ -93,7 +93,7 @@ export default function KpiCards({ stats }: Props) {
                     >
                         {stats.healthPct}
                     </span>
-                    <span className="ml-0.5 text-lg text-gray-400">%</span>
+                    <span className="ml-0.5 text-lg text-muted-foreground">%</span>
                     <p
                         className="mt-1.5 text-sm font-medium"
                         style={{ color: health.color }}
@@ -136,14 +136,14 @@ export default function KpiCards({ stats }: Props) {
             </div>
 
             {/* Card 2 — Alertes actives */}
-            <div className="flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-5">
-                <p className="text-xs text-gray-500">Alertes actives</p>
+            <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-5 text-card-foreground">
+                <p className="text-xs text-muted-foreground">Alertes actives</p>
 
                 <div>
-                    <span className="text-[42px] leading-none font-medium text-red-800">
+                    <span className="text-[42px] leading-none font-medium text-red-800 dark:text-red-300">
                         {stats.totalCritical}
                     </span>
-                    <p className="mt-1.5 text-sm font-medium text-red-800">
+                    <p className="mt-1.5 text-sm font-medium text-red-800 dark:text-red-300">
                         critiques
                     </p>
                 </div>
@@ -177,14 +177,14 @@ export default function KpiCards({ stats }: Props) {
             </div>
 
             {/* Card 3 — Machines concernées */}
-            <div className="flex flex-col gap-3 rounded-xl border border-gray-200 bg-white p-5">
-                <p className="text-xs text-gray-500">Machines concernées</p>
+            <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-5 text-card-foreground">
+                <p className="text-xs text-muted-foreground">Machines concernées</p>
 
                 <div>
-                    <span className="text-[42px] leading-none font-medium text-gray-800">
+                    <span className="text-[42px] leading-none font-medium text-foreground">
                         {stats.machinesWithAlerts}
                     </span>
-                    <p className="mt-1.5 text-sm text-gray-500">
+                    <p className="mt-1.5 text-sm text-muted-foreground">
                         sur {stats.totalMachines} machines
                     </p>
                 </div>

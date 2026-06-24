@@ -16,20 +16,20 @@ export default function KpiCards({ stats }: { stats: Stats }) {
             gradient: 'from-blue-500 to-blue-600',
             iconBg: 'bg-gradient-to-br from-blue-50 to-blue-100',
             iconColor: 'text-blue-600',
-            textColor: 'text-gray-900',
-            border: 'border-blue-100',
-            hoverShadow: 'hover:shadow-blue-100',
+            textColor: 'text-foreground',
+            border: 'border-border',
+            hoverShadow: 'hover:shadow-blue-500/10',
         },
         {
             label: 'Ordinateurs vulnérables',
             value: stats.vulnerableComputers,
             icon: <FiAlertOctagon size={20} />,
             gradient: 'from-red-500 to-red-600',
-            iconBg: 'bg-gradient-to-br from-red-50 to-red-100',
-            iconColor: 'text-red-600',
-            textColor: 'text-red-700',
-            border: 'border-red-100',
-            hoverShadow: 'hover:shadow-red-100',
+            iconBg: 'bg-gradient-to-br from-red-50 to-red-100 dark:from-red-950/50 dark:to-red-900/30',
+            iconColor: 'text-red-600 dark:text-red-300',
+            textColor: 'text-red-700 dark:text-red-300',
+            border: 'border-border',
+            hoverShadow: 'hover:shadow-red-500/10',
             percentage:
                 stats.totalComputers > 0
                     ? Math.round(
@@ -43,11 +43,11 @@ export default function KpiCards({ stats }: { stats: Stats }) {
             value: stats.withoutSophos,
             icon: <FiAlertTriangle size={20} />,
             gradient: 'from-orange-500 to-orange-600',
-            iconBg: 'bg-gradient-to-br from-orange-50 to-orange-100',
-            iconColor: 'text-orange-600',
-            textColor: 'text-orange-700',
-            border: 'border-orange-100',
-            hoverShadow: 'hover:shadow-orange-100',
+            iconBg: 'bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/50 dark:to-orange-900/30',
+            iconColor: 'text-orange-600 dark:text-orange-300',
+            textColor: 'text-orange-700 dark:text-orange-300',
+            border: 'border-border',
+            hoverShadow: 'hover:shadow-orange-500/10',
             percentage:
                 stats.totalComputers > 0
                     ? Math.round(
@@ -63,7 +63,7 @@ export default function KpiCards({ stats }: { stats: Stats }) {
                 {cards.map((kpi, index) => (
                     <div
                         key={kpi.label}
-                        className={`group relative overflow-hidden rounded-2xl border ${kpi.border} bg-white p-5 shadow-sm transition-all duration-300 hover:shadow-lg ${kpi.hoverShadow} hover:-translate-y-1`}
+                        className={`group relative overflow-hidden rounded-2xl border ${kpi.border} bg-card p-5 text-card-foreground shadow-sm transition-all duration-300 hover:shadow-lg ${kpi.hoverShadow} hover:-translate-y-1`}
                         style={{
                             animationDelay: `${index * 100}ms`,
                             animation: 'fadeInUp 0.5s ease-out forwards',
@@ -76,7 +76,7 @@ export default function KpiCards({ stats }: { stats: Stats }) {
 
                         <div className="flex items-start justify-between">
                             <div className="flex-1">
-                                <p className="mb-3 text-xs font-semibold tracking-wider text-gray-500 uppercase">
+                                <p className="mb-3 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                                     {kpi.label}
                                 </p>
 
@@ -87,7 +87,7 @@ export default function KpiCards({ stats }: { stats: Stats }) {
                                         {kpi.value.toLocaleString('fr-FR')}
                                     </p>
                                     {kpi.percentage !== undefined && (
-                                        <span className="text-sm font-medium text-gray-400">
+                                        <span className="text-sm font-medium text-muted-foreground">
                                             ({kpi.percentage}%)
                                         </span>
                                     )}
@@ -104,7 +104,7 @@ export default function KpiCards({ stats }: { stats: Stats }) {
                         {/* Progress bar for vulnerable/without sophos */}
                         {kpi.percentage !== undefined && (
                             <div className="mt-4">
-                                <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
+                                <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                                     <div
                                         className={`h-full bg-linear-to-r ${kpi.gradient} transition-all duration-1000 ease-out`}
                                         style={{

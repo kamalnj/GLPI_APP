@@ -54,7 +54,7 @@ export default function OutDateInventoryTable({
                 <div className="relative w-full sm:max-w-md">
                     <FiSearch
                         size={14}
-                        className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
+                        className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground"
                     />
 
                     <input
@@ -62,7 +62,7 @@ export default function OutDateInventoryTable({
                         placeholder="Rechercher une machine..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pr-3 pl-9 text-sm placeholder-gray-400 shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 focus:outline-none"
+                        className="w-full rounded-lg border border-input bg-background py-2.5 pr-3 pl-9 text-sm text-foreground placeholder:text-muted-foreground shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none"
                     />
                 </div>
 
@@ -75,10 +75,10 @@ export default function OutDateInventoryTable({
                 </a>
             </div>
 
-            <div className="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
+            <div className="overflow-x-auto rounded-xl border border-border shadow-sm">
                 {/* En-tête fixe */}
-                <table className="min-w-full text-sm text-gray-700">
-                    <thead className="bg-gray-50 text-xs tracking-wide text-gray-400 uppercase">
+                <table className="min-w-full text-sm text-foreground">
+                    <thead className="bg-muted/60 text-xs tracking-wide text-muted-foreground uppercase">
                         <tr>
                             <th className="px-4 py-3 text-left">Machine</th>
                             <th className="px-4 py-3 text-left">
@@ -92,7 +92,7 @@ export default function OutDateInventoryTable({
                 </table>
 
                 {filtered.length === 0 ? (
-                    <p className="py-8 text-center text-sm text-gray-400">
+                    <p className="py-8 text-center text-sm text-muted-foreground">
                         Aucune alerte inventaire obsolète trouvée.
                     </p>
                 ) : (
@@ -109,7 +109,7 @@ export default function OutDateInventoryTable({
                             }}
                         >
                             <table
-                                className="min-w-full text-sm text-gray-700"
+                                className="min-w-full text-sm text-foreground"
                                 style={{
                                     position: 'absolute',
                                     top: offsetY,
@@ -117,22 +117,22 @@ export default function OutDateInventoryTable({
                                     right: 0,
                                 }}
                             >
-                                <tbody className="divide-y divide-gray-100">
+                                <tbody className="divide-y divide-border">
                                     {visibleItems.map((r) => (
                                         <tr
                                             key={r.id}
                                             className={`transition-colors`}
                                             style={{ height: ROW_HEIGHT }}
                                         >
-                                            <td className="px-4 py-3 font-semibold text-gray-800">
+                                            <td className="px-4 py-3 font-semibold text-foreground">
                                                 {r.name}
                                             </td>
-                                            <td className="px-4 py-3 text-gray-500">
+                                            <td className="px-4 py-3 text-muted-foreground">
                                                 {formatDate(
                                                     r.last_inventory_update,
                                                 )}
                                             </td>
-                                            <td className="px-4 py-3 text-xs text-gray-400">
+                                            <td className="px-4 py-3 text-xs text-muted-foreground">
                                                 {formatDate(r.synced_at)}
                                             </td>
                                         </tr>
@@ -146,7 +146,7 @@ export default function OutDateInventoryTable({
 
             {/* Compteur */}
             {filtered.length !== outDateInventoryAlerts.length && (
-                <p className="text-right text-xs text-gray-400">
+                <p className="text-right text-xs text-muted-foreground">
                     {filtered.length} / {outDateInventoryAlerts.length} alertes
                 </p>
             )}

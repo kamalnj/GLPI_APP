@@ -77,7 +77,7 @@ export function InactiveUsers({ users }: InactiveUsersProps) {
                             {users.map((user) => (
                                 <TableRow
                                     key={user.user_name}
-                                    className="bg-red-50"
+                                    className=" hover:bg-muted/50 text-amber-500 dark:hover:bg-muted/50 transition-colors"
                                 >
                                     <TableCell className="font-medium">
                                         {user.user_name}

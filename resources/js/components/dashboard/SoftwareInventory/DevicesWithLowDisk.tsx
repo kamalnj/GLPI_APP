@@ -40,16 +40,18 @@ export function DevicesWithLowDisk({ devices }: DevicesWithLowDiskProps) {
     }
 
     return (
-        <Card className="border-red-200">
+        <Card className="border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/20">
             <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5 text-red-600" />
+                    <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
                     Appareils en alerte (Au-dessus moyenne + disque faible)
                 </CardTitle>
-                <span className="text-2xl font-bold text-red-600">
+
+                <span className="text-2xl font-bold text-red-600 dark:text-red-400">
                     {devices.length}
                 </span>
             </CardHeader>
+
             <CardContent>
                 <div className="overflow-x-auto">
                     <Table>
@@ -65,38 +67,42 @@ export function DevicesWithLowDisk({ devices }: DevicesWithLowDiskProps) {
                                 </TableHead>
                             </TableRow>
                         </TableHeader>
+
                         <TableBody>
                             {devices.slice(0, 20).map((device) => (
                                 <TableRow
                                     key={device.id}
                                     className={
                                         device.avg_free_percent < 10
-                                            ? 'bg-red-50'
+                                            ? 'bg-red-50 dark:bg-red-950/40'
                                             : device.avg_free_percent < 20
-                                              ? 'bg-orange-50'
+                                              ? 'bg-orange-50 dark:bg-orange-950/30'
                                               : ''
                                     }
                                 >
                                     <TableCell className="font-medium">
                                         {device.name}
                                     </TableCell>
-                                    <TableCell className="text-sm">
+
+                                    <TableCell className="text-sm text-muted-foreground">
                                         {device.model}
                                     </TableCell>
+
                                     <TableCell className="text-right">
-                                        <span className="inline-flex items-center justify-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                                        <span className="inline-flex items-center justify-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
                                             {device.software_count}
                                         </span>
                                     </TableCell>
+
                                     <TableCell className="text-right">
                                         <span
                                             className={`inline-flex items-center justify-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
                                                 device.avg_free_percent < 10
-                                                    ? 'bg-red-100 text-red-800'
+                                                    ? 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300'
                                                     : device.avg_free_percent <
                                                         20
-                                                      ? 'bg-orange-100 text-orange-800'
-                                                      : 'bg-yellow-100 text-yellow-800'
+                                                      ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300'
+                                                      : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300'
                                             }`}
                                         >
                                             {device.avg_free_percent.toFixed(1)}
@@ -108,6 +114,7 @@ export function DevicesWithLowDisk({ devices }: DevicesWithLowDiskProps) {
                         </TableBody>
                     </Table>
                 </div>
+
                 {devices.length > 20 && (
                     <p className="mt-4 text-xs text-muted-foreground">
                         Affichage des 20 premiers appareils sur {devices.length}

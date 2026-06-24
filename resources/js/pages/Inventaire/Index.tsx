@@ -226,7 +226,7 @@ export default function Index({
                             <button
                                 onClick={submit}
                                 disabled={loading}
-                                className="h-11 flex-1 rounded-lg bg-primary text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60"
+                                className="h-11 flex-1 rounded-lg bg-primary text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60 dark:bg-primary/80 dark:text-primary-foreground"
                             >
                                 {loading ? '...' : 'Filtrer'}
                             </button>

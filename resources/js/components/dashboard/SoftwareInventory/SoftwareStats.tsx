@@ -113,9 +113,9 @@ export function SoftwareStats({
 
             {/* Top Device by Software Count */}
             {top_device_by_software_count && (
-                <Card className="border-orange-200 bg-orange-50">
+                <Card className="border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-900">
                     <CardHeader>
-                        <CardTitle className="text-orange-900">
+                        <CardTitle className="text-orange-900 dark:text-white">
                             Appareil avec le plus de logiciels
                         </CardTitle>
                     </CardHeader>
@@ -124,7 +124,7 @@ export function SoftwareStats({
                             <p className="text-lg font-semibold">
                                 {top_device_by_software_count.name}
                             </p>
-                            <p className="text-sm text-orange-800">
+                            <p className="text-sm text-orange-800 dark:text-orange-300">
                                 Modèle:{' '}
                                 {top_device_by_software_count.computer_model}
                             </p>

@@ -6,8 +6,8 @@ import LevelBadge from './LevelBadge';
 
 const rowBg = (level: AlertLevel) =>
     level === 'critical'
-        ? 'bg-red-50/40 hover:bg-red-50'
-        : 'bg-amber-50/30 hover:bg-amber-50/60';
+        ? 'bg-red-50/40 hover:bg-red-50 dark:bg-red-950/20 dark:hover:bg-red-950/35'
+        : 'bg-amber-50/30 hover:bg-amber-50/60 dark:bg-amber-950/20 dark:hover:bg-amber-950/35';
 
 export const formatDate = (date: string) =>
     new Date(date).toLocaleString('fr-FR', {
@@ -64,21 +64,21 @@ export default function RamAlertsTable({
             <div className="relative">
                 <FiSearch
                     size={14}
-                    className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
+                    className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground"
                 />
                 <input
                     type="text"
                     placeholder="Rechercher une machine ou barrette..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="w-full rounded-md border border-gray-200 bg-white py-2 pr-3 pl-8 text-sm placeholder-gray-400 focus:border-gray-400 focus:ring-1 focus:ring-gray-300 focus:outline-none"
+                    className="w-full rounded-md border border-input bg-background py-2 pr-3 pl-8 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring/40 focus:outline-none"
                 />
             </div>
 
-            <div className="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
+            <div className="overflow-x-auto rounded-xl border border-border shadow-sm">
                 {/* En-tête fixe */}
-                <table className="min-w-full text-sm text-gray-700">
-                    <thead className="bg-gray-50 text-xs tracking-wide text-gray-400 uppercase">
+                <table className="min-w-full text-sm text-foreground">
+                    <thead className="bg-muted/60 text-xs tracking-wide text-muted-foreground uppercase">
                         <tr>
                             <th className="px-4 py-3 text-left">Machine</th>
                             <th className="px-4 py-3 text-left">Barrette</th>
@@ -92,7 +92,7 @@ export default function RamAlertsTable({
                 </table>
 
                 {filtered.length === 0 ? (
-                    <p className="py-8 text-center text-sm text-gray-400">
+                    <p className="py-8 text-center text-sm text-muted-foreground">
                         Aucune alerte RAM trouvée.
                     </p>
                 ) : (
@@ -109,7 +109,7 @@ export default function RamAlertsTable({
                             }}
                         >
                             <table
-                                className="min-w-full text-sm text-gray-700"
+                                className="min-w-full text-sm text-foreground"
                                 style={{
                                     position: 'absolute',
                                     top: offsetY,
@@ -117,17 +117,17 @@ export default function RamAlertsTable({
                                     right: 0,
                                 }}
                             >
-                                <tbody className="divide-y divide-gray-100">
+                                <tbody className="divide-y divide-border">
                                     {visibleItems.map((r) => (
                                         <tr
                                             key={r.id}
                                             className={`transition-colors ${rowBg(r.alert_level)}`}
                                             style={{ height: ROW_HEIGHT }}
                                         >
-                                            <td className="px-4 py-3 font-semibold text-gray-800">
+                                            <td className="px-4 py-3 font-semibold text-foreground">
                                                 {r.computer_name}
                                             </td>
-                                            <td className="px-4 py-3 text-gray-500">
+                                            <td className="px-4 py-3 text-muted-foreground">
                                                 {r.ram_name}
                                             </td>
                                             <td className="px-4 py-3">
@@ -141,7 +141,7 @@ export default function RamAlertsTable({
                                                     level={r.alert_level}
                                                 />
                                             </td>
-                                            <td className="px-4 py-3 text-xs text-gray-400">
+                                            <td className="px-4 py-3 text-xs text-muted-foreground">
                                                 {formatDate(r.synced_at)}
                                             </td>
                                         </tr>
@@ -155,7 +155,7 @@ export default function RamAlertsTable({
 
             {/* Compteur */}
             {filtered.length !== ramAlerts.length && (
-                <p className="text-right text-xs text-gray-400">
+                <p className="text-right text-xs text-muted-foreground">
                     {filtered.length} / {ramAlerts.length} alertes
                 </p>
             )}

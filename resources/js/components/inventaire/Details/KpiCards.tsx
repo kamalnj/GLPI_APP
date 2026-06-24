@@ -20,8 +20,8 @@ export default function KpiCards({ kpis }: { kpis: SecurityKpis }) {
             label: 'Total',
             value: kpis.total,
             icon: <FiLayers size={18} />,
-            color: 'text-gray-700',
-            iconBg: 'bg-gray-100 text-gray-500',
+            color: 'text-foreground',
+            iconBg: 'bg-muted text-muted-foreground',
             small: false,
         },
         {
@@ -29,7 +29,7 @@ export default function KpiCards({ kpis }: { kpis: SecurityKpis }) {
             value: kpis.critical,
             icon: <FiAlertOctagon size={18} />,
             color: 'text-red-600',
-            iconBg: 'bg-red-50 text-red-500',
+            iconBg: 'bg-red-50 text-red-500 dark:bg-red-950/35 dark:text-red-300',
             small: false,
         },
         {
@@ -37,15 +37,15 @@ export default function KpiCards({ kpis }: { kpis: SecurityKpis }) {
             value: kpis.high,
             icon: <FiAlertTriangle size={18} />,
             color: 'text-orange-500',
-            iconBg: 'bg-orange-50 text-orange-400',
+            iconBg: 'bg-orange-50 text-orange-400 dark:bg-orange-950/35 dark:text-orange-300',
             small: false,
         },
         {
             label: 'Dernière détection',
             value: kpis.last_detected ?? 'N/A',
             icon: <FiClock size={18} />,
-            color: 'text-gray-700',
-            iconBg: 'bg-gray-100 text-gray-500',
+            color: 'text-foreground',
+            iconBg: 'bg-muted text-muted-foreground',
             small: true,
         },
     ];
@@ -55,7 +55,7 @@ export default function KpiCards({ kpis }: { kpis: SecurityKpis }) {
             {cards.map((kpi) => (
                 <div
                     key={kpi.label}
-                    className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-3 shadow-sm sm:gap-4 sm:p-4"
+                    className="flex items-center gap-3 rounded-xl border border-border bg-card p-3 text-card-foreground shadow-sm sm:gap-4 sm:p-4"
                 >
                     <div
                         className={`flex h-9 w-9 items-center justify-center rounded-lg sm:h-10 sm:w-10 ${kpi.iconBg} shrink-0`}
@@ -63,7 +63,7 @@ export default function KpiCards({ kpis }: { kpis: SecurityKpis }) {
                         {kpi.icon}
                     </div>
                     <div className="min-w-0">
-                        <div className="truncate text-[10px] font-medium tracking-wide text-gray-400 uppercase sm:text-xs">
+                        <div className="truncate text-[10px] font-medium tracking-wide text-muted-foreground uppercase sm:text-xs">
                             {kpi.label}
                         </div>
                         <div

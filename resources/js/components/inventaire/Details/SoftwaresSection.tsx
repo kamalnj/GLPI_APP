@@ -50,7 +50,7 @@ export default function SoftwaresSection({ softwares }: Props) {
         <div>
             <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-lg font-semibold">Logiciels installés</h2>
-                <span className="text-xs text-gray-400">
+                <span className="text-xs text-muted-foreground">
                     {filtered.length === softwares.length
                         ? `${softwares.length} logiciel${softwares.length > 1 ? 's' : ''}`
                         : `${filtered.length} / ${softwares.length}`}
@@ -60,14 +60,14 @@ export default function SoftwaresSection({ softwares }: Props) {
             <div className="relative mb-3">
                 <FiSearch
                     size={14}
-                    className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-gray-400"
+                    className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground"
                 />
                 <input
                     type="text"
                     placeholder="Rechercher un logiciel..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="w-full rounded-md border border-gray-200 bg-white py-2 pr-3 pl-8 text-sm placeholder-gray-400 focus:border-gray-400 focus:ring-1 focus:ring-gray-300 focus:outline-none"
+                    className="w-full rounded-md border border-input bg-background py-2 pr-3 pl-8 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring/40 focus:outline-none"
                 />
             </div>
 
@@ -96,7 +96,7 @@ export default function SoftwaresSection({ softwares }: Props) {
                 </table>
 
                 {filtered.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center gap-2 py-10 text-gray-400">
+                    <div className="flex flex-col items-center justify-center gap-2 py-10 text-muted-foreground">
                         <FiPackage size={24} />
                         <span className="text-sm">Aucun logiciel trouvé</span>
                     </div>
@@ -132,18 +132,18 @@ export default function SoftwaresSection({ softwares }: Props) {
                                     {visibleItems.map((s) => (
                                         <tr
                                             key={s.id}
-                                            className="border-b last:border-b-0 hover:bg-gray-50"
+                                            className="border-b border-border transition-colors last:border-b-0 hover:bg-muted/60"
                                             style={{ height: ROW_HEIGHT }}
                                         >
                                             <td className="truncate px-3 py-2">
                                                 {s.software_name ?? '—'}
                                             </td>
 
-                                            <td className="truncate px-3 py-2 text-gray-500">
+                                            <td className="truncate px-3 py-2 text-muted-foreground">
                                                 {s.version ?? '—'}
                                             </td>
 
-                                            <td className="truncate px-3 py-2 text-gray-500">
+                                            <td className="truncate px-3 py-2 text-muted-foreground">
                                                 {s.date_install
                                                     ? new Date(
                                                           s.date_install,

@@ -67,7 +67,7 @@ export function RemoteOnsiteAverage({
 
                     {/* Stats */}
                     <div className="flex flex-col justify-center space-y-6">
-                        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+                        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900">
                             <p className="mb-1 text-sm text-gray-600">
                                 On-site
                             </p>
@@ -82,7 +82,7 @@ export function RemoteOnsiteAverage({
                             </p>
                         </div>
 
-                        <div className="rounded-lg border border-green-200 bg-green-50 p-4">
+                        <div className="rounded-lg border border-green-200 bg-green-50 p-4 dark:border-green-800 dark:bg-green-900">
                             <p className="mb-1 text-sm text-gray-600">Remote</p>
 
                             <p className="text-2xl font-bold text-green-600">

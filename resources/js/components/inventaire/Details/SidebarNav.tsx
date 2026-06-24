@@ -21,9 +21,9 @@ export default function SidebarNav({
     onSelect,
 }: Props) {
     return (
-        <nav className="w-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+        <nav className="w-full overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-sm">
             <div className="px-4 pt-4 pb-2">
-                <span className="text-[10px] font-semibold tracking-widest text-gray-400 uppercase">
+                <span className="text-[10px] font-semibold tracking-widest text-muted-foreground uppercase">
                     Navigation
                 </span>
             </div>
@@ -37,16 +37,16 @@ export default function SidebarNav({
                                 onClick={() => onSelect(section.id)}
                                 className={`nav-btn flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm whitespace-nowrap md:py-2.5 ${
                                     isActive
-                                        ? 'bg-gray-900 font-semibold text-white'
-                                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                                        ? 'bg-primary font-semibold text-primary-foreground'
+                                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                                 }`}
                             >
                                 <div className="flex items-center gap-2">
                                     <span
                                         className={
                                             isActive
-                                                ? 'text-white'
-                                                : 'text-gray-400'
+                                                ? 'text-primary-foreground'
+                                                : 'text-muted-foreground'
                                         }
                                     >
                                         {section.icon}
@@ -59,8 +59,8 @@ export default function SidebarNav({
                                     <span
                                         className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${
                                             isActive
-                                                ? 'bg-white/20 text-white'
-                                                : 'bg-gray-100 text-gray-500'
+                                                ? 'bg-primary-foreground/20 text-primary-foreground'
+                                                : 'bg-muted text-muted-foreground'
                                         }`}
                                     >
                                         {section.count}

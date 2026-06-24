@@ -2,7 +2,7 @@ import { useState, useMemo, lazy, Suspense } from 'react';
 import { Head } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
-import { HardDrive, MemoryStick, XCircle, Download, Clock } from 'lucide-react';
+import { HardDrive, Download, Clock } from 'lucide-react';
 import {
     DiskAlert,
     KpiStats,
@@ -57,7 +57,7 @@ function SkeletonRow({ cols }: { cols: number }) {
             {Array.from({ length: cols }).map((_, i) => (
                 <td key={i} className="px-4 py-3">
                     <div
-                        className="h-4 animate-pulse rounded bg-gray-200"
+                        className="h-4 animate-pulse rounded bg-muted"
                         style={{ width: `${60 + ((i * 15) % 40)}%` }}
                     />
                 </td>
@@ -68,18 +68,18 @@ function SkeletonRow({ cols }: { cols: number }) {
 
 function SkeletonTable({ cols, rows = 8 }: { cols: number; rows?: number }) {
     return (
-        <div className="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
+        <div className="overflow-x-auto rounded-xl border border-border shadow-sm">
             <table className="min-w-full text-sm">
-                <thead className="bg-gray-50">
+                <thead className="bg-muted/60">
                     <tr>
                         {Array.from({ length: cols }).map((_, i) => (
                             <th key={i} className="px-4 py-3">
-                                <div className="h-3 w-20 animate-pulse rounded bg-gray-200" />
+                                <div className="h-3 w-20 animate-pulse rounded bg-muted-foreground/20" />
                             </th>
                         ))}
                     </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-border">
                     {Array.from({ length: rows }).map((_, i) => (
                         <SkeletonRow key={i} cols={cols} />
                     ))}
@@ -92,7 +92,7 @@ function SkeletonTable({ cols, rows = 8 }: { cols: number; rows?: number }) {
 // Skeleton chart — affiché pendant le lazy load du composant chart
 function SkeletonChart() {
     return (
-        <div className="h-48 w-full animate-pulse rounded-xl border border-gray-200 bg-gray-50" />
+        <div className="h-48 w-full animate-pulse rounded-xl border border-border bg-muted/60" />
     );
 }
 
@@ -131,7 +131,7 @@ export default function Index({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Alertes système" />
             <div className="space-y-6 p-6">
-                <h1 className="text-2xl font-bold text-gray-800">
+                <h1 className="text-2xl font-bold text-foreground">
                     Alertes système
                 </h1>
 
@@ -139,7 +139,7 @@ export default function Index({
                 <KpiCards stats={kpiStats} />
 
                 {/* Onglets */}
-                <div className="flex gap-2 border-b border-gray-200">
+                <div className="flex gap-2 border-b border-border">
                     {tabs.map((tab) => (
                         <button
                             key={tab.key}
@@ -161,7 +161,7 @@ export default function Index({
                             className={`flex items-center gap-2 border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${
                                 activeTab === tab.key
                                     ? 'border-blue-500 text-blue-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                                    : 'border-transparent text-muted-foreground hover:text-foreground'
                             }`}
                         >
                             {tab.icon}
@@ -181,7 +181,7 @@ export default function Index({
                         {diskAlerts === undefined ? (
                             <SkeletonTable cols={5} />
                         ) : diskAlerts.length === 0 ? (
-                            <p className="text-sm text-gray-400">
+                            <p className="text-sm text-muted-foreground">
                                 Aucune alerte disque.
                             </p>
                         ) : (
@@ -202,7 +202,7 @@ export default function Index({
                         {patchWindowsAlerts === undefined ? (
                             <SkeletonTable cols={5} />
                         ) : patchWindowsAlerts.length === 0 ? (
-                            <p className="text-sm text-gray-400">
+                            <p className="text-sm text-muted-foreground">
                                 Aucune alerte patch Windows.
                             </p>
                         ) : (
@@ -225,7 +225,7 @@ export default function Index({
                         {outDateInventoryAlerts === undefined ? (
                             <SkeletonTable cols={3} />
                         ) : outDateInventoryAlerts.length === 0 ? (
-                            <p className="text-sm text-gray-400">
+                            <p className="text-sm text-muted-foreground">
                                 Aucune alerte inventaire obsolète.
                             </p>
                         ) : (

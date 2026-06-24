@@ -11,12 +11,12 @@ export default function StatCard({
 }) {
     return (
         <div
-            className={`flex items-center gap-4 rounded-xl border px-5 py-4 ${color} bg-white shadow-sm`}
+            className={`flex items-center gap-4 rounded-xl border border-border bg-card px-5 py-4 text-card-foreground shadow-sm ${color}`}
         >
             <div className="text-2xl">{icon}</div>
             <div>
-                <p className="text-2xl font-bold text-gray-800">{count}</p>
-                <p className="text-xs text-gray-500">{label}</p>
+                <p className="text-2xl font-bold text-foreground">{count}</p>
+                <p className="text-xs text-muted-foreground">{label}</p>
             </div>
         </div>
     );
